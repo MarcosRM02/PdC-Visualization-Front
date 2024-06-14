@@ -6,6 +6,7 @@ import { BsInfoCircle } from "react-icons/bs";
 import { MdOutlineDelete } from "react-icons/md";
 import { MdEmail } from "react-icons/md";
 import { useState } from "react";
+import { MdDescription } from "react-icons/md";
 
 import { FaIdCard } from "react-icons/fa";
 
@@ -14,7 +15,6 @@ const SWDataSingleCard = ({
 }: {
   SynchronizedWearables: any;
 }) => {
-  const [showModal, setShowModal] = useState(false);
   if (
     !SynchronizedWearables ||
     !SynchronizedWearables._id ||
@@ -24,20 +24,31 @@ const SWDataSingleCard = ({
     return <div>No user data available.</div>; // Mostrar un mensaje o retornar null
   }
   return (
-    <Link to={`/users/${SynchronizedWearables.email}`} className="no-underline">
-      <div className="border-2 border-gray-500 rounded-lg px-4 py-2 m-4 relative hover:shadow-xl">
-        <div key={SynchronizedWearables._id} className="my-2">
-          <span className="text-gray-600">ID: {SynchronizedWearables._id}</span>
-          <br />
-          <span className="text-gray-600">
-            Description: {SynchronizedWearables.description}
-          </span>
-          <br />
-          <span className="text-gray-600">
-            Wearable ID: {SynchronizedWearables.wearables}
-          </span>
+    //<Link to={`/users/${SynchronizedWearables.email}`} className="no-underline">
+    <div className="border-2 border-gray-500 rounded-lg px-4 py-2 m-4 relative hover:shadow-xl">
+      <div key={SynchronizedWearables._id} className="my-2">
+        <span className="text-gray-600"></span>
+
+        <div className="flex justify-start items-center gap-x-2">
+          <FaIdCard className="text-red-300 text-2xl" />
+          <h4 className="my-2 text-gray-500">
+            {" "}
+            ID: {SynchronizedWearables.wearables}
+          </h4>
         </div>
-        {/*
+
+        <div className="flex justify-start items-center gap-x-2">
+          <MdDescription className="text-red-300 text-2xl" />
+          <div>
+            <h4 className="my-2 text-gray-500">
+              {" "}
+              {/*Probar a meter el ojo para ver la descripción*/}
+              Description: {SynchronizedWearables.description}
+            </h4>
+          </div>
+        </div>
+      </div>
+      {/*
         <div className="flex justify-between items-center gap-x-2 mt-4 p-4">
           <BiShow
             className="text-3xl text-blue-800 hover:text-black cursor-pointer"
@@ -53,8 +64,8 @@ const SWDataSingleCard = ({
           <MdOutlineDelete className="text-2xl text-red-600 hover:text-black" />
         </Link>
       </div> */}
-      </div>
-    </Link>
+    </div>
+    //</Link>
   );
 };
 
