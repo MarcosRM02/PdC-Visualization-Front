@@ -5,7 +5,7 @@ import { MdOutlineAddBox } from "react-icons/md";
 import UsersCard from "../Components/Users/UsersCard";
 
 const Home = () => {
-  const [books, setBooks] = useState([]);
+  const [users, setUsers] = useState([]);
   const [_, setLoading] = useState(false);
 
   useEffect(() => {
@@ -13,7 +13,7 @@ const Home = () => {
     axios
       .get("http://localhost:3000/users")
       .then((response) => {
-        setBooks(response.data.data);
+        setUsers(response.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -21,17 +21,16 @@ const Home = () => {
         setLoading(false);
       });
   }, []);
-
   return (
     <div className="p-4">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl my-8">Users List</h1>
-        <Link to="/books/create">
+        {/* <Link to="/books/create">
           <MdOutlineAddBox className="text-sky-800 text-4xl" />
-        </Link>
+        </Link> */}
       </div>
 
-      <UsersCard books={books} />
+      <UsersCard users={users} />
     </div>
   );
 };

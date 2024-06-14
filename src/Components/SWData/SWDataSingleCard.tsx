@@ -6,28 +6,36 @@ import { BsInfoCircle } from "react-icons/bs";
 import { MdOutlineDelete } from "react-icons/md";
 import { MdEmail } from "react-icons/md";
 import { useState } from "react";
-import UserModal from "./UserModal";
+
 import { FaIdCard } from "react-icons/fa";
 
-const UserSingleCard = ({ user }: { user: any }) => {
+const SWDataSingleCard = ({
+  SynchronizedWearables,
+}: {
+  SynchronizedWearables: any;
+}) => {
   const [showModal, setShowModal] = useState(false);
-  if (!user || !user._id || !user.name || !user.email) {
+  if (
+    !SynchronizedWearables ||
+    !SynchronizedWearables._id ||
+    !SynchronizedWearables.wearables ||
+    !SynchronizedWearables.description
+  ) {
     return <div>No user data available.</div>; // Mostrar un mensaje o retornar null
   }
   return (
-    <Link to={`/users/${user.email}`} className="no-underline">
+    <Link to={`/users/${SynchronizedWearables.email}`} className="no-underline">
       <div className="border-2 border-gray-500 rounded-lg px-4 py-2 m-4 relative hover:shadow-xl">
-        <div className="flex justify-start items-center gap-x-2">
-          <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500">{user._id}</h4>
-        </div>
-        <div className="flex justify-start items-center gap-x-2">
-          <BiUserCircle className="text-red-300 text-2xl" />
-          <h2 className="my-1">{user.name}</h2>
-        </div>
-        <div className="flex justify-start items-center gap-x-2">
-          <MdEmail className="text-red-300 text-2xl" />
-          <h2 className="my-1">{user.email}</h2>
+        <div key={SynchronizedWearables._id} className="my-2">
+          <span className="text-gray-600">ID: {SynchronizedWearables._id}</span>
+          <br />
+          <span className="text-gray-600">
+            Description: {SynchronizedWearables.description}
+          </span>
+          <br />
+          <span className="text-gray-600">
+            Wearable ID: {SynchronizedWearables.wearables}
+          </span>
         </div>
         {/*
         <div className="flex justify-between items-center gap-x-2 mt-4 p-4">
@@ -45,12 +53,9 @@ const UserSingleCard = ({ user }: { user: any }) => {
           <MdOutlineDelete className="text-2xl text-red-600 hover:text-black" />
         </Link>
       </div> */}
-        {showModal && (
-          <UserModal user={user} onClose={() => setShowModal(false)} />
-        )}
       </div>
     </Link>
   );
 };
 
-export default UserSingleCard;
+export default SWDataSingleCard;
