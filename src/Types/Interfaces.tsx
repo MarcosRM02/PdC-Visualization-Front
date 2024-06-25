@@ -1,14 +1,4 @@
-import mongoose from "mongoose";
-import mongooseLong from "mongoose-long";
-
-export interface Book {
-  _id: string;
-  title: string;
-  author: string;
-  publishYear: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import Long from "long";
 
 export interface UsersCardProps {
   users: User[];
@@ -16,6 +6,10 @@ export interface UsersCardProps {
 
 export interface SynchronizedWearablesCardProps {
   SynchronizedWearables: SynchronizedWearables[];
+}
+
+export interface SWDataCardProps {
+  SWDatas: SWData[];
 }
 
 export interface User {
@@ -28,12 +22,34 @@ export interface User {
 }
 
 export interface SynchronizedWearables {
-  wearables: string;
-  //timestamp: mongoose.Types.Long;
-  description: string;
+  // Cambiar el nombre de la interfaz
   _id: string;
+  wearables: string;
+  description: string;
 }
-export interface WearableDataDto {
-  type: string;
-  data: Buffer;
+
+export interface SWData {
+  _id: string;
+  syncronized_wearables_id: string;
+  timestamp: typeof Long;
+  wearableData: string[];
+}
+// export interface WearableData {
+//   WereableId: string;
+//   wearable_type: string;
+//   dataframe: JSON; // Acordarse de que esto en realidad es un danfo dataframe, que hay que desjasonizar
+// }
+
+interface DataFrameRow {
+  [key: string]: number[]; // Assuming the arrays are of numbers
+}
+
+export interface WearableData {
+  WearablesId: string;
+  wearable_type: string;
+  dataframe: DataFrameRow;
+}
+
+export interface WearableDataProps {
+  wearables: WearableData[];
 }
