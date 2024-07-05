@@ -1,8 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { WearableDataProps } from "../../Types/Interfaces";
 import { DataFrame, concat, toCSV } from "danfojs";
 
+import Plotly from "plotly.js-dist-min";
+
 const WearablesData = ({ wearables = [] }: WearableDataProps) => {
+  const refs = {
+    leftPressureSensor: useRef(null),
+    leftAccelerometer: useRef(null),
+    leftGyroscope: useRef(null),
+    rightPressureSensor: useRef(null),
+    rightAccelerometer: useRef(null),
+    rightGyroscope: useRef(null),
+  };
+
   const leftWearables = wearables.filter(
     (wearable) => wearable.wearable_type === "L"
   );
@@ -12,16 +23,25 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
   );
 
   useEffect(() => {
-    plotWearablesData(leftWearables, rightWearables);
-  }, [wearables]);
+    plotWearablesData(leftWearables, rightWearables, refs);
 
+    Object.values(refs).forEach((ref) => {
+      if (ref.current) {
+        ref.current.on("plotly_relayout", (eventData) =>
+          handleRelayout(eventData, ref.current, refs)
+        );
+      }
+    });
+  }, [wearables, ...Object.values(refs)]);
+
+  // Meter un boiton para resetear todas las graficas d1
   return (
     <div className="flex justify-around">
-      <div className="left-side">
+      <div id="Left-Side" className="flex-1 overflow-auto p-4">
         {leftWearables.map((wearable, index) => (
           <div key={index} className="wearable-item">
             <h4>Left Wearable - {wearable.WearablesId} </h4>
-            <div id="leftPressureSensor"></div>
+            <div ref={refs.leftPressureSensor} id="leftPressureSensor"></div>
             <div className="flex justify-end">
               <button
                 onClick={() =>
@@ -32,7 +52,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
                 Download CSV
               </button>
             </div>
-            <div id="leftAccelerometer"></div>
+            <div ref={refs.leftAccelerometer} id="leftAccelerometer"></div>
             <div className="flex justify-end">
               <button
                 onClick={() =>
@@ -43,7 +63,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
                 Download CSV
               </button>
             </div>
-            <div id="leftGyroscope"></div>
+            <div ref={refs.leftGyroscope} id="leftGyroscope"></div>
             <div className="flex justify-end">
               <button
                 onClick={() =>
@@ -58,11 +78,11 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
         ))}
       </div>
 
-      <div className="right-side">
+      <div id="right-side" className="flex-1 overflow-auto p-4">
         {rightWearables.map((wearable, index) => (
           <div key={index} className="wearable-item">
             <h4>Right Wearable - {wearable.WearablesId}</h4>
-            <div id="rightPressureSensor"></div>
+            <div ref={refs.rightPressureSensor} id="rightPressureSensor"></div>
             <div className="flex justify-end">
               <button
                 onClick={() =>
@@ -73,7 +93,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
                 Download CSV
               </button>
             </div>
-            <div id="rightAccelerometer"></div>
+            <div ref={refs.rightAccelerometer} id="rightAccelerometer"></div>
             <div className="flex justify-end">
               <button
                 onClick={() =>
@@ -84,7 +104,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
                 Download CSV
               </button>
             </div>
-            <div id="rightGyroscope"></div>
+            <div ref={refs.rightGyroscope} id="rightGyroscope"></div>
             <div className="flex justify-end">
               <button
                 onClick={() =>
@@ -102,23 +122,48 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
   );
 };
 
-function plotWearablesData(leftWearables: any, rightWearables: any) {
-  plotLeftWearable(leftWearables);
-  plotrightWearable(rightWearables);
+function plotWearablesData(leftWearables: any, rightWearables: any, refs: any) {
+  plotLeftWearable(leftWearables, refs);
+  plotrightWearable(rightWearables, refs);
 }
 
-function plotLeftWearable(leftWearables: any) {
-  // @ts-ignore
-  plotData(leftWearables, "leftPressureSensor", "Pressure Sensor", [":32"]);
-  plotData(leftWearables, "leftAccelerometer", "Accelerometer", [32, 33, 34]);
-  plotData(leftWearables, "leftGyroscope", "Gyroscope", [35, 36, 37]);
+function plotLeftWearable(leftWearables: any, refs: any) {
+  plotData(leftWearables, refs.leftPressureSensor.current, "Pressure Sensor", [
+    ":32",
+  ]);
+  plotData(
+    leftWearables,
+    refs.leftAccelerometer.current,
+    "Accelerometer",
+    [32, 33, 34]
+  );
+  plotData(
+    leftWearables,
+    refs.leftGyroscope.current,
+    "Gyroscope",
+    [35, 36, 37]
+  );
 }
 
-function plotrightWearable(rightWearables: any) {
-  // @ts-ignore
-  plotData(rightWearables, "rightPressureSensor", "Pressure Sensor", [":32"]);
-  plotData(rightWearables, "rightAccelerometer", "Accelerometer", [32, 33, 34]);
-  plotData(rightWearables, "rightGyroscope", "Gyroscope", [35, 36, 37]);
+function plotrightWearable(rightWearables: any, refs: any) {
+  plotData(
+    rightWearables,
+    refs.rightPressureSensor.current,
+    "Pressure Sensor",
+    [":32"]
+  );
+  plotData(
+    rightWearables,
+    refs.rightAccelerometer.current,
+    "Accelerometer",
+    [32, 33, 34]
+  );
+  plotData(
+    rightWearables,
+    refs.rightGyroscope.current,
+    "Gyroscope",
+    [35, 36, 37]
+  );
 }
 
 function generateLayout(title: string) {
@@ -137,6 +182,7 @@ function generateLayout(title: string) {
     width: 1000,
     yaxis: {
       title: "Value",
+      fixedrange: true,
     },
     xaxis: {
       title: "Time",
@@ -146,25 +192,77 @@ function generateLayout(title: string) {
 
 function plotData(
   wearable: any,
-  divId: string,
+  divId: HTMLElement | null,
   title: string,
-  columns: number[]
+  columns: (number | string)[]
 ) {
+  if (!divId) {
+    console.error("Invalid div element");
+    return;
+  }
+
   const frames = wearable.map(
     (wearable: any) => new DataFrame(wearable.dataframe)
   );
 
-  const leftDf = concat({ dfList: frames, axis: 1 });
+  const df = concat({ dfList: frames, axis: 1 });
 
   // @ts-ignore
-  let datos = leftDf.iloc({ rows: [":"], columns: columns });
+  let datos = df.iloc({ rows: [":"], columns: columns });
+
   const config = {
-    columns: datos.columns,
     displayModeBar: true,
     displaylogo: false,
+    responsive: true,
   };
 
-  datos.plot(divId).line({ layout: generateLayout(title), config: config });
+  const traces = datos.columns.map((column: string) => ({
+    x: datos.index.values,
+    y: (datos as DataFrame)[column].values,
+    type: "scatter",
+    mode: "lines",
+    name: column,
+  }));
+
+  Plotly.newPlot(divId, traces, generateLayout(title), config);
+}
+
+function handleRelayout(eventData: any, triggeredBy: any, refs: any) {
+  console.log("Evento de relayout:", eventData);
+  console.log("Desencadenado por:", triggeredBy);
+
+  const newRange = [
+    eventData["xaxis.range[0]"] !== undefined
+      ? eventData["xaxis.range[0]"]
+      : triggeredBy.current.layout.xaxis.range[0],
+    eventData["xaxis.range[1]"] !== undefined
+      ? eventData["xaxis.range[1]"]
+      : triggeredBy.current.layout.xaxis.range[1],
+  ];
+
+  console.log("Nuevo rango:", newRange);
+
+  var startIndex = Math.floor(newRange[0]);
+  var endIndex = Math.ceil(newRange[1]);
+  console.log("Índices actuales:", startIndex, endIndex);
+
+  const graphRefs = Object.values(refs);
+
+  // Actualiza todos los gráficos excepto el que inició el evento
+  graphRefs.forEach((ref) => {
+    if (ref !== triggeredBy) {
+      if (ref.current) {
+        console.log("El gráfico existe, su ref es:", ref);
+        try {
+          Plotly.relayout(ref.current, {
+            "xaxis.range": [startIndex, endIndex],
+          });
+        } catch (error) {
+          console.error("Error al actualizar el rango del gráfico:", error);
+        }
+      }
+    }
+  });
 }
 
 async function descargarDatosVisibles(divId: string, wearable: any) {
@@ -194,7 +292,7 @@ async function descargarDatosVisibles(divId: string, wearable: any) {
     var encodedUri = encodeURI(csvContent);
     var link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "selected_data.csv");
+    link.setAttribute("download", "selected_data.csv"); // Cambiar el nombre del archivo, al timestamp, el id de plantilla y el tipo
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link); // Limpiar después de la descarga
