@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import UsersCard from "../Components/Users/UsersCard";
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import UsersCard from '../../Components/Users/UsersCard';
+import { MdOutlineAddBox } from 'react-icons/md';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
   const [users, setUsers] = useState([]);
@@ -9,7 +11,7 @@ const Home = () => {
   useEffect(() => {
     setLoading(true);
     axios
-      .get("http://localhost:3000/users")
+      .get('http://localhost:3000/professionals')
       .then((response) => {
         setUsers(response.data);
         setLoading(false);
@@ -23,12 +25,12 @@ const Home = () => {
     <div className="p-4">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl my-8">Users List</h1>
-        {/* <Link to="/books/create">
+        <Link to="/professionals/create">
           <MdOutlineAddBox className="text-sky-800 text-4xl" />
-        </Link> */}
+        </Link>
       </div>
 
-      <UsersCard users={users} />
+      <UsersCard professionals={users} />
     </div>
   );
 };
