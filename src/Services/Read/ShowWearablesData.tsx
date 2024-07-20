@@ -11,6 +11,13 @@ const ShowWearables = () => {
   const [loading, setLoading] = useState(false);
   const { id, timestamp } = useParams<{ id: string; timestamp: string }>(); // Also type useParams
 
+  /**Toda esta parte de la consulyta, lo que voy a hacer es hacerlo en la single card, y asi lo paso todo directament aqui como una sola funcion que es su responsabilidad.
+   * Paso el id de los sw, el id de el tiral, el del participante.
+   * Hago una consulta para el id del experimento, buscando el experimento que contenga a ese participante
+   * de ese id de sw, hago una consulta para obtener los id de los wearables.
+   * Con los id de los wearables, hago una consulta para obtener los datos de los wearables.
+   */
+
   useEffect(() => {
     setLoading(true);
     axios

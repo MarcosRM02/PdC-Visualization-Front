@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import BackButton from '../../Components/BackButton';
 import Spinner from '../../Components/Spinner';
 import SWDataCard from '../../Components/Trials/TrialCard';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Long from 'long';
+import { MdOutlineAddBox } from 'react-icons/md';
 
 const ShowSWData = () => {
   const [sWDatas, setSWDatas] = useState([]);
@@ -55,58 +56,85 @@ const ShowSWData = () => {
   // };
 
   return (
+    // <div className="p-4">
+    //   <BackButton />
+    //   {loading ? (
+    //     <Spinner />
+    //   ) : sWDatas.length > 0 ? (
+    //     <div>
+    //       <h1 className="text-3xl my-4 font-bold">
+    //         <span> Trials</span>{' '}
+    //       </h1>
+    //       {/* <div className="flex justify-center my-4">
+    //         <DatePicker
+    //           selected={startDate}
+    //           onChange={(date) => setStartDate(date)}
+    //           selectsStart
+    //           startDate={startDate}
+    //           endDate={endDate}
+    //           showTimeSelect
+    //           timeFormat="HH:mm"
+    //           timeIntervals={15}
+    //           timeCaption="time"
+    //           dateFormat="MMMM d, yyyy h:mm aa"
+    //           className="mx-2"
+    //         />
+    //         <DatePicker
+    //           selected={endDate}
+    //           onChange={(date) => setEndDate(date)}
+    //           selectsEnd
+    //           startDate={startDate}
+    //           endDate={endDate}
+    //           showTimeSelect
+    //           timeFormat="HH:mm"
+    //           timeIntervals={15}
+    //           timeCaption="time"
+    //           dateFormat="MMMM d, yyyy h:mm aa"
+    //           className="mx-2"
+    //         />
+    //       </div> */}
+    //       {/* <div className="flex justify-center space-x-2">
+    //         <button
+    //           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    //           onClick={handleFilter}
+    //         >
+    //           Filter Data
+    //         </button>
+    //         <button
+    //           className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+    //           onClick={clearFilters}
+    //         >
+    //           Clear Filters
+    //         </button>
+    //       </div> */}
+
+    //       <div>
+    //         <SWDataCard trials={filteredSWDatas} />
+    //       </div>
+    //     </div>
+    //   ) : (
+    //     <div>
+    //       <h1 className="text-3xl my-4 font-bold">
+    //         <span> No Trials Available</span>{' '}
+    //       </h1>
+    //     </div>
+    //   )}
+    // </div>
+
     <div className="p-4">
       <BackButton />
+      <h1 className="text-3xl my-4 font-bold">
+        <span> Trials</span>{' '}
+      </h1>
+      <div className="flex justify-between items-center">
+        <Link to={`/trials/create/${id}`}>
+          <MdOutlineAddBox className="text-sky-800 text-4xl" />
+        </Link>
+      </div>
       {loading ? (
         <Spinner />
       ) : sWDatas.length > 0 ? (
         <div>
-          <h1 className="text-3xl my-4 font-bold">
-            <span> Trials</span>{' '}
-          </h1>
-          {/* <div className="flex justify-center my-4">
-            <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              selectsStart
-              startDate={startDate}
-              endDate={endDate}
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              timeCaption="time"
-              dateFormat="MMMM d, yyyy h:mm aa"
-              className="mx-2"
-            />
-            <DatePicker
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
-              selectsEnd
-              startDate={startDate}
-              endDate={endDate}
-              showTimeSelect
-              timeFormat="HH:mm"
-              timeIntervals={15}
-              timeCaption="time"
-              dateFormat="MMMM d, yyyy h:mm aa"
-              className="mx-2"
-            />
-          </div> */}
-          {/* <div className="flex justify-center space-x-2">
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              onClick={handleFilter}
-            >
-              Filter Data
-            </button>
-            <button
-              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-              onClick={clearFilters}
-            >
-              Clear Filters
-            </button>
-          </div> */}
-
           <div>
             <SWDataCard trials={filteredSWDatas} />
           </div>
@@ -114,7 +142,7 @@ const ShowSWData = () => {
       ) : (
         <div>
           <h1 className="text-3xl my-4 font-bold">
-            <span> No Trials Available</span>{' '}
+            <span> No trials Available</span>{' '}
           </h1>
         </div>
       )}

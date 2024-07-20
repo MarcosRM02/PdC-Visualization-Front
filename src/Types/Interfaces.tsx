@@ -50,7 +50,7 @@ export interface IExperiment {
   name: string;
   description: string;
   startDate: string;
-  finishDate: string;
+  finishDate?: string; // Optional Attribute
   notes?: string; // Optional Attribute
   numberOfParticipants: number;
   // professionalId: User; // UN EXPERIMENTO TIENE QUE TENER VARIOS, ESTO HAY QUE CAMBIARLO
@@ -83,7 +83,7 @@ export interface ISWData {
   id: number;
 }
 
-export interface IProfessonal {
+export interface IProfessional {
   id: number;
   name: string;
   username: string;
@@ -91,6 +91,6 @@ export interface IProfessonal {
   password: string;
 }
 
-export interface IProfessonalProps {
-  professionals: IProfessonal[];
+export interface IProfessionalProps {
+  professionals: IProfessional[];
 }

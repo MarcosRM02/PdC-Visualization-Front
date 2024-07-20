@@ -1,90 +1,75 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BackButton from '../../Components/BackButton';
 import Spinner from '../../Components/Spinner';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
-import { data } from 'autoprefixer';
 
-const CreateBooks = () => {
+const EditPersonalData = () => {
+  const [code, setCode] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const { enqueueSnackbar } = useSnackbar();
   const [height, setHeight] = useState('');
   const [weight, setweight] = useState('');
   const [footLength, setfootLength] = useState('');
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
 
-  const [code, setCode] = useState('');
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const { enqueueSnackbar } = useSnackbar();
-  const { id } = useParams();
-
-  const handleSequentialPost = () => {
-    const dataToSend = {
-      ...(name && { name }),
-      ...(age && { age: Number(age) }),
-      ...(height && { height: Number(height) }),
-      ...(weight && { weight: Number(weight) }),
-      ...(footLength && { footLength: Number(footLength) }),
-    };
+  useEffect(() => {
     setLoading(true);
-    // First POST request
     axios
-      .post(`http://localhost:3000/personalData`, dataToSend)
-      .then((response1) => {
-        // Assume response1.data contains the ID needed for the next request
-        const newId = response1.data;
-        console.log('newId', newId);
-        // Data for the second PUT request, using the ID from the first response
-        const data2 = {
-          code,
-          personalDataId: newId, // This is the ID obtained from the first request
-        };
+      .get(`http://localhost:3000/personalData/${id}`)
+      .then((response) => {
+        setName(response.data.name);
+        setAge(response.data.age);
+        setHeight(response.data.height);
+        setweight(response.data.weight);
+        setfootLength(response.data.footLength);
 
-        // Second POST request
-        axios
-          .post(`http://localhost:3000/participants/create/${id}`, data2)
-          .then(() => {
-            setLoading(false);
-            enqueueSnackbar('Participant Created successfully', {
-              variant: 'success',
-            });
-            navigate(-1);
-          })
-          .catch((error2) => {
-            // Handle error for the second update
-            setLoading(false);
-            enqueueSnackbar('Error creating the second resource', {
-              variant: 'error',
-            });
-            console.log('Failed to cr4eate the second resource', error2);
-          });
-      })
-      .catch((error1) => {
-        // Handle error for the first update
         setLoading(false);
-        enqueueSnackbar('Error creating the first resource', {
-          variant: 'error',
+      })
+      .catch((error) => {
+        setLoading(false);
+        alert('An error happened. Please Chack console');
+        console.log(error);
+      });
+  }, []);
+
+  const handleEditExperiment = () => {
+    const data = {
+      name,
+      age,
+      height,
+      weight,
+      footLength,
+    };
+    console.log(data);
+    setLoading(true);
+    axios
+      .put(`http://localhost:3000/personalData/edit/${id}`, data)
+      .then(() => {
+        setLoading(false);
+        enqueueSnackbar('Participant Edited successfully', {
+          variant: 'success',
         });
-        console.log('Failed to create the first resource', error1);
+        navigate(-1);
+      })
+      .catch((error) => {
+        setLoading(false);
+        // alert('An error happened. Please Chack console');
+        enqueueSnackbar('Error', { variant: 'error' });
+        console.log(error);
       });
   };
 
   return (
     <div className="p-4">
       <BackButton />
-      <h1 className="text-3xl my-4">Create Participant</h1>
+      <h1 className="text-3xl my-4">Edit Personal Data</h1>
       {loading ? <Spinner /> : ''}
       <div className="flex flex-col border-2 border-sky-400 rounded-xl w-[600px] p-4 mx-auto">
-        <div className="my-4">
-          <label className="text-xl mr-4 text-gray-500">Code</label>
-          <input
-            type="text"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            className="border-2 border-gray-500 px-4 py-2 w-full"
-          />
-        </div>
         <div className="my-4">
           <label className="text-xl mr-4 text-gray-500">Name (optional)</label>
           <input
@@ -97,7 +82,7 @@ const CreateBooks = () => {
         <div className="my-4">
           <label className="text-xl mr-4 text-gray-500">Age (optional)</label>
           <input
-            type="text"
+            type="number"
             value={age}
             onChange={(e) => setAge(e.target.value)}
             className="border-2 border-gray-500 px-4 py-2 w-full"
@@ -119,7 +104,7 @@ const CreateBooks = () => {
             Weight (optional)
           </label>
           <input
-            type="text"
+            type="number"
             value={weight}
             onChange={(e) => setweight(e.target.value)}
             className="border-2 border-gray-500 px-4 py-2 w-full"
@@ -136,7 +121,7 @@ const CreateBooks = () => {
             className="border-2 border-gray-500 px-4 py-2 w-full"
           />
         </div>
-        <button className="p-2 bg-sky-300 m-8" onClick={handleSequentialPost}>
+        <button className="p-2 bg-sky-300 m-8" onClick={handleEditExperiment}>
           Save
         </button>
       </div>
@@ -144,4 +129,4 @@ const CreateBooks = () => {
   );
 };
 
-export default CreateBooks;
+export default EditPersonalData;

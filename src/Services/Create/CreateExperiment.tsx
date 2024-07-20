@@ -2,7 +2,7 @@ import { useState } from 'react';
 import BackButton from '../../Components/BackButton';
 import Spinner from '../../Components/Spinner';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
 const CreateBooks = () => {
@@ -14,24 +14,25 @@ const CreateBooks = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const { id } = useParams();
 
   const handleSaveBook = () => {
     const data = {
       name,
       description,
       startDate,
-      finishDate,
-      notes,
+      // finishDate,
+      //notes,
     };
     setLoading(true);
     axios
-      .post('http://localhost:3000/experiments/create', data)
+      .post(`http://localhost:3000/experiments/create/${id}`, data)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Experiment Created successfully', {
           variant: 'success',
         });
-        navigate('/');
+        navigate(-1);
       })
       .catch((error) => {
         setLoading(false);
