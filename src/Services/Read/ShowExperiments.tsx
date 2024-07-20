@@ -57,14 +57,19 @@ const ShowSWData = () => {
 
   return (
     <div className="p-4">
-      <BackButton />
+      {/* <BackButton /> */}
+      <h1 className="text-3xl my-4 font-bold">
+        <span> Experiments</span>{' '}
+      </h1>
+      <div className="flex justify-between items-center">
+        <Link to={`/experiments/create/${id}`}>
+          <MdOutlineAddBox className="text-sky-800 text-4xl" />
+        </Link>
+      </div>
       {loading ? (
         <Spinner />
       ) : sWDatas.length > 0 ? (
         <div>
-          <h1 className="text-3xl my-4 font-bold">
-            <span> Experiments</span>{' '}
-          </h1>
           {/* <div className="flex justify-center my-4">
             <DatePicker
               selected={startDate}
@@ -107,11 +112,6 @@ const ShowSWData = () => {
               Clear Filters
             </button>
           </div> */}
-          <div className="flex justify-between items-center">
-            <Link to="/experiments/create">
-              <MdOutlineAddBox className="text-sky-800 text-4xl" />
-            </Link>
-          </div>
 
           <div>
             <SWDataCard experiments={filteredSWDatas} />

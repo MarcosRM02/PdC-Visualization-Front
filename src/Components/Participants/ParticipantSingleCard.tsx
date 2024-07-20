@@ -4,9 +4,18 @@ import { FaIdCard } from 'react-icons/fa';
 import { FaCalendarDay } from 'react-icons/fa6';
 import { MdOutlineDelete } from 'react-icons/md';
 import { Link, useNavigate } from 'react-router-dom';
+import UserModal from './UserModal';
+import { BiShow } from 'react-icons/bi';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
   const navigate = useNavigate();
+
+  const [showModal, setShowModal] = useState(false);
+  useEffect(() => {
+    console.log('showModal state changed:', showModal);
+  }, [showModal]);
 
   const handleEditClick = (event) => {
     event.stopPropagation();
@@ -17,6 +26,35 @@ const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
     event.stopPropagation();
     navigate(`/participants/delete/${SWDatas.id}`);
   };
+
+  console.log(SWDatas.personalData.id);
+
+  const [modalData, setModalData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  useEffect(() => {
+    if (showModal && SWDatas.personalData.id) {
+      // Log para confirmar que entramos al useEffect
+      console.log('Fetching data for ID:', SWDatas.personalData.id);
+      setLoading(true);
+      axios
+        .get(`http://localhost:3000/personalData/${SWDatas.personalData.id}`)
+        .then((response) => {
+          setModalData(response.data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error('Failed to fetch data:', err);
+          setError('Failed to load data');
+          setLoading(false);
+        });
+    }
+  }, [showModal, SWDatas.personalData.id]);
+
+  useEffect(() => {
+    console.log('Modal visible:', showModal);
+    console.log('User ID:', SWDatas.personalData.id);
+  }, [showModal, SWDatas.personalData.id]);
 
   return (
     <div
@@ -35,6 +73,24 @@ const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
         </div>
       </div>
       <div className="flex justify-between items-center gap-x-2 mt-4 p-4">
+        <div
+          onClick={() =>
+            navigate(`/trials/by-participant/${SWDatas.personalData.id}`)
+          }
+          className="border-2 border-gray-500 rounded-lg px-4 py-2 m-4 relative hover:shadow-xl no-underline cursor-pointer"
+        >
+          {/* Card Content */}
+          <BiShow
+            className="text-3xl text-blue-800 hover:text-black cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowModal(true);
+            }}
+          />
+          {showModal && (
+            <UserModal user={modalData} onClose={() => setShowModal(false)} />
+          )}
+        </div>
         <button
           onClick={handleEditClick}
           className="bg-transparent border-none cursor-pointer"
@@ -48,7 +104,9 @@ const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
           <MdOutlineDelete className="text-2xl text-red-600 hover:text-black" />
         </button>
       </div>
-      METER LO DE LOS DATOS PERSONALES COMO UN MODAL
+      {/* {showModal && (
+        <UserModal user={modalData} onClose={() => setShowModal(false)} />
+      )} */}
     </div>
   );
 };

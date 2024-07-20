@@ -23,8 +23,20 @@ const EditUser = () => {
       .then((response) => {
         setName(response.data.name);
         setDescription(response.data.description);
-        setStartDate(response.data.startDate);
-        setFinishDate(response.data.finishDate);
+        const formattedStartDate = new Date(response.data.startDate)
+          .toISOString()
+          .split('T')[0];
+
+        setStartDate(formattedStartDate);
+        if (response.data.finishDate === null) {
+          setFinishDate('');
+        } else {
+          const formattedFinishDate = new Date(response.data.finishDate)
+            .toISOString()
+            .split('T')[0];
+          setFinishDate(formattedFinishDate);
+        }
+
         setNotes(response.data.notes);
         setLoading(false);
       })
@@ -40,7 +52,9 @@ const EditUser = () => {
       name,
       description,
       startDate,
-      finishDate,
+      finishDate: finishDate
+        ? new Date(finishDate).toISOString().split('T')[0]
+        : null,
       notes,
     };
     setLoading(true);
