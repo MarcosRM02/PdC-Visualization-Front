@@ -12,7 +12,7 @@ const Login = () => {
     event.preventDefault();
     try {
       const response = await fetch(
-        'http://localhost:3000/professionals/login',
+        'http://localhost:3000/authentication/login',
         {
           method: 'POST',
           headers: {
@@ -23,6 +23,8 @@ const Login = () => {
       );
       if (response.ok) {
         const data = await response.json();
+        sessionStorage.setItem('accessToken', data.accessToken); // Guardar el token en sessionStorage
+        sessionStorage.setItem('expiresIn', data.expiresIn); // Opcional, guardar la expiración
         setWelcomeMessage('Welcome! Loading your user profile...');
         setTimeout(() => {
           setWelcomeMessage('');

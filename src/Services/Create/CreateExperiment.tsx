@@ -15,6 +15,7 @@ const CreateBooks = () => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams();
+  const accessToken = sessionStorage.getItem('accessToken');
 
   const handleSaveBook = () => {
     const data = {
@@ -24,9 +25,14 @@ const CreateBooks = () => {
       // finishDate,
       //notes,
     };
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
     setLoading(true);
     axios
-      .post(`http://localhost:3000/experiments/create/${id}`, data)
+      .post(`http://localhost:3000/experiments/create/${id}`, data, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Experiment Created successfully', {

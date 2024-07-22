@@ -12,10 +12,17 @@ const EditUser = () => {
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
+  const accessToken = sessionStorage.getItem('accessToken');
+
   useEffect(() => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
     setLoading(true);
     axios
-      .get(`http://localhost:3000/participants/${id}`)
+      .get(`http://localhost:3000/participants/${id}`, config)
       .then((response) => {
         setCode(response.data.code);
         setLoading(false);
@@ -31,9 +38,14 @@ const EditUser = () => {
     const data = {
       code,
     };
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
     setLoading(true);
     axios
-      .put(`http://localhost:3000/participants/edit/${id}`, data)
+      .put(`http://localhost:3000/participants/edit/${id}`, data, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Participant Edited successfully', {

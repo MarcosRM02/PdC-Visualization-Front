@@ -18,10 +18,17 @@ const ShowWearables = () => {
    * Con los id de los wearables, hago una consulta para obtener los datos de los wearables.
    */
 
+  const accessToken = sessionStorage.getItem('accessToken');
+
   useEffect(() => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
     setLoading(true);
     axios
-      .get(`http://localhost:3000/swdata/${id}/${timestamp}`)
+      .get(`http://localhost:3000/swdata/${id}/${timestamp}`, config)
       .then((response) => {
         setWearables(response.data); // Ensure the backend sends the correct format
         setLoading(false);

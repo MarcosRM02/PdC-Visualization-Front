@@ -12,6 +12,7 @@ const CreateBooks = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const accessToken = sessionStorage.getItem('accessToken');
 
   const handleSaveBook = () => {
     const data = {
@@ -19,15 +20,20 @@ const CreateBooks = () => {
       surname,
       email,
     };
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
     setLoading(true);
     axios
-      .post('http://localhost:3000/professionals/create', data)
+      .post('http://localhost:3000/professionals/create', data, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Professional Created successfully', {
           variant: 'success',
         });
-        navigate('/');
+        navigate(-1);
       })
       .catch((error) => {
         setLoading(false);

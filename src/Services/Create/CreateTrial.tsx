@@ -15,6 +15,7 @@ const CreateTrial = () => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams();
+  const accessToken = sessionStorage.getItem('accessToken');
 
   const handleSequentialPost = () => {
     const dataToSend = {
@@ -25,10 +26,15 @@ const CreateTrial = () => {
       ...(code && { weight: String(code) }),
       ...(annotation && { annotation: String(annotation) }),
     };
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
     setLoading(true);
     // First POST request
     axios
-      .post(`http://localhost:3000/trials/create`, dataToSend)
+      .post(`http://localhost:3000/trials/create`, dataToSend, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Experiment Created successfully', {
