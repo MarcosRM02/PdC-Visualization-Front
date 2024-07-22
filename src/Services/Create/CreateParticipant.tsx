@@ -18,6 +18,7 @@ const CreateBooks = () => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams();
+  const accessToken = sessionStorage.getItem('accessToken');
 
   const handleSequentialPost = () => {
     const dataToSend = {
@@ -27,10 +28,15 @@ const CreateBooks = () => {
       ...(weight && { weight: Number(weight) }),
       ...(footLength && { footLength: Number(footLength) }),
     };
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
     setLoading(true);
     // First POST request
     axios
-      .post(`http://localhost:3000/personalData`, dataToSend)
+      .post(`http://localhost:3000/personalData`, dataToSend, config)
       .then((response1) => {
         // Assume response1.data contains the ID needed for the next request
         const newId = response1.data;

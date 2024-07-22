@@ -14,10 +14,17 @@ const EditUser = () => {
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
+  const accessToken = sessionStorage.getItem('accessToken');
+
   useEffect(() => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
     setLoading(true);
     axios
-      .get(`http://localhost:3000/professionals/${id}`)
+      .get(`http://localhost:3000/professionals/${id}`, config)
       .then((response) => {
         setName(response.data.name);
         setSurname(response.data.surname);
@@ -37,15 +44,20 @@ const EditUser = () => {
       surname,
       email,
     };
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
     setLoading(true);
     axios
-      .put(`http://localhost:3000/professionals/edit/${id}`, data)
+      .put(`http://localhost:3000/professionals/edit/${id}`, data, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Professional Edited successfully', {
           variant: 'success',
         });
-        navigate('/');
+        navigate(-1);
       })
       .catch((error) => {
         setLoading(false);

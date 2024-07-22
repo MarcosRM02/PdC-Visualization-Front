@@ -14,11 +14,17 @@ const ShowSWData = () => {
   const [filteredSWDatas, setFilteredSWDatas] = useState([]);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
-  console.log('id', typeof id);
+  const accessToken = sessionStorage.getItem('accessToken');
+
   useEffect(() => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
     setLoading(true);
     axios
-      .get(`http://localhost:3000/participants/by-experiment/${id}`)
+      .get(`http://localhost:3000/participants/by-experiment/${id}`, config)
       .then((response) => {
         setSWDatas(response.data);
         setFilteredSWDatas(response.data);

@@ -11,10 +11,19 @@ const DeleteBook = () => {
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
+  const accessToken = sessionStorage.getItem('accessToken');
+
+ 
   const handleDeleteProfessional = () => {
     setLoading(true);
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
     axios
-      .delete(`http://localhost:3000/experiments/delete/${id}`)
+      .delete(`http://localhost:3000/experiments/delete/${id}`, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Experiment Deleted successfully', {

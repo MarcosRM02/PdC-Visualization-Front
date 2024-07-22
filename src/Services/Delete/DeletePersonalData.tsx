@@ -11,10 +11,19 @@ const DeletePersonalData = () => {
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
-  const handleDeleteParticipant = () => {
+  const accessToken = sessionStorage.getItem('accessToken');
+
+  const handleDeletePersonalData = () => {
+    setLoading(true);
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
     setLoading(true);
     axios
-      .delete(`http://localhost:3000/personalData/delete/${id}`)
+      .delete(`http://localhost:3000/personalData/delete/${id}`, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Personal Data Deleted successfully', {
@@ -42,7 +51,7 @@ const DeletePersonalData = () => {
 
         <button
           className="p-4 bg-red-600 text-white m-8 w-full"
-          onClick={handleDeleteParticipant}
+          onClick={handleDeletePersonalData}
         >
           Yes, Delete it
         </button>

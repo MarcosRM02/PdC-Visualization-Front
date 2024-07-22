@@ -14,10 +14,17 @@ const ShowSWData = () => {
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
 
+  const accessToken = sessionStorage.getItem('accessToken');
+
   useEffect(() => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
     setLoading(true);
     axios
-      .get(`http://localhost:3000/swdata/${id}z`)
+      .get(`http://localhost:3000/swdata/${id}`, config)
       .then((response) => {
         setSWDatas(response.data);
         setFilteredSWDatas(response.data);

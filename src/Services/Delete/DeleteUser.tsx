@@ -11,16 +11,25 @@ const DeleteBook = () => {
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
+  const accessToken = sessionStorage.getItem('accessToken');
+
   const handleDeleteProfessional = () => {
     setLoading(true);
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+    setLoading(true);
     axios
-      .delete(`http://localhost:3000/professionals/delete/${id}`)
+      .delete(`http://localhost:3000/professionals/delete/${id}`, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Professional Deleted successfully', {
           variant: 'success',
         });
-        navigate('/');
+        navigate(-1);
       })
       .catch((error) => {
         setLoading(false);
