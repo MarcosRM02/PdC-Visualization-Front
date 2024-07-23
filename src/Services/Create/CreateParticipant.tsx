@@ -20,6 +20,8 @@ const CreateBooks = () => {
   const { id } = useParams();
   const accessToken = sessionStorage.getItem('accessToken');
 
+  console.log(accessToken);
+
   const handleSequentialPost = () => {
     const dataToSend = {
       ...(name && { name }),
@@ -42,14 +44,14 @@ const CreateBooks = () => {
         const newId = response1.data;
         console.log('newId', newId);
         // Data for the second PUT request, using the ID from the first response
-        const data2 = {
+        const data = {
           code,
           personalDataId: newId, // This is the ID obtained from the first request
         };
 
         // Second POST request
         axios
-          .post(`http://localhost:3000/participants/create/${id}`, data2)
+          .post(`http://localhost:3000/participants/create/${id}`, data, config)
           .then(() => {
             setLoading(false);
             enqueueSnackbar('Participant Created successfully', {

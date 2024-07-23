@@ -19,7 +19,7 @@
     "plotly.js": "^2.33.0",
     "plotly.js-basic-dist": "^2.33.0",
     "plotly.js-dist": "^2.33.0",
-    "plotly.js-dist-min": "^2.33.0",
+    "plotly.js-dist-min": "^2.34.0",
     "postcss": "^8.4.38",
     "react": "^18.2.0",
     "react-datepicker": "^7.2.0",
@@ -32,6 +32,7 @@
   "devDependencies": {
     "@types/plotly.js": "^2.29.5",
     "@types/plotly.js-basic-dist": "^1.54.4",
+    "@types/plotly.js-dist-min": "^2.3.4",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@typescript-eslint/eslint-plugin": "^7.2.0",

@@ -16,6 +16,9 @@ import EditPersonalData from './Services/Update/EditPersonalData';
 import DeletePersonalData from './Services/Delete/DeletePersonalData';
 import CreateTrial from './Services/Create/CreateTrial';
 import Login from './Services/Login/login';
+import EditTrial from './Services/Update/EditTrial';
+import DeleteTrial from './Services/Delete/DeleteTrial';
+import ShowWearables from './Services/Read/ShowWearablesData';
 
 const App = () => {
   return (
@@ -45,7 +48,14 @@ const App = () => {
       />
 
       <Route path="/trials/create/:id" element={<CreateTrial />} />
+      <Route path="/trials/edit/:id" element={<EditTrial />} />
+      <Route path="/trials/delete/:id" element={<DeleteTrial />} />
       <Route path="/trials/by-participant/:id" element={<ShowTrials />} />
+
+      <Route
+        path="/swData/getData/:experimentId/:participantId/:swId/:trialId"
+        element={<ShowWearables />}
+      />
     </Routes>
   );
 };
