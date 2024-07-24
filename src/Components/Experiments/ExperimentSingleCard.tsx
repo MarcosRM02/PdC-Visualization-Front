@@ -42,8 +42,6 @@ const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
     navigate(`/experiments/delete/${SWDatas.id}`);
   };
 
-  console.log('SWDatas', SWDatas);
-
   return (
     <div
       onClick={() => navigate(`/participants/by-experiment/${SWDatas.id}`)}

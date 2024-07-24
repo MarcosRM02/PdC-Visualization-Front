@@ -23,7 +23,6 @@ const ShowSWData = () => {
         Authorization: `Bearer ${accessToken}`,
       },
     };
-    console.log(accessToken);
     setLoading(true);
     axios
       .get(`http://localhost:3000/experiments/by-professional/${id}`, config)

@@ -14,7 +14,6 @@ const ShowSWData = () => {
   const [filteredSWDatas, setFilteredSWDatas] = useState([]);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
-  console.log('id', id);
   const accessToken = sessionStorage.getItem('accessToken');
 
   useEffect(() => {
