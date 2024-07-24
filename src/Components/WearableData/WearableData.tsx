@@ -1,8 +1,10 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import ReactPlayer from 'react-player';
 import { WearableDataProps } from '../../Types/Interfaces';
 import { DataFrame, concat, toCSV } from 'danfojs';
 
 import Plotly from 'plotly.js-dist-min';
+import Plot from 'react-plotly.js';
 
 const WearablesData = ({ wearables = [] }: WearableDataProps) => {
   const refs = {
@@ -14,14 +16,13 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
     rightGyroscope: useRef(null),
   };
 
-
   // Extraer el tipo de las url, y asi ya lo tengo todo preparado para pasarselo a la funcion de plotWearablesData, pq de la nueva manera, no va como antes.
   const leftWearables = wearables.filter(
-    (wearable) => wearable.wearable_type === 'L',
+    (wearable) => wearable.wearableType === 'L',
   );
 
   const rightWearables = wearables.filter(
-    (wearable) => wearable.wearable_type === 'R',
+    (wearable) => wearable.wearableType === 'R',
   );
 
   useEffect(() => {
@@ -36,13 +37,101 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
     });
   }, [wearables, ...Object.values(refs)]);
 
+  interface DataPoint {
+    time: number;
+    value: number;
+  }
+
+  const [data, setData] = useState<DataPoint[]>([]);
+  const [playTime, setPlayTime] = useState<number>(0);
+  const playerRef = useRef<ReactPlayer | null>(null);
+
+  // Simula datos; en la práctica real, estos datos pueden venir de una API o ser calculados
+  useEffect(() => {
+    const simulatedData = Array.from({ length: 600 }, (_, i) => ({
+      time: i,
+      value: Math.random() * 100,
+    }));
+    setData(simulatedData);
+  }, []);
+
+  const handleProgress = (state: { playedSeconds: number }) => {
+    setPlayTime(state.playedSeconds);
+  };
+  // Función para manejar clics en los puntos del gráfico
+  const handlePointClick = (data) => {
+    if (data.points && data.points.length > 0) {
+      const pointTime = data.points[0].x;
+      setPlayTime(pointTime); // Actualiza el tiempo de reproducción en el estado
+      if (playerRef.current) {
+        playerRef.current.seekTo(pointTime, 'seconds'); // Cambia el video al tiempo seleccionado
+      }
+    }
+  };
   // Meter un boiton para resetear todas las graficas d1
   return (
     <div className="flex justify-around">
+      <div>
+        <ReactPlayer
+          ref={playerRef}
+          url="https://youtu.be/hMS8RtYVouc?t=31"
+          playing
+          onProgress={handleProgress}
+          width="100%"
+          height="auto"
+        />
+        <Plot
+          data={[
+            {
+              x: data.map((d) => d.time),
+              y: data.map((d) => d.value),
+              type: 'scatter',
+              mode: 'lines+markers',
+              marker: { color: 'blue' },
+            },
+            {
+              x: [playTime, playTime],
+              y: [0, Math.max(...data.map((d) => d.value))],
+              type: 'scatter',
+              mode: 'lines',
+              line: { color: 'red', width: 2 },
+              name: 'Current Time',
+            },
+          ]}
+          layout={{
+            width: 720,
+            height: 440,
+            title: 'Data Response to Video Time',
+            xaxis: {
+              title: 'Time (seconds)',
+              range: [0, Math.max(...data.map((d) => d.time))],
+            },
+            yaxis: {
+              title: 'Value',
+            },
+            shapes: [
+              {
+                type: 'line',
+                x0: playTime,
+                x1: playTime,
+                y0: 0,
+                y1: 1,
+                yref: 'paper',
+                line: {
+                  color: 'red',
+                  width: 3,
+                  dash: 'dot',
+                },
+              },
+            ],
+          }}
+          onClick={handlePointClick} // Añade el manejador de clics al gráfico
+        />
+      </div>
       <div id="Left-Side" className="flex-1 overflow-auto p-4">
         {leftWearables.map((wearable, index) => (
           <div key={index} className="wearable-item">
-            <h4>Left Wearable - {wearable.WearablesId} </h4>
+            <h4>Left Wearable - {wearable.wearablesId} </h4>
             <div ref={refs.leftPressureSensor} id="leftPressureSensor"></div>
             <div className="flex justify-end">
               <button
@@ -83,7 +172,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
       <div id="right-side" className="flex-1 overflow-auto p-4">
         {rightWearables.map((wearable, index) => (
           <div key={index} className="wearable-item">
-            <h4>Right Wearable - {wearable.WearablesId}</h4>
+            <h4>Right Wearable - {wearable.wearablesId}</h4>
             <div ref={refs.rightPressureSensor} id="rightPressureSensor"></div>
             <div className="flex justify-end">
               <button
@@ -230,9 +319,6 @@ function plotData(
 }
 
 function handleRelayout(eventData: any, triggeredBy: any, refs: any) {
-  console.log('Evento de relayout:', eventData);
-  console.log('Desencadenado por:', triggeredBy);
-
   const newRange = [
     eventData['xaxis.range[0]'] !== undefined
       ? eventData['xaxis.range[0]']
@@ -242,11 +328,8 @@ function handleRelayout(eventData: any, triggeredBy: any, refs: any) {
       : triggeredBy.current.layout.xaxis.range[1],
   ];
 
-  console.log('Nuevo rango:', newRange);
-
   var startIndex = Math.floor(newRange[0]);
   var endIndex = Math.ceil(newRange[1]);
-  console.log('Índices actuales:', startIndex, endIndex);
 
   const graphRefs = Object.values(refs);
 
@@ -254,7 +337,6 @@ function handleRelayout(eventData: any, triggeredBy: any, refs: any) {
   graphRefs.forEach((ref) => {
     if (ref !== triggeredBy) {
       if (ref.current) {
-        console.log('El gráfico existe, su ref es:', ref);
         try {
           Plotly.relayout(ref.current, {
             'xaxis.range': [startIndex, endIndex],

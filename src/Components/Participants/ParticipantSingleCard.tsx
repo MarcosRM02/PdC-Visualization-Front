@@ -14,7 +14,6 @@ const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
 
   const [showModal, setShowModal] = useState(false);
   useEffect(() => {
-    console.log('showModal state changed:', showModal);
   }, [showModal]);
 
   const handleEditClick = (event) => {
@@ -27,15 +26,13 @@ const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
     navigate(`/participants/delete/${SWDatas.id}`);
   };
 
-  console.log(SWDatas.personalData.id);
 
   const [modalData, setModalData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   useEffect(() => {
     if (showModal && SWDatas.personalData.id) {
-      // Log para confirmar que entramos al useEffect
-      console.log('Fetching data for ID:', SWDatas.personalData.id);
+
       setLoading(true);
       axios
         .get(`http://localhost:3000/personalData/${SWDatas.personalData.id}`)
@@ -51,10 +48,6 @@ const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
     }
   }, [showModal, SWDatas.personalData.id]);
 
-  useEffect(() => {
-    console.log('Modal visible:', showModal);
-    console.log('User ID:', SWDatas.personalData.id);
-  }, [showModal, SWDatas.personalData.id]);
 
   return (
     <div

@@ -33,11 +33,8 @@ const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
   //   }) +
   //   " " +
   //   date.toLocaleTimeString("en-US");
-  console.log('SWID: ', SWDatas.sw.id);
-  console.log('TrialId: ', SWDatas.id);
-  console.log('participantId: ', SWDatas.participant.id);
-  // console.log('WearablesID:', SWDatas.sw.wearables);
-  // console.log('ExperimentID: ', SWDatas.participant.experiment.id);
+
+
 
   const [data, setData] = useState({
     experimentId: null,

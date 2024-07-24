@@ -32,8 +32,8 @@ interface DataFrameRow {
 }
 
 export interface WearableData {
-  WearablesId: string;
-  wearable_type: string;
+  wearablesId: string;
+  wearableType: string;
   dataframe: DataFrameRow;
 }
 
