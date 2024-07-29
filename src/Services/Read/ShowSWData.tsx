@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { useParams } from "react-router-dom";
-import BackButton from "../Components/BackButton";
-import Spinner from "../Components/Spinner";
-import SWDataCard from "../Components/SWData/SWDataCard";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import Long from "long";
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import BackButton from '../../Components/BackButton';
+import Spinner from '../../Components/Spinner';
+import SWDataCard from '../../Components/SWData/SWDataCard';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import Long from 'long';
 
 const ShowSWData = () => {
   const [sWDatas, setSWDatas] = useState([]);
@@ -14,10 +14,17 @@ const ShowSWData = () => {
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
 
+  const accessToken = sessionStorage.getItem('accessToken');
+
   useEffect(() => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
     setLoading(true);
     axios
-      .get(`http://localhost:3000/swdata/${id}`)
+      .get(`http://172.18.0.4:3000/swdata/${id}`, config)
       .then((response) => {
         setSWDatas(response.data);
         setFilteredSWDatas(response.data);
@@ -37,7 +44,7 @@ const ShowSWData = () => {
       const timestampLong = new Long(
         data.timestamp.low,
         data.timestamp.high,
-        data.timestamp.unsigned
+        data.timestamp.unsigned,
       );
       const timestampNumber = timestampLong.toNumber();
       const dataDate = new Date(timestampNumber);
@@ -62,7 +69,7 @@ const ShowSWData = () => {
       ) : sWDatas.length > 0 ? (
         <div>
           <h1 className="text-3xl my-4 font-bold">
-            <span> Synchronized Wearables Data</span>{" "}
+            <span> Synchronized Wearables Data</span>{' '}
           </h1>
           <div className="flex justify-center my-4">
             <DatePicker
@@ -114,7 +121,7 @@ const ShowSWData = () => {
       ) : (
         <div>
           <h1 className="text-3xl my-4 font-bold">
-            <span> No Synchronized Wearables Available</span>{" "}
+            <span> No Synchronized Wearables Available</span>{' '}
           </h1>
         </div>
       )}

@@ -1,0 +1,54 @@
+import React, { useState, useEffect, useRef } from 'react';
+import ReactPlayer from 'react-player';
+import Plot from 'react-plotly.js';
+
+interface DataPoint {
+  time: number;
+  value: number;
+}
+
+const VideoGraph: React.FC = () => {
+  const [data, setData] = useState<DataPoint[]>([]);
+  const [playTime, setPlayTime] = useState<number>(0);
+  const playerRef = useRef<ReactPlayer | null>(null);
+
+  // Simula datos; en la práctica real, estos datos pueden venir de una API o ser calculados
+  useEffect(() => {
+    const simulatedData = Array.from({ length: 300 }, (_, i) => ({
+      time: i,
+      value: Math.random() * 100
+    }));
+    setData(simulatedData);
+  }, []);
+
+  const handleProgress = (state: { playedSeconds: number }) => {
+    setPlayTime(state.playedSeconds);
+  };
+
+  return (
+    <div>
+      <ReactPlayer
+        ref={playerRef}
+        url="path_to_your_video.mp4"
+        playing
+        onProgress={handleProgress}
+        width="100%"
+        height="auto"
+      />
+      <Plot
+        data={[
+          {
+            x: data.map(d => d.time),
+            y: data.map(d => d.value),
+            type: 'scatter',
+            mode: 'lines+markers',
+            marker: { color: 'blue' },
+          }
+        ]}
+        layout={{ width: 720, height: 440, title: 'Data Response to Video Time' }}
+      />
+    </div>
+  );
+};
+
+export default VideoGraph;
