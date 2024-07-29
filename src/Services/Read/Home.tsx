@@ -11,7 +11,7 @@ const Home = () => {
   useEffect(() => {
     setLoading(true);
     axios
-      .get('http://localhost:3000/professionals')
+      .get('http://172.18.0.4:3000/professionals')
       .then((response) => {
         setUsers(response.data);
         setLoading(false);

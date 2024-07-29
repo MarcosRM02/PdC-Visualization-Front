@@ -68,7 +68,23 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
       }
     }
   };
-  // Meter un boiton para resetear todas las graficas d1
+
+  const resetGraphs = () => {
+    const graphRefs = Object.values(refs);
+    graphRefs.forEach((ref) => {
+      if (ref.current) {
+        try {
+          // Usar autorange para que Plotly ajuste automáticamente el rango
+          Plotly.relayout(ref.current, {
+            'xaxis.autorange': true,
+          });
+        } catch (error) {
+          console.error('Error al resetear el rango del gráfico:', error);
+        }
+      }
+    });
+  };
+
   return (
     <div className="flex justify-around">
       <div>
@@ -127,6 +143,14 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
           }}
           onClick={handlePointClick} // Añade el manejador de clics al gráfico
         />
+      </div>
+      <div>
+        <button
+          onClick={resetGraphs}
+          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
+        >
+          Reset Graphs
+        </button>
       </div>
       <div id="Left-Side" className="flex-1 overflow-auto p-4">
         {leftWearables.map((wearable, index) => (

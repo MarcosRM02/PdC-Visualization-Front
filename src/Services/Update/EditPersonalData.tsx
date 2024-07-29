@@ -26,7 +26,7 @@ const EditPersonalData = () => {
     };
     setLoading(true);
     axios
-      .get(`http://localhost:3000/personalData/${id}`, config)
+      .get(`http://172.18.0.4:3000/personalData/${id}`, config)
       .then((response) => {
         setName(response.data.name);
         setAge(response.data.age);
@@ -59,7 +59,7 @@ const EditPersonalData = () => {
     console.log(data);
     setLoading(true);
     axios
-      .put(`http://localhost:3000/personalData/edit/${id}`, data, config)
+      .put(`http://172.18.0.4:3000/personalData/edit/${id}`, data, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Participant Edited successfully', {

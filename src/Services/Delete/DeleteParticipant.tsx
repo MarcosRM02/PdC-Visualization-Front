@@ -22,7 +22,7 @@ const DeleteBook = () => {
     };
     setLoading(true);
     axios
-      .delete(`http://localhost:3000/participants/delete/${id}`, config)
+      .delete(`http://172.18.0.4:3000/participants/delete/${id}`, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Participant Deleted successfully', {

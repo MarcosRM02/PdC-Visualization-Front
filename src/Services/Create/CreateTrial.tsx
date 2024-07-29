@@ -34,7 +34,7 @@ const CreateTrial = () => {
     setLoading(true);
     // First POST request
     axios
-      .post(`http://localhost:3000/trials/create`, dataToSend, config)
+      .post(`http://172.18.0.4:3000/trials/create`, dataToSend, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Experiment Created successfully', {

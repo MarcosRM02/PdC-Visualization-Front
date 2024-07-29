@@ -22,7 +22,7 @@ const EditUser = () => {
     };
     setLoading(true);
     axios
-      .get(`http://localhost:3000/participants/${id}`, config)
+      .get(`http://172.18.0.4:3000/participants/${id}`, config)
       .then((response) => {
         setCode(response.data.code);
         setLoading(false);
@@ -45,7 +45,7 @@ const EditUser = () => {
     };
     setLoading(true);
     axios
-      .put(`http://localhost:3000/participants/edit/${id}`, data, config)
+      .put(`http://172.18.0.4:3000/participants/edit/${id}`, data, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Participant Edited successfully', {

@@ -26,7 +26,7 @@ const EditUser = () => {
     };
     setLoading(true);
     axios
-      .get(`http://localhost:3000/experiments/${id}`, config)
+      .get(`http://172.18.0.4:3000/experiments/${id}`, config)
       .then((response) => {
         setName(response.data.name);
         setDescription(response.data.description);
@@ -71,7 +71,7 @@ const EditUser = () => {
     };
     setLoading(true);
     axios
-      .put(`http://localhost:3000/experiments/edit/${id}`, data, config)
+      .put(`http://172.18.0.4:3000/experiments/edit/${id}`, data, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Experiment Edited successfully', {

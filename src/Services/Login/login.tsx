@@ -12,7 +12,7 @@ const Login = () => {
     event.preventDefault();
     try {
       const response = await fetch(
-        'http://localhost:3000/authentication/login',
+        'http://172.18.0.4:3000/authentication/login',
         {
           method: 'POST',
           headers: {
@@ -21,6 +21,7 @@ const Login = () => {
           body: JSON.stringify({ email, password }),
         },
       );
+      console.log('Login response:', response);
       if (response.ok) {
         const data = await response.json();
         sessionStorage.setItem('accessToken', data.accessToken); // Guardar el token en sessionStorage
