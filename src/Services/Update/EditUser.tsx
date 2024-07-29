@@ -24,7 +24,7 @@ const EditUser = () => {
     };
     setLoading(true);
     axios
-      .get(`http://172.18.0.4:3000/professionals/${id}`, config)
+      .get(`http://172.18.0.6:3000/professionals/${id}`, config)
       .then((response) => {
         setName(response.data.name);
         setSurname(response.data.surname);
