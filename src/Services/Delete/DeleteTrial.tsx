@@ -22,7 +22,7 @@ const DeleteTrial = () => {
       },
     };
     axios
-      .delete(`http://172.18.0.4:3000/trials/delete/${id}`, config)
+      .delete(`http://172.18.0.6:3000/trials/delete/${id}`, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Trial Deleted successfully', {

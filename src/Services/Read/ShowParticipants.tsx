@@ -24,7 +24,7 @@ const ShowSWData = () => {
     };
     setLoading(true);
     axios
-      .get(`http://172.18.0.4:3000/participants/by-experiment/${id}`, config)
+      .get(`http://172.18.0.6:3000/participants/by-experiment/${id}`, config)
       .then((response) => {
         setSWDatas(response.data);
         setFilteredSWDatas(response.data);

@@ -26,7 +26,7 @@ const EditUser = () => {
     };
     setLoading(true);
     axios
-      .get(`http://172.18.0.4:3000/experiments/${id}`, config)
+      .get(`http://172.18.0.6:3000/experiments/${id}`, config)
       .then((response) => {
         setName(response.data.name);
         setDescription(response.data.description);

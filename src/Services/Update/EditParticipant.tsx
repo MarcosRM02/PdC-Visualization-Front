@@ -22,7 +22,7 @@ const EditUser = () => {
     };
     setLoading(true);
     axios
-      .get(`http://172.18.0.4:3000/participants/${id}`, config)
+      .get(`http://172.18.0.6:3000/participants/${id}`, config)
       .then((response) => {
         setCode(response.data.code);
         setLoading(false);

@@ -15,12 +15,12 @@ const getIDFromAPI = async (participantId, swId) => {
   };
   try {
     const wearablesIds = await axios.get(
-      `http://172.18.0.4:3000/sw/wearable-ids/${swId}`,
+      `http://172.18.0.6:3000/sw/wearable-ids/${swId}`,
       config,
     );
 
     const experimentId = await axios.get(
-      `http://172.18.0.4:3000/participants/experiment-by-participant/${participantId}`,
+      `http://172.18.0.6:3000/participants/experiment-by-participant/${participantId}`,
       config,
     );
 

@@ -22,7 +22,7 @@ const DeleteBook = () => {
       },
     };
     axios
-      .delete(`http://172.18.0.4:3000/experiments/delete/${id}`, config)
+      .delete(`http://172.18.0.6:3000/experiments/delete/${id}`, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Experiment Deleted successfully', {

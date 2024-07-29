@@ -26,7 +26,7 @@ const EditPersonalData = () => {
     };
     setLoading(true);
     axios
-      .get(`http://172.18.0.4:3000/personalData/${id}`, config)
+      .get(`http://172.18.0.6:3000/personalData/${id}`, config)
       .then((response) => {
         setName(response.data.name);
         setAge(response.data.age);
