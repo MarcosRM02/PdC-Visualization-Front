@@ -38,7 +38,7 @@ const CreateBooks = () => {
     setLoading(true);
     // First POST request
     axios
-      .post(`http://localhost:3000/personalData`, dataToSend, config)
+      .post(`http://172.18.0.4:3000/personalData`, dataToSend, config)
       .then((response1) => {
         // Assume response1.data contains the ID needed for the next request
         const newId = response1.data;
@@ -51,7 +51,11 @@ const CreateBooks = () => {
 
         // Second POST request
         axios
-          .post(`http://localhost:3000/participants/create/${id}`, data, config)
+          .post(
+            `http://172.18.0.4:3000/participants/create/${id}`,
+            data,
+            config,
+          )
           .then(() => {
             setLoading(false);
             enqueueSnackbar('Participant Created successfully', {

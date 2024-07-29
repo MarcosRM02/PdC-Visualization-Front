@@ -30,7 +30,7 @@ const ShowWearables = () => {
     setLoading(true);
     axios
       .get(
-        `http://localhost:3000/swData/getData/${experimentId}/${participantId}/${swId}/${trialId}?${wearableQuery}`,
+        `http://172.18.0.4:3000/swData/getData/${experimentId}/${participantId}/${swId}/${trialId}?${wearableQuery}`,
         config,
       )
       .then((response) => {
