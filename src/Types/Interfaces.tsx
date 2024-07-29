@@ -1,8 +1,4 @@
-import Long from "long";
-
-export interface UsersCardProps {
-  users: User[];
-}
+import Long from 'long';
 
 export interface SynchronizedWearablesCardProps {
   SynchronizedWearables: SynchronizedWearables[];
@@ -10,15 +6,6 @@ export interface SynchronizedWearablesCardProps {
 
 export interface SWDataCardProps {
   SWDatas: SWData[];
-}
-
-export interface User {
-  _id: string;
-  name: string;
-  username: string;
-  email: string;
-  password: string;
-  synchronized_wearables: SynchronizedWearables[];
 }
 
 export interface SynchronizedWearables {
@@ -45,11 +32,65 @@ interface DataFrameRow {
 }
 
 export interface WearableData {
-  WearablesId: string;
-  wearable_type: string;
+  wearablesId: string;
+  wearableType: string;
   dataframe: DataFrameRow;
 }
 
 export interface WearableDataProps {
   wearables: WearableData[];
+}
+
+export interface IExperimentProp {
+  experiments: IExperiment[];
+}
+
+export interface IExperiment {
+  id: number;
+  name: string;
+  description: string;
+  startDate: string;
+  finishDate?: string; // Optional Attribute
+  notes?: string; // Optional Attribute
+  numberOfParticipants: number;
+  // professionalId: User; // UN EXPERIMENTO TIENE QUE TENER VARIOS, ESTO HAY QUE CAMBIARLO
+}
+
+export interface IParticipantProp {
+  participants: IParticipant[];
+}
+
+export interface IParticipant {
+  id: number;
+  code: string;
+}
+
+export interface ITrialProp {
+  trials: ITrial[];
+}
+
+export interface ITrial {
+  id: number;
+  date: string;
+  code?: string;
+  description?: string;
+  annotation?: string;
+  participantId: IParticipant;
+  swId: ISWData;
+}
+
+export interface ISWData {
+  id: number;
+}
+
+export interface IProfessional {
+  id: number;
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+}
+
+export interface IProfessionalProps {
+  professionals: IProfessional[];
 }
