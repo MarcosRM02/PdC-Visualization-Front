@@ -12,6 +12,7 @@ const DeleteBook = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const accessToken = sessionStorage.getItem('accessToken');
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleDeleteProfessional = () => {
     setLoading(true);
@@ -23,7 +24,7 @@ const DeleteBook = () => {
     };
     setLoading(true);
     axios
-      .delete(`http://172.18.0.6:3000/professionals/delete/${id}`, config)
+      .delete(`${apiUrl}/professionals/delete/${id}`, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Professional Deleted successfully', {

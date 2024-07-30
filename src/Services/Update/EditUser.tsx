@@ -15,6 +15,7 @@ const EditUser = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const accessToken = sessionStorage.getItem('accessToken');
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const config = {
@@ -24,7 +25,7 @@ const EditUser = () => {
     };
     setLoading(true);
     axios
-      .get(`http://172.18.0.6:3000/professionals/${id}`, config)
+      .get(`${apiUrl}/professionals/${id}`, config)
       .then((response) => {
         setName(response.data.name);
         setSurname(response.data.surname);
@@ -51,7 +52,7 @@ const EditUser = () => {
     };
     setLoading(true);
     axios
-      .put(`http://172.18.0.4:3000/professionals/edit/${id}`, data, config)
+      .put(`${apiUrl}/professionals/edit/${id}`, data, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Professional Edited successfully', {

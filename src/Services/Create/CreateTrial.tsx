@@ -16,6 +16,7 @@ const CreateTrial = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams();
   const accessToken = sessionStorage.getItem('accessToken');
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleSequentialPost = () => {
     const dataToSend = {
@@ -34,7 +35,7 @@ const CreateTrial = () => {
     setLoading(true);
     // First POST request
     axios
-      .post(`http://172.18.0.6:3000/trials/create`, dataToSend, config)
+      .post(`${apiUrl}/trials/create`, dataToSend, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Experiment Created successfully', {

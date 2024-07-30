@@ -17,6 +17,7 @@ const EditTrial = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const accessToken = sessionStorage.getItem('accessToken');
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const config = {
@@ -26,7 +27,7 @@ const EditTrial = () => {
     };
     setLoading(true);
     axios
-      .get(`http://172.18.0.6:3000/trials/${id}`, config)
+      .get(`${apiUrl}/trials/${id}`, config)
       .then((response) => {
         setCode(response.data.code);
         setLoading(false);
@@ -49,7 +50,7 @@ const EditTrial = () => {
     };
     setLoading(true);
     axios
-      .put(`http://172.18.0.4:3000/trials/edit/${id}`, data, config)
+      .put(`${apiUrl}/trials/edit/${id}`, data, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Trial Edited successfully', {

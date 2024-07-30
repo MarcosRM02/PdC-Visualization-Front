@@ -15,6 +15,7 @@ const ShowSWData = () => {
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const accessToken = sessionStorage.getItem('accessToken');
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const config = {
@@ -24,7 +25,7 @@ const ShowSWData = () => {
     };
     setLoading(true);
     axios
-      .get(`http://172.18.0.6:3000/participants/by-experiment/${id}`, config)
+      .get(`${apiUrl}/participants/by-experiment/${id}`, config)
       .then((response) => {
         setSWDatas(response.data);
         setFilteredSWDatas(response.data);

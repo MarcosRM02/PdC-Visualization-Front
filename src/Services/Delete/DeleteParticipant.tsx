@@ -11,6 +11,7 @@ const DeleteBook = () => {
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
   const accessToken = sessionStorage.getItem('accessToken');
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleDeleteParticipant = () => {
     setLoading(true);
@@ -22,7 +23,7 @@ const DeleteBook = () => {
     };
     setLoading(true);
     axios
-      .delete(`http://172.18.0.6:3000/participants/delete/${id}`, config)
+      .delete(`${apiUrl}/participants/delete/${id}`, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Participant Deleted successfully', {

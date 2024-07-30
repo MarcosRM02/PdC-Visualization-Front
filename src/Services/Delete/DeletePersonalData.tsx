@@ -12,6 +12,7 @@ const DeletePersonalData = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const accessToken = sessionStorage.getItem('accessToken');
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleDeletePersonalData = () => {
     setLoading(true);
@@ -23,7 +24,7 @@ const DeletePersonalData = () => {
     };
     setLoading(true);
     axios
-      .delete(`http://172.18.0.6:3000/personalData/delete/${id}`, config)
+      .delete(`${apiUrl}/personalData/delete/${id}`, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Personal Data Deleted successfully', {

@@ -13,6 +13,7 @@ const CreateBooks = () => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const accessToken = sessionStorage.getItem('accessToken');
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleSaveBook = () => {
     const data = {
@@ -27,7 +28,7 @@ const CreateBooks = () => {
     };
     setLoading(true);
     axios
-      .post('http://172.18.0.6:3000/professionals/create', data, config)
+      .post(`${apiUrl}/professionals/create`, data, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Professional Created successfully', {

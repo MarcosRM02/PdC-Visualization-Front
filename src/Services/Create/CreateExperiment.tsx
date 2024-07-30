@@ -16,6 +16,7 @@ const CreateBooks = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams();
   const accessToken = sessionStorage.getItem('accessToken');
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleSaveBook = () => {
     const data = {
@@ -32,7 +33,7 @@ const CreateBooks = () => {
     };
     setLoading(true);
     axios
-      .post(`http://172.18.0.6:3000/experiments/create/${id}`, data, config)
+      .post(`${apiUrl}/experiments/create/${id}`, data, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Experiment Created successfully', {
