@@ -12,6 +12,7 @@ const DeleteTrial = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const accessToken = sessionStorage.getItem('accessToken');
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleDeleteTrial = () => {
     setLoading(true);
@@ -22,7 +23,7 @@ const DeleteTrial = () => {
       },
     };
     axios
-      .delete(`http://172.18.0.6:3000/trials/delete/${id}`, config)
+      .delete(`${apiUrl}/trials/delete/${id}`, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Trial Deleted successfully', {

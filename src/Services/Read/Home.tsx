@@ -7,11 +7,11 @@ import { Link } from 'react-router-dom';
 const Home = () => {
   const [users, setUsers] = useState([]);
   const [_, setLoading] = useState(false);
-
+  const apiUrl = import.meta.env.VITE_API_URL;
   useEffect(() => {
     setLoading(true);
     axios
-      .get('http://172.18.0.6:3000/professionals')
+      .get(`${apiUrl}/professionals`)
       .then((response) => {
         setUsers(response.data);
         setLoading(false);

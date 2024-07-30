@@ -17,6 +17,7 @@ const EditPersonalData = () => {
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const accessToken = sessionStorage.getItem('accessToken');
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const config = {
@@ -26,7 +27,7 @@ const EditPersonalData = () => {
     };
     setLoading(true);
     axios
-      .get(`http://172.18.0.6:3000/personalData/${id}`, config)
+      .get(`${apiUrl}/personalData/${id}`, config)
       .then((response) => {
         setName(response.data.name);
         setAge(response.data.age);
@@ -59,7 +60,7 @@ const EditPersonalData = () => {
     console.log(data);
     setLoading(true);
     axios
-      .put(`http://172.18.0.4:3000/personalData/edit/${id}`, data, config)
+      .put(`${apiUrl}/personalData/edit/${id}`, data, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Participant Edited successfully', {

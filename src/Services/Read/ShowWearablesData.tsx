@@ -17,7 +17,7 @@ const ShowWearables = () => {
       .map((id) => `wearableIds=${encodeURIComponent(id)}`)
       .join('&');
   }, [wearableIds]);
-
+  const apiUrl = import.meta.env.VITE_API_URL;
   useEffect(() => {
     const accessToken = sessionStorage.getItem('accessToken');
     if (!accessToken) return; // Si no hay token, no ejecutar la llamada.
@@ -30,7 +30,7 @@ const ShowWearables = () => {
     setLoading(true);
     axios
       .get(
-        `http://172.18.0.6:3000/swData/getData/${experimentId}/${participantId}/${swId}/${trialId}?${wearableQuery}`,
+        `${apiUrl}/swData/getData/${experimentId}/${participantId}/${swId}/${trialId}?${wearableQuery}`,
         config,
       )
       .then((response) => {

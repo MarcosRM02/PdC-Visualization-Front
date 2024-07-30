@@ -21,6 +21,7 @@ const CreateBooks = () => {
   const accessToken = sessionStorage.getItem('accessToken');
 
   console.log(accessToken);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleSequentialPost = () => {
     const dataToSend = {
@@ -38,7 +39,7 @@ const CreateBooks = () => {
     setLoading(true);
     // First POST request
     axios
-      .post(`http://172.18.0.4:3000/personalData`, dataToSend, config)
+      .post(`${apiUrl}/personalData`, dataToSend, config)
       .then((response1) => {
         // Assume response1.data contains the ID needed for the next request
         const newId = response1.data;
@@ -51,11 +52,7 @@ const CreateBooks = () => {
 
         // Second POST request
         axios
-          .post(
-            `http://172.18.0.6:3000/participants/create/${id}`,
-            data,
-            config,
-          )
+          .post(`${process.env.URL}/participants/create/${id}`, data, config)
           .then(() => {
             setLoading(false);
             enqueueSnackbar('Participant Created successfully', {

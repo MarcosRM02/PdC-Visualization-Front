@@ -21,6 +21,7 @@ import DeleteTrial from './Services/Delete/DeleteTrial';
 import ShowWearables from './Services/Read/ShowWearablesData';
 
 const App = () => {
+  console.log(process.env.REACT_APP_API_URL);
   return (
     <Routes>
       <Route path="/" element={<Login />} />

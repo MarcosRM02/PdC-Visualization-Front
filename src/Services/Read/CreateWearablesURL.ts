@@ -8,6 +8,8 @@ import axios from 'axios';
  */
 const getIDFromAPI = async (participantId, swId) => {
   const accessToken = sessionStorage.getItem('accessToken');
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const config = {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -15,12 +17,12 @@ const getIDFromAPI = async (participantId, swId) => {
   };
   try {
     const wearablesIds = await axios.get(
-      `http://172.18.0.6:3000/sw/wearable-ids/${swId}`,
+      `${apiUrl}/sw/wearable-ids/${swId}`,
       config,
     );
 
     const experimentId = await axios.get(
-      `http://172.18.0.6:3000/participants/experiment-by-participant/${participantId}`,
+      `${apiUrl}/participants/experiment-by-participant/${participantId}`,
       config,
     );
 

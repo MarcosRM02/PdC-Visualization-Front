@@ -13,6 +13,7 @@ const EditUser = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const accessToken = sessionStorage.getItem('accessToken');
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const config = {
@@ -22,7 +23,7 @@ const EditUser = () => {
     };
     setLoading(true);
     axios
-      .get(`http://172.18.0.6:3000/participants/${id}`, config)
+      .get(`${apiUrl}/participants/${id}`, config)
       .then((response) => {
         setCode(response.data.code);
         setLoading(false);
@@ -45,7 +46,7 @@ const EditUser = () => {
     };
     setLoading(true);
     axios
-      .put(`http://172.18.0.4:3000/participants/edit/${id}`, data, config)
+      .put(`${apiUrl}/participants/edit/${id}`, data, config)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Participant Edited successfully', {

@@ -10,17 +10,20 @@ const Login = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    console.log(process.env.REACT_APP_URL); // Debe mostrar la URL
+    console.log(`la url es: ${process.env.REACT_APP_URL}/authentication/login`); // Debe mostrar la URL completa
+    const apiUrl = import.meta.env.VITE_API_URL;
+    console.log('url2: ', apiUrl); // Debe mostrar la URL
+    console.log(import.meta.env.VITE_API_URL); // Debe mostrar la URL
+
     try {
-      const response = await fetch(
-        'http://172.18.0.6:3000/authentication/login',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, password }),
+      const response = await fetch(`${apiUrl}/authentication/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({ email, password }),
+      });
       console.log('Login response:', response);
       if (response.ok) {
         const data = await response.json();
