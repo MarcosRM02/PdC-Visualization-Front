@@ -86,8 +86,8 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
   };
 
   return (
-    <div className="flex justify-around">
-      <div>
+    <div className="flex justify-around w-full">
+      <div className="flex flex-col w-1/2 p-4 overflow-auto">
         <ReactPlayer
           ref={playerRef}
           url="https://youtu.be/hMS8RtYVouc?t=31"
@@ -152,7 +152,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
           Reset Graphs
         </button>
       </div>
-      <div id="Left-Side" className="flex-1 overflow-auto p-4">
+      <div id="Left-Side" className="flex flex-col w-1/2 p-4 overflow-auto">
         {leftWearables.map((wearable, index) => (
           <div key={index} className="wearable-item">
             <h4>Left Wearable - {wearable.wearablesId} </h4>
@@ -193,7 +193,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
         ))}
       </div>
 
-      <div id="right-side" className="flex-1 overflow-auto p-4">
+      <div id="right-side" className="flex flex-col w-1/2 p-4 overflow-auto">
         {rightWearables.map((wearable, index) => (
           <div key={index} className="wearable-item">
             <h4>Right Wearable - {wearable.wearablesId}</h4>
