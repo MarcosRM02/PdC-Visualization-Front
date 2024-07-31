@@ -52,7 +52,7 @@ const CreateBooks = () => {
 
         // Second POST request
         axios
-          .post(`${process.env.URL}/participants/create/${id}`, data, config)
+          .post(`${apiUrl}/participants/create/${id}`, data, config)
           .then(() => {
             setLoading(false);
             enqueueSnackbar('Participant Created successfully', {
