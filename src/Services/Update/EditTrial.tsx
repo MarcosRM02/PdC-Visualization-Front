@@ -29,19 +29,26 @@ const EditTrial = () => {
     axios
       .get(`${apiUrl}/trials/${id}`, config)
       .then((response) => {
-        setCode(response.data.code);
+        const { code, date, description, annotation } = response.data; // Asegúrate de que la respuesta tenga estas propiedades
+        setCode(code);
+        setDate(date); // Establece el valor de date en el estado
+        setDescription(description); // Establece el valor de description en el estado
+        setAnnotation(annotation); // Establece el valor de annotation en el estado
         setLoading(false);
       })
       .catch((error) => {
         setLoading(false);
-        alert('An error happened. Please Chack console');
+        alert('An error happened. Please Check console');
         console.log(error);
       });
-  }, []);
+  }, [apiUrl, id, accessToken]);
 
   const handleEditExperiment = () => {
     const data = {
       code,
+      date, // Asegúrate de enviar la fecha actualizada
+      description, // Asegúrate de enviar la descripción actualizada
+      annotation, // Asegúrate de enviar la anotación actualizada
     };
     const config = {
       headers: {
@@ -60,7 +67,6 @@ const EditTrial = () => {
       })
       .catch((error) => {
         setLoading(false);
-        // alert('An error happened. Please Chack console');
         enqueueSnackbar('Error', { variant: 'error' });
         console.log(error);
       });
@@ -69,7 +75,7 @@ const EditTrial = () => {
   return (
     <div className="p-4">
       <BackButton />
-      <h1 className="text-3xl my-4">Edit Participant</h1>
+      <h1 className="text-3xl my-4">Edit Trial</h1>
       {loading ? <Spinner /> : ''}
       <div className="flex flex-col border-2 border-sky-400 rounded-xl w-[600px] p-4 mx-auto">
         <div className="my-4">

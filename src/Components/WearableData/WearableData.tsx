@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { WearableDataProps } from '../../Types/Interfaces';
-import { DataFrame, concat, toCSV } from 'danfojs';
+import { DataFrame, Series, concat, toCSV, toJSON } from 'danfojs';
 
 import Plotly from 'plotly.js-dist-min';
 import Plot from 'react-plotly.js';
@@ -14,6 +14,8 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
     rightPressureSensor: useRef(null),
     rightAccelerometer: useRef(null),
     rightGyroscope: useRef(null),
+    leftHeatmap: useRef(null),
+    rightHeatmap: useRef(null),
   };
 
   // Extraer el tipo de las url, y asi ya lo tengo todo preparado para pasarselo a la funcion de plotWearablesData, pq de la nueva manera, no va como antes.
@@ -25,8 +27,25 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
     (wearable) => wearable.wearableType === 'R',
   );
 
+  const [data, setData] = useState<DataPoint[]>([]);
+  const [playTime, setPlayTime] = useState<number>(0);
+  const playerRef = useRef<ReactPlayer | null>(null);
+  const handleProgress = (state: { playedSeconds: number }) => {
+    setPlayTime(state.playedSeconds);
+    // updateAllGraphs(state.playedSeconds);
+  };
+  // Función para manejar clics en los puntos del gráfico
+  const handlePointClick = (data) => {
+    if (data.points && data.points.length > 0) {
+      const pointTime = data.points[0].x;
+      setPlayTime(pointTime); // Actualiza el tiempo de reproducción en el estado
+      if (playerRef.current) {
+        playerRef.current.seekTo(pointTime, 'seconds'); // Cambia el video al tiempo seleccionado
+      }
+    }
+  };
   useEffect(() => {
-    plotWearablesData(leftWearables, rightWearables, refs);
+    plotWearablesData(leftWearables, rightWearables, refs, playTime);
 
     Object.values(refs).forEach((ref) => {
       if (ref.current) {
@@ -42,10 +61,6 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
     value: number;
   }
 
-  const [data, setData] = useState<DataPoint[]>([]);
-  const [playTime, setPlayTime] = useState<number>(0);
-  const playerRef = useRef<ReactPlayer | null>(null);
-
   // Simula datos; en la práctica real, estos datos pueden venir de una API o ser calculados
   useEffect(() => {
     const simulatedData = Array.from({ length: 600 }, (_, i) => ({
@@ -55,20 +70,37 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
     setData(simulatedData);
   }, []);
 
-  const handleProgress = (state: { playedSeconds: number }) => {
-    setPlayTime(state.playedSeconds);
-  };
-  // Función para manejar clics en los puntos del gráfico
-  const handlePointClick = (data) => {
-    if (data.points && data.points.length > 0) {
-      const pointTime = data.points[0].x;
-      setPlayTime(pointTime); // Actualiza el tiempo de reproducción en el estado
-      if (playerRef.current) {
-        playerRef.current.seekTo(pointTime, 'seconds'); // Cambia el video al tiempo seleccionado
+  // const updateAllGraphs = (currentTime: number) => {
+  //   Object.values(refs).forEach((ref) => {
+  //     if (ref.current) {
+  //       Plotly.relayout(ref.current, {
+  //         'xaxis.range': [currentTime - 10, currentTime + 10], // para que se vea el rango de datos dentro del tiempo
+  //       });
+  //     }
+  //   });
+  // };
+  useEffect(() => {
+    Object.values(refs).forEach((ref) => {
+      if (ref.current) {
+        ref.current.on('plotly_click', handlePointClick);
       }
-    }
-  };
+    });
+  }, []);
 
+  useEffect(() => {
+    updateCurrentTimeLine(playTime);
+  }, [playTime]);
+
+  const updateCurrentTimeLine = (currentTime) => {
+    Object.values(refs).forEach((ref) => {
+      if (ref.current) {
+        Plotly.relayout(ref.current, {
+          'shapes[0].x0': currentTime,
+          'shapes[0].x1': currentTime,
+        });
+      }
+    });
+  };
   const resetGraphs = () => {
     const graphRefs = Object.values(refs);
     graphRefs.forEach((ref) => {
@@ -97,7 +129,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
           height="auto"
         />
       </div>
-      <div className="mt-20">
+      {/* <div className="mt-24">
         <Plot
           data={[
             {
@@ -145,11 +177,11 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
           }}
           onClick={handlePointClick}
         />
-      </div>
+      </div> */}
       <div>
         <button
           onClick={resetGraphs}
-          className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
+          className="mt-40 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
         >
           Reset Graphs
         </button>
@@ -159,6 +191,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
           {leftWearables.map((wearable, index) => (
             <div key={index} className="wearable-item">
               <h4>Left Wearable - {wearable.wearablesId} </h4>
+              <div ref={refs.leftHeatmap} id="leftHeatmap"></div>
               <div ref={refs.leftPressureSensor} id="leftPressureSensor"></div>
               <div className="flex justify-end">
                 <button
@@ -200,6 +233,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
           {rightWearables.map((wearable, index) => (
             <div key={index} className="wearable-item">
               <h4>Right Wearable - {wearable.wearablesId}</h4>
+              <div ref={refs.rightHeatmap} id="rightHeatmap"></div>
               <div
                 ref={refs.rightPressureSensor}
                 id="rightPressureSensor"
@@ -247,47 +281,75 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
   );
 };
 
-function plotWearablesData(leftWearables: any, rightWearables: any, refs: any) {
-  plotLeftWearable(leftWearables, refs);
-  plotrightWearable(rightWearables, refs);
+function plotWearablesData(
+  leftWearables: any,
+  rightWearables: any,
+  refs: any,
+  playTime: any,
+) {
+  plotLeftWearable(leftWearables, refs, playTime);
+  plotrightWearable(rightWearables, refs, playTime);
 }
 
-function plotLeftWearable(leftWearables: any, refs: any) {
-  plotData(leftWearables, refs.leftPressureSensor.current, 'Pressure Sensor', [
-    ':32',
-  ]);
+function plotLeftWearable(leftWearables: any, refs: any, playTime: any) {
+  plotHeatmap(
+    leftWearables,
+    refs.leftHeatmap.current,
+    'Left Pressure Sensor Heatmap',
+    [':37'], // Asumiendo que estos son los datos relevantes para el mapa de calor
+    playTime,
+  );
+  plotData(
+    leftWearables,
+    refs.leftPressureSensor.current,
+    'Pressure Sensor',
+    [':32'],
+    playTime,
+  );
   plotData(
     leftWearables,
     refs.leftAccelerometer.current,
     'Accelerometer',
     [32, 33, 34],
+    playTime,
   );
   plotData(
     leftWearables,
     refs.leftGyroscope.current,
     'Gyroscope',
     [35, 36, 37],
+    playTime,
   );
 }
 
-function plotrightWearable(rightWearables: any, refs: any) {
+function plotrightWearable(rightWearables: any, refs: any, playTime: any) {
+  plotHeatmap(
+    rightWearables,
+    refs.rightHeatmap.current,
+    'Right Pressure Sensor Heatmap',
+    [':37'], // Asumiendo que estos son los datos relevantes para el mapa de calor
+    playTime,
+  );
   plotData(
     rightWearables,
     refs.rightPressureSensor.current,
     'Pressure Sensor',
     [':32'],
+    playTime,
   );
   plotData(
     rightWearables,
     refs.rightAccelerometer.current,
     'Accelerometer',
     [32, 33, 34],
+    playTime,
   );
   plotData(
     rightWearables,
     refs.rightGyroscope.current,
     'Gyroscope',
     [35, 36, 37],
+    playTime,
   );
 }
 
@@ -320,6 +382,7 @@ function plotData(
   divId: HTMLElement | null,
   title: string,
   columns: (number | string)[],
+  playTime: number,
 ) {
   if (!divId) {
     console.error('Invalid div element');
@@ -332,24 +395,34 @@ function plotData(
 
   const df = concat({ dfList: frames, axis: 1 });
 
-  // @ts-ignore
   let datos = df.iloc({ rows: [':'], columns: columns });
-
-  const config = {
-    displayModeBar: true,
-    displaylogo: false,
-    responsive: true,
-  };
 
   const traces = datos.columns.map((column: string) => ({
     x: datos.index.values,
-    y: (datos as DataFrame)[column].values,
+    y: datos[column].values,
     type: 'scatter',
     mode: 'lines',
     name: column,
   }));
 
-  Plotly.newPlot(divId, traces, generateLayout(title), config);
+  const layout = generateLayout(title);
+  layout.shapes = [
+    {
+      type: 'line',
+      x0: playTime,
+      x1: playTime,
+      y0: 0,
+      y1: 1,
+      yref: 'paper',
+      line: {
+        color: 'red',
+        width: 3,
+        dash: 'line',
+      },
+    },
+  ];
+
+  Plotly.newPlot(divId, traces, layout);
 }
 
 function handleRelayout(eventData: any, triggeredBy: any, refs: any) {
@@ -419,4 +492,57 @@ async function descargarDatosVisibles(divId: string, wearable: any) {
   }
 }
 
+function plotHeatmap(
+  wearableData: any,
+  divId: HTMLElement | null,
+  title: string,
+  columns: (number | string)[],
+  playTime: number,
+) {
+  if (!divId) {
+    console.error('Invalid div element');
+    return;
+  }
+
+  // Crear DataFrames desde los datos del wearable y concatenarlos en un solo DataFrame
+  const frames = wearableData.map(
+    (wearable: any) => new DataFrame(wearable.dataframe),
+  );
+
+  const df = concat({ dfList: frames, axis: 1 });
+
+  let datos = df.iloc({ rows: [':'], columns: columns });
+
+
+  let zData;
+  if (datos instanceof DataFrame) {
+    // Intenta convertir DataFrame directamente a una matriz
+    zData = datos.values;
+  } else if (datos instanceof Series) {
+    // Convierte Series a DataFrame y luego a una matriz
+    zData = new DataFrame([datos]).values;
+  } //else {
+  //   console.error('Invalid data type');
+  //   return;
+  // }
+
+  // Configurar los datos del mapa de calor
+  const data = [
+    {
+      z: datos.values,
+      type: 'heatmap',
+      colorscale: 'Viridis',
+    },
+  ];
+
+  const layout = {
+    title: 'Mapa de Calor de Datos de Sensores',
+    xaxis: { title: 'Índice de Tiempo' },
+    yaxis: { title: 'Índice de Sensor' },
+    autosize: true,
+  };
+
+  // Usar Plotly.newPlot para renderizar el mapa de calor en el div especificado
+  Plotly.newPlot(divId, data, layout);
+}
 export default WearablesData;
