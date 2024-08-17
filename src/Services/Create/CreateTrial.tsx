@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import BackButton from '../../Components/BackButton';
 import Spinner from '../../Components/Spinner';
 import axios from 'axios';
@@ -17,6 +17,26 @@ const CreateTrial = () => {
   const { id } = useParams();
   const accessToken = sessionStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
+
+  const [swIds, setSWIds] = useState([]);
+
+  useEffect(() => {
+    // Hacer la llamada a la API para obtener los SW Ids cuando el componente se monta
+    const fetchSWIds = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/sw`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        setSWIds(response.data); // Suponiendo que la API devuelve un array de SW Ids
+      } catch (error) {
+        console.error('Error fetching SW Ids:', error);
+      }
+    };
+
+    fetchSWIds();
+  }, [apiUrl, accessToken]);
 
   const handleSequentialPost = () => {
     const dataToSend = {
@@ -68,13 +88,21 @@ const CreateTrial = () => {
         </div>
         <div className="my-4">
           <label className="text-xl mr-4 text-gray-500">SW Id</label>
-          <input
-            type="number"
+          <select
             value={swId}
             onChange={(e) => setSWId(e.target.value)}
             className="border-2 border-gray-500 px-4 py-2 w-full"
-          />
+          >
+            <option value="">Select SW Id</option>
+            {swIds.map((sw) => (
+              <option key={sw.id} value={sw.id}>
+                {sw.id}{' '}
+                {/* O el campo que quieras mostrar como texto en el dropdown */}
+              </option>
+            ))}
+          </select>
         </div>
+
         <div className="my-4">
           <label className="text-xl mr-4 text-gray-500">
             Description (optional)
