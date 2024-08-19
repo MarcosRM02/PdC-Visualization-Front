@@ -384,10 +384,10 @@ function plotData(
   columns: (number | string)[],
   playTime: number,
 ) {
-  // if (!divId) {
-  //   console.error('Invalid div element');
-  //   return;
-  // }
+  if (!divId) {
+    console.error('Invalid div element');
+    return;
+  }
 
   const frames = wearable.map(
     (wearable: any) => new DataFrame(wearable.dataframe),
