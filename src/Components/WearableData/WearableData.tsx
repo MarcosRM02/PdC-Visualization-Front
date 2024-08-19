@@ -45,6 +45,10 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
     }
   };
   useEffect(() => {
+    Object.entries(refs).forEach(([key, ref]) => {
+      console.log(`${key}:`, ref.current); // Imprime el nombre del ref y el elemento DOM asociado si está cargado
+    });
+
     plotWearablesData(leftWearables, rightWearables, refs, playTime);
 
     Object.values(refs).forEach((ref) => {
