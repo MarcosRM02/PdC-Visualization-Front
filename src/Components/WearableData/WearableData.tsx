@@ -384,10 +384,10 @@ function plotData(
   columns: (number | string)[],
   playTime: number,
 ) {
-  if (!divId) {
-    console.error('Invalid div element');
-    return;
-  }
+  // if (!divId) {
+  //   console.error('Invalid div element');
+  //   return;
+  // }
 
   const frames = wearable.map(
     (wearable: any) => new DataFrame(wearable.dataframe),
@@ -512,7 +512,6 @@ function plotHeatmap(
   const df = concat({ dfList: frames, axis: 1 });
 
   let datos = df.iloc({ rows: [':'], columns: columns });
-
 
   let zData;
   if (datos instanceof DataFrame) {
