@@ -45,16 +45,8 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
     }
   };
   useEffect(() => {
-    const checkAndPlot = () => {
-      if (Object.values(refs).every((ref) => ref.current)) {
-        plotWearablesData(leftWearables, rightWearables, refs, playTime);
-      } else {
-        console.log('Los elementos aún no se han cargado, reintentando...');
-        // Intenta nuevamente después de un breve retraso
-        setTimeout(checkAndPlot, 500); // Reintenta después de 500 milisegundos
-      }
-    };
-    checkAndPlot();
+    plotWearablesData(leftWearables, rightWearables, refs, playTime);
+
     Object.values(refs).forEach((ref) => {
       if (ref.current) {
         ref.current.on('plotly_relayout', (eventData) =>
@@ -392,6 +384,7 @@ function plotData(
   columns: (number | string)[],
   playTime: number,
 ) {
+  console.log('divId', divId);
   if (!divId) {
     console.error('Invalid div element');
     return;
