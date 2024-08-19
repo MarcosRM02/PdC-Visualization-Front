@@ -54,6 +54,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
         setTimeout(checkAndPlot, 500); // Reintenta después de 500 milisegundos
       }
     };
+    checkAndPlot();
     Object.values(refs).forEach((ref) => {
       if (ref.current) {
         ref.current.on('plotly_relayout', (eventData) =>
