@@ -45,8 +45,11 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
     }
   };
   useEffect(() => {
-    plotWearablesData(leftWearables, rightWearables, refs, playTime);
-
+    if (Object.values(refs).every((ref) => ref.current)) {
+      plotWearablesData(leftWearables, rightWearables, refs, playTime);
+    } else {
+      console.log('No se han cargado');
+    }
     Object.values(refs).forEach((ref) => {
       if (ref.current) {
         ref.current.on('plotly_relayout', (eventData) =>
