@@ -26,8 +26,6 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
   const rightWearables = wearables.filter(
     (wearable) => wearable.wearableType === 'R',
   );
-
-  const [data, setData] = useState<DataPoint[]>([]);
   const [playTime, setPlayTime] = useState<number>(0);
   const playerRef = useRef<ReactPlayer | null>(null);
   const handleProgress = (state: { playedSeconds: number }) => {
@@ -61,15 +59,6 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
     time: number;
     value: number;
   }
-
-  // Simula datos; en la práctica real, estos datos pueden venir de una API o ser calculados
-  useEffect(() => {
-    const simulatedData = Array.from({ length: 600 }, (_, i) => ({
-      time: i,
-      value: Math.random() * 100,
-    }));
-    setData(simulatedData);
-  }, []);
 
   // const updateAllGraphs = (currentTime: number) => {
   //   Object.values(refs).forEach((ref) => {
@@ -380,7 +369,7 @@ function generateLayout(title: string) {
 
 function plotData(
   wearable: any,
-  divId: HTMLElement | null,
+  divId: HTMLElement,
   title: string,
   columns: (number | string)[],
   playTime: number,
@@ -423,6 +412,7 @@ function plotData(
       },
     },
   ];
+  console.log('traces', traces);
 
   Plotly.newPlot(divId, traces, layout);
 }
