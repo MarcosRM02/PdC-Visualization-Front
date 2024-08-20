@@ -44,17 +44,18 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
       }
     }
   };
-  useEffect(() => {}, [wearables, ...Object.values(refs)]);
-  console.log(refs.leftPressureSensor.current);
-  plotWearablesData(leftWearables, rightWearables, refs, playTime);
+  useEffect(() => {
+    console.log(refs.leftPressureSensor.current);
+    plotWearablesData(leftWearables, rightWearables, refs, playTime);
 
-  Object.values(refs).forEach((ref) => {
-    if (ref.current) {
-      ref.current.on('plotly_relayout', (eventData) =>
-        handleRelayout(eventData, ref.current, refs),
-      );
-    }
-  });
+    Object.values(refs).forEach((ref) => {
+      if (ref.current) {
+        ref.current.on('plotly_relayout', (eventData) =>
+          handleRelayout(eventData, ref.current, refs),
+        );
+      }
+    });
+  }, [wearables, ...Object.values(refs)]);
 
   interface DataPoint {
     time: number;
@@ -188,93 +189,83 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
       </div>
       <div className="mt-12 flex flex-row justify-between w-full">
         <div id="Left-Side" className="flex-1 overflow-auto p-4">
-          {leftWearables.map((wearable, index) => (
-            <div key={index} className="wearable-item">
-              <h4>Left Wearable - {wearable.wearablesId} </h4>
-              <div ref={refs.leftHeatmap} id="leftHeatmap"></div>
-              <div ref={refs.leftPressureSensor} id="leftPressureSensor"></div>
-              <div className="flex justify-end">
-                <button
-                  onClick={() =>
-                    descargarDatosVisibles('leftPressureSensor', leftWearables)
-                  }
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
-                >
-                  Download CSV
-                </button>
-              </div>
-              <div ref={refs.leftAccelerometer} id="leftAccelerometer"></div>
-              <div className="flex justify-end">
-                <button
-                  onClick={() =>
-                    descargarDatosVisibles('leftAccelerometer', leftWearables)
-                  }
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
-                >
-                  Download CSV
-                </button>
-              </div>
-              <div ref={refs.leftGyroscope} id="leftGyroscope"></div>
-              <div className="flex justify-end">
-                <button
-                  onClick={() =>
-                    descargarDatosVisibles('leftGyroscope', leftWearables)
-                  }
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
-                >
-                  Download CSV
-                </button>
-              </div>
+          <div className="wearable-item">
+            <h4>Left Wearable </h4>
+            <div ref={refs.leftHeatmap} id="leftHeatmap"></div>
+            <div ref={refs.leftPressureSensor} id="leftPressureSensor"></div>
+            <div className="flex justify-end">
+              <button
+                onClick={() =>
+                  descargarDatosVisibles('leftPressureSensor', leftWearables)
+                }
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
+              >
+                Download CSV
+              </button>
             </div>
-          ))}
+            <div ref={refs.leftAccelerometer} id="leftAccelerometer"></div>
+            <div className="flex justify-end">
+              <button
+                onClick={() =>
+                  descargarDatosVisibles('leftAccelerometer', leftWearables)
+                }
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
+              >
+                Download CSV
+              </button>
+            </div>
+            <div ref={refs.leftGyroscope} id="leftGyroscope"></div>
+            <div className="flex justify-end">
+              <button
+                onClick={() =>
+                  descargarDatosVisibles('leftGyroscope', leftWearables)
+                }
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
+              >
+                Download CSV
+              </button>
+            </div>
+          </div>
         </div>
 
         <div id="right-side" className="flex-1 overflow-auto p-4">
-          {rightWearables.map((wearable, index) => (
-            <div key={index} className="wearable-item">
-              <h4>Right Wearable - {wearable.wearablesId}</h4>
-              <div ref={refs.rightHeatmap} id="rightHeatmap"></div>
-              <div
-                ref={refs.rightPressureSensor}
-                id="rightPressureSensor"
-              ></div>
-              <div className="flex justify-end">
-                <button
-                  onClick={() =>
-                    descargarDatosVisibles(
-                      'rightPressureSensor',
-                      rightWearables,
-                    )
-                  }
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
-                >
-                  Download CSV
-                </button>
-              </div>
-              <div ref={refs.rightAccelerometer} id="rightAccelerometer"></div>
-              <div className="flex justify-end">
-                <button
-                  onClick={() =>
-                    descargarDatosVisibles('rightAccelerometer', rightWearables)
-                  }
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
-                >
-                  Download CSV
-                </button>
-              </div>
-              <div ref={refs.rightGyroscope} id="rightGyroscope"></div>
-              <div className="flex justify-end">
-                <button
-                  onClick={() =>
-                    descargarDatosVisibles('rightGyroscope', rightWearables)
-                  }
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
-                >
-                  Download CSV
-                </button>
-              </div>
+          <div className="wearable-item">
+            <h4>Right Wearable </h4>
+            <div ref={refs.rightHeatmap} id="rightHeatmap"></div>
+            <div ref={refs.rightPressureSensor} id="rightPressureSensor"></div>
+            <div className="flex justify-end">
+              <button
+                onClick={() =>
+                  descargarDatosVisibles('rightPressureSensor', rightWearables)
+                }
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
+              >
+                Download CSV
+              </button>
             </div>
-          ))}
+            <div ref={refs.rightAccelerometer} id="rightAccelerometer"></div>
+            <div className="flex justify-end">
+              <button
+                onClick={() =>
+                  descargarDatosVisibles('rightAccelerometer', rightWearables)
+                }
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
+              >
+                Download CSV
+              </button>
+            </div>
+            <div ref={refs.rightGyroscope} id="rightGyroscope"></div>
+            <div className="flex justify-end">
+              <button
+                onClick={() =>
+                  descargarDatosVisibles('rightGyroscope', rightWearables)
+                }
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
+              >
+                Download CSV
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
