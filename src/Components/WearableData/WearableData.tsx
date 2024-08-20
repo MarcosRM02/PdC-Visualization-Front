@@ -44,31 +44,20 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
       }
     }
   };
-
-  const [areRefsReady, setAreRefsReady] = useState(false);
   useEffect(() => {
-    const allRefsReady = Object.values(refs).every(
-      (ref) => ref.current !== null,
-    );
-    setAreRefsReady(allRefsReady);
-  }, [refs]); // Observa los cambios en refs
+    Object.entries(refs).forEach(([key, ref]) => {
+      console.log(`${key}:`, ref.current); // Imprime el nombre del ref y el elemento DOM asociado si está cargado
+    });
+    plotWearablesData(leftWearables, rightWearables, refs, playTime);
 
-  useEffect(() => {
-    if (areRefsReady) {
-      plotWearablesData(leftWearables, rightWearables, refs, playTime);
-
-      Object.values(refs).forEach((ref) => {
-        if (ref.current) {
-          ref.current.on('plotly_relayout', (eventData) =>
-            handleRelayout(eventData, ref.current, refs),
-          );
-          ref.current.on('plotly_click', handlePointClick);
-        }
-      });
-
-      updateCurrentTimeLine(playTime);
-    }
-  }, [playTime, areRefsReady]);
+    Object.values(refs).forEach((ref) => {
+      if (ref.current) {
+        ref.current.on('plotly_relayout', (eventData) =>
+          handleRelayout(eventData, ref.current, refs),
+        );
+      }
+    });
+  }, [wearables, ...Object.values(refs)]);
 
   interface DataPoint {
     time: number;
@@ -136,7 +125,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
       <div className="absolute z-10 w-full h-auto">
         <ReactPlayer
           ref={playerRef}
-          url="https://youtu.be/hMS8RtYVouc?t=31"
+          // url="https://youtu.be/hMS8RtYVouc?t=31"
           playing
           onProgress={handleProgress}
           width="auto"
