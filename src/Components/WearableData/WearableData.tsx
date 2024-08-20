@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { WearableDataProps } from '../../Types/Interfaces';
 import { DataFrame, Series, concat, toCSV, toJSON } from 'danfojs';
@@ -44,18 +44,17 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
       }
     }
   };
-  useLayoutEffect(() => {
-    console.log(refs.leftPressureSensor.current);
-    plotWearablesData(leftWearables, rightWearables, refs, playTime);
+  useEffect(() => {}, [wearables, ...Object.values(refs)]);
+  console.log(refs.leftPressureSensor.current);
+  plotWearablesData(leftWearables, rightWearables, refs, playTime);
 
-    Object.values(refs).forEach((ref) => {
-      if (ref.current) {
-        ref.current.on('plotly_relayout', (eventData) =>
-          handleRelayout(eventData, ref.current, refs),
-        );
-      }
-    });
-  }, [wearables, ...Object.values(refs)]);
+  Object.values(refs).forEach((ref) => {
+    if (ref.current) {
+      ref.current.on('plotly_relayout', (eventData) =>
+        handleRelayout(eventData, ref.current, refs),
+      );
+    }
+  });
 
   interface DataPoint {
     time: number;
