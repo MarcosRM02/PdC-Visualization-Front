@@ -295,14 +295,14 @@ function plotWearablesData(
 function plotLeftWearable(leftWearables: any, refs: any, playTime: any) {
   plotHeatmap(
     leftWearables,
-    'leftHeatmap',
+    refs.leftHeatmap.current,
     'Left Pressure Sensor Heatmap',
     [':37'], // Asumiendo que estos son los datos relevantes para el mapa de calor
     playTime,
   );
   plotData(
     leftWearables,
-    'leftPressureSensor',
+    refs.leftPressureSensor.current,
     'Pressure Sensor',
     [':32'],
     playTime,
@@ -380,7 +380,7 @@ function generateLayout(title: string) {
 
 function plotData(
   wearable: any,
-  divId: HTMLElement | string | null,
+  divId: HTMLElement | null,
   title: string,
   columns: (number | string)[],
   playTime: number,
@@ -496,7 +496,7 @@ async function descargarDatosVisibles(divId: string, wearable: any) {
 
 function plotHeatmap(
   wearableData: any,
-  divId: HTMLElement | string | null,
+  divId: HTMLElement | null,
   title: string,
   columns: (number | string)[],
   playTime: number,
