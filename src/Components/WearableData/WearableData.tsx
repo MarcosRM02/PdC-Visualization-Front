@@ -193,7 +193,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
             <div key={index} className="wearable-item">
               <h4>Left Wearable - {wearable.wearablesId} </h4>
               <div ref={refs.leftHeatmap} id="leftHeatmap">
-                HOLA CAPULLO
+                <h1>Hola capullo</h1>
               </div>
               <div ref={refs.leftPressureSensor} id="leftPressureSensor"></div>
               <div className="flex justify-end">
