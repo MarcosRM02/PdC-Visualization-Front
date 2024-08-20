@@ -44,7 +44,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
   };
   useEffect(() => {
     console.log(refs.leftPressureSensor.current);
-    console.log('leftWearables', refs.leftHeatmap.current);
+    console.log('leftWearables', refs.leftPressureSensor.current);
     plotWearablesData(leftWearables, rightWearables, refs, playTime);
 
     Object.values(refs).forEach((ref) => {
