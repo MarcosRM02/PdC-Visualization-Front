@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { WearableDataProps } from '../../Types/Interfaces';
 import { DataFrame, Series, concat, toCSV, toJSON } from 'danfojs';
@@ -44,7 +44,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
       }
     }
   };
-  useEffect(() => {
+  useLayoutEffect(() => {
     console.log(refs.leftPressureSensor.current);
     plotWearablesData(leftWearables, rightWearables, refs, playTime);
 
@@ -188,7 +188,6 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
         </button>
       </div>
       <div className="mt-12 flex flex-row justify-between w-full">
-        <h1>Hola capullo</h1>
         <div id="Left-Side" className="flex-1 overflow-auto p-4">
           {leftWearables.map((wearable, index) => (
             <div key={index} className="wearable-item">
