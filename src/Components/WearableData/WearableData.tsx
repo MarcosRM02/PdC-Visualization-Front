@@ -7,16 +7,17 @@ import Plotly from 'plotly.js-dist-min';
 import Plot from 'react-plotly.js';
 
 const WearablesData = ({ wearables = [] }: WearableDataProps) => {
-  const refs = {
-    leftPressureSensor: useRef(null),
-    leftAccelerometer: useRef(null),
-    leftGyroscope: useRef(null),
-    rightPressureSensor: useRef(null),
-    rightAccelerometer: useRef(null),
-    rightGyroscope: useRef(null),
-    leftHeatmap: useRef(null),
-    rightHeatmap: useRef(null),
-  };
+  // const refs = {
+  //   leftPressureSensor: useRef(null),
+  //   leftAccelerometer: useRef(null),
+  //   leftGyroscope: useRef(null),
+  //   rightPressureSensor: useRef(null),
+  //   rightAccelerometer: useRef(null),
+  //   rightGyroscope: useRef(null),
+  //   leftHeatmap: useRef(null),
+  //   rightHeatmap: useRef(null),
+  // };
+  const refs = useRef<(HTMLDivElement | null)[]>([]);
 
   // Extraer el tipo de las url, y asi ya lo tengo todo preparado para pasarselo a la funcion de plotWearablesData, pq de la nueva manera, no va como antes.
   const leftWearables = wearables.filter(
@@ -192,9 +193,19 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
           {leftWearables.map((wearable, index) => (
             <div key={index} className="wearable-item">
               <h4>Left Wearable - {wearable.wearablesId} </h4>
-              <div ref={refs.leftHeatmap} id="leftHeatmap"></div>
-              <div ref={refs.leftPressureSensor} id="leftPressureSensor"></div>
-              <div className="flex justify-end">
+              <div
+                ref={(el) => {
+                  refs.current[0] = el;
+                }}
+                id="leftHeatmap"
+              ></div>
+              <div
+                ref={(el) => {
+                  refs.current[1] = el;
+                }}
+                id="leftPressureSensor"
+              ></div>
+              {/* <div className="flex justify-end">
                 <button
                   onClick={() =>
                     descargarDatosVisibles('leftPressureSensor', leftWearables)
@@ -225,12 +236,12 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
                 >
                   Download CSV
                 </button>
-              </div>
+              </div> */}
             </div>
           ))}
         </div>
 
-        <div id="right-side" className="flex-1 overflow-auto p-4">
+        {/* <div id="right-side" className="flex-1 overflow-auto p-4">
           {rightWearables.map((wearable, index) => (
             <div key={index} className="wearable-item">
               <h4>Right Wearable - {wearable.wearablesId}</h4>
@@ -276,7 +287,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
               </div>
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
     </div>
   );
@@ -295,63 +306,63 @@ function plotWearablesData(
 function plotLeftWearable(leftWearables: any, refs: any, playTime: any) {
   plotHeatmap(
     leftWearables,
-    refs.leftHeatmap.current,
+    refs.current[0],
     'Left Pressure Sensor Heatmap',
     [':37'], // Asumiendo que estos son los datos relevantes para el mapa de calor
     playTime,
   );
   plotData(
     leftWearables,
-    refs.leftPressureSensor.current,
+    refs.current[1],
     'Pressure Sensor',
     [':32'],
     playTime,
   );
-  plotData(
-    leftWearables,
-    refs.leftAccelerometer.current,
-    'Accelerometer',
-    [32, 33, 34],
-    playTime,
-  );
-  plotData(
-    leftWearables,
-    refs.leftGyroscope.current,
-    'Gyroscope',
-    [35, 36, 37],
-    playTime,
-  );
+  // plotData(
+  //   leftWearables,
+  //   refs.leftAccelerometer.current,
+  //   'Accelerometer',
+  //   [32, 33, 34],
+  //   playTime,
+  // );
+  // plotData(
+  //   leftWearables,
+  //   refs.leftGyroscope.current,
+  //   'Gyroscope',
+  //   [35, 36, 37],
+  //   playTime,
+  // );
 }
 
 function plotrightWearable(rightWearables: any, refs: any, playTime: any) {
-  plotHeatmap(
-    rightWearables,
-    refs.rightHeatmap.current,
-    'Right Pressure Sensor Heatmap',
-    [':37'], // Asumiendo que estos son los datos relevantes para el mapa de calor
-    playTime,
-  );
-  plotData(
-    rightWearables,
-    refs.rightPressureSensor.current,
-    'Pressure Sensor',
-    [':32'],
-    playTime,
-  );
-  plotData(
-    rightWearables,
-    refs.rightAccelerometer.current,
-    'Accelerometer',
-    [32, 33, 34],
-    playTime,
-  );
-  plotData(
-    rightWearables,
-    refs.rightGyroscope.current,
-    'Gyroscope',
-    [35, 36, 37],
-    playTime,
-  );
+  // plotHeatmap(
+  //   rightWearables,
+  //   refs.rightHeatmap.current,
+  //   'Right Pressure Sensor Heatmap',
+  //   [':37'], // Asumiendo que estos son los datos relevantes para el mapa de calor
+  //   playTime,
+  // );
+  // plotData(
+  //   rightWearables,
+  //   refs.rightPressureSensor.current,
+  //   'Pressure Sensor',
+  //   [':32'],
+  //   playTime,
+  // );
+  // plotData(
+  //   rightWearables,
+  //   refs.rightAccelerometer.current,
+  //   'Accelerometer',
+  //   [32, 33, 34],
+  //   playTime,
+  // );
+  // plotData(
+  //   rightWearables,
+  //   refs.rightGyroscope.current,
+  //   'Gyroscope',
+  //   [35, 36, 37],
+  //   playTime,
+  // );
 }
 
 function generateLayout(title: string) {
