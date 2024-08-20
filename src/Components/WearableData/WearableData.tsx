@@ -282,6 +282,7 @@ function plotWearablesData(
 }
 
 function plotLeftWearable(leftWearables: any, refs: any, playTime: any) {
+  console.log('leftWearables', refs.leftHeatmap.current);
   plotHeatmap(
     leftWearables,
     refs.leftHeatmap.current,
