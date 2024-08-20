@@ -57,7 +57,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
         );
       }
     });
-  }, [wearables, ...Object.values(refs)]);
+  }, [wearables, refs]);
 
   interface DataPoint {
     time: number;
