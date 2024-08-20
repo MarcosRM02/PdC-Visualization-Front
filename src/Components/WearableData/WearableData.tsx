@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { WearableDataProps } from '../../Types/Interfaces';
 import { DataFrame, Series, concat, toCSV, toJSON } from 'danfojs';
@@ -189,45 +189,53 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
       </div>
       <div className="mt-12 flex flex-row justify-between w-full">
         <div id="Left-Side" className="flex-1 overflow-auto p-4">
-          {leftWearables.map((wearable, index) => (
-            <div key={index} className="wearable-item">
-              <h4>Left Wearable - {wearable.wearablesId} </h4>
-              <div ref={refs.leftHeatmap} id="leftHeatmap"></div>
-              <div ref={refs.leftPressureSensor} id="leftPressureSensor"></div>
-              <div className="flex justify-end">
-                <button
-                  onClick={() =>
-                    descargarDatosVisibles('leftPressureSensor', leftWearables)
-                  }
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
-                >
-                  Download CSV
-                </button>
-              </div>
-              <div ref={refs.leftAccelerometer} id="leftAccelerometer"></div>
-              <div className="flex justify-end">
-                <button
-                  onClick={() =>
-                    descargarDatosVisibles('leftAccelerometer', leftWearables)
-                  }
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
-                >
-                  Download CSV
-                </button>
-              </div>
-              <div ref={refs.leftGyroscope} id="leftGyroscope"></div>
-              <div className="flex justify-end">
-                <button
-                  onClick={() =>
-                    descargarDatosVisibles('leftGyroscope', leftWearables)
-                  }
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
-                >
-                  Download CSV
-                </button>
-              </div>
-            </div>
-          ))}
+          <>
+            {leftWearables.map((wearable, index) => (
+              <Fragment key={index}>
+                <h4>Left Wearable - {wearable.wearablesId} </h4>
+                <div ref={refs.leftHeatmap} id="leftHeatmap"></div>
+                <div
+                  ref={refs.leftPressureSensor}
+                  id="leftPressureSensor"
+                ></div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={() =>
+                      descargarDatosVisibles(
+                        'leftPressureSensor',
+                        leftWearables,
+                      )
+                    }
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
+                  >
+                    Download CSV
+                  </button>
+                </div>
+                <div ref={refs.leftAccelerometer} id="leftAccelerometer"></div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={() =>
+                      descargarDatosVisibles('leftAccelerometer', leftWearables)
+                    }
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
+                  >
+                    Download CSV
+                  </button>
+                </div>
+                <div ref={refs.leftGyroscope} id="leftGyroscope"></div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={() =>
+                      descargarDatosVisibles('leftGyroscope', leftWearables)
+                    }
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
+                  >
+                    Download CSV
+                  </button>
+                </div>
+              </Fragment>
+            ))}
+          </>
         </div>
 
         <div id="right-side" className="flex-1 overflow-auto p-4">
