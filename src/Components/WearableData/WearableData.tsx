@@ -44,6 +44,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
   };
   useEffect(() => {
     console.log(refs.leftPressureSensor.current);
+    console.log('leftWearables', refs.leftHeatmap.current);
     plotWearablesData(leftWearables, rightWearables, refs, playTime);
 
     Object.values(refs).forEach((ref) => {
@@ -106,9 +107,19 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
       }
     });
   };
+  useEffect(() => {
+    plotData(
+      leftWearables,
+      refs.leftPressureSensor.current,
+      'Pressure Sensor',
+      [':32'],
+      playTime,
+    );
+  });
 
   return (
     <div className="relative flex flex-col items-center">
+      <div ref={refs.leftPressureSensor}></div>
       <div className="absolute z-10 w-full h-auto">
         <ReactPlayer
           ref={playerRef}
@@ -370,7 +381,7 @@ function generateLayout(title: string) {
 
 function plotData(
   wearable: any,
-  divId: HTMLElement,
+  divId: HTMLElement | null,
   title: string,
   columns: (number | string)[],
   playTime: number,
