@@ -45,9 +45,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
     }
   };
   useEffect(() => {
-    Object.entries(refs).forEach(([key, ref]) => {
-      console.log(`${key}:`, ref.current); // Imprime el nombre del ref y el elemento DOM asociado si está cargado
-    });
+    console.log(refs.leftPressureSensor.current);
     plotWearablesData(leftWearables, rightWearables, refs, playTime);
 
     Object.values(refs).forEach((ref) => {
@@ -57,7 +55,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
         );
       }
     });
-  }, [wearables, refs]);
+  }, [wearables, ...Object.values(refs)]);
 
   interface DataPoint {
     time: number;
