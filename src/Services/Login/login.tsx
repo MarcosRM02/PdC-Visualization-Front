@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [loginAttempted, setLoginAttempted] = useState<boolean>(false);
   const [welcomeMessage, setWelcomeMessage] = useState<string>('');
   const navigate = useNavigate();
 
