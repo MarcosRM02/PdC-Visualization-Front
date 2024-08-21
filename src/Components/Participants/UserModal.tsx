@@ -1,10 +1,7 @@
 import { AiOutlineClose, AiOutlineEdit } from 'react-icons/ai';
 import { PiBookOpenTextLight } from 'react-icons/pi';
 import { BiUserCircle } from 'react-icons/bi';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
-import { MdOutlineDelete } from 'react-icons/md';
+import { useNavigate,  } from 'react-router-dom';
 
 // Tenggo que pasarle el id, y que haga la petcion de los datos personales (GET)
 const UserModal = ({ user, onClose }: { user: any; onClose: any }) => {
@@ -16,7 +13,7 @@ const UserModal = ({ user, onClose }: { user: any; onClose: any }) => {
   }
 
   // LOS HAGO, PQ NO PUEDE HABER NESTED LINKS, DA ERRORES EN EL DOM
-  const handleEditClick = (event) => {
+  const handleEditClick = (event: any) => {
     event.stopPropagation();
     navigate(`/personalData/edit/${user.id}`);
   };

@@ -1,10 +1,8 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { WearableDataProps } from '../../Types/Interfaces';
-import { DataFrame, Series, concat, toCSV, toJSON } from 'danfojs';
-
+import { DataFrame, Series, concat, toCSV } from 'danfojs';
 import Plotly from 'plotly.js-dist-min';
-import Plot from 'react-plotly.js';
 
 const WearablesData = ({ wearables = [] }: WearableDataProps) => {
   const refs = {
@@ -33,7 +31,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
     // updateAllGraphs(state.playedSeconds);
   };
   // Función para manejar clics en los puntos del gráfico
-  const handlePointClick = (data) => {
+  const handlePointClick = (data: any) => {
     if (data.points && data.points.length > 0) {
       const pointTime = data.points[0].x;
       setPlayTime(pointTime); // Actualiza el tiempo de reproducción en el estado
@@ -49,17 +47,12 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
 
     Object.values(refs).forEach((ref) => {
       if (ref.current) {
-        ref.current.on('plotly_relayout', (eventData) =>
+        (ref.current as any).on('plotly_relayout', (eventData: any) =>
           handleRelayout(eventData, ref.current, refs),
         );
       }
     });
   }, [wearables, ...Object.values(refs)]);
-
-  interface DataPoint {
-    time: number;
-    value: number;
-  }
 
   // const updateAllGraphs = (currentTime: number) => {
   //   Object.values(refs).forEach((ref) => {
@@ -73,7 +66,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
   useEffect(() => {
     Object.values(refs).forEach((ref) => {
       if (ref.current) {
-        ref.current.on('plotly_click', handlePointClick);
+        (ref.current as any).on('plotly_click', handlePointClick);
       }
     });
   }, []);
@@ -82,10 +75,11 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
     updateCurrentTimeLine(playTime);
   }, [playTime]);
 
-  const updateCurrentTimeLine = (currentTime) => {
+  const updateCurrentTimeLine = (currentTime: any) => {
     Object.values(refs).forEach((ref) => {
       if (ref.current) {
         Plotly.relayout(ref.current, {
+          // @ts-ignore
           'shapes[0].x0': currentTime,
           'shapes[0].x1': currentTime,
         });
@@ -406,10 +400,12 @@ function plotData(
 
   const df = concat({ dfList: frames, axis: 1 });
 
+  // @ts-ignore
   let datos = df.iloc({ rows: [':'], columns: columns });
 
   const traces = datos.columns.map((column: string) => ({
     x: datos.index.values,
+    // @ts-ignore
     y: datos[column].values,
     type: 'scatter',
     mode: 'lines',
@@ -417,6 +413,7 @@ function plotData(
   }));
 
   const layout = generateLayout(title);
+  // @ts-ignore
   layout.shapes = [
     {
       type: 'line',
@@ -433,7 +430,7 @@ function plotData(
     },
   ];
   console.log('traces', traces);
-
+  // @ts-ignore
   Plotly.newPlot(divId, traces, layout);
 }
 
@@ -455,8 +452,10 @@ function handleRelayout(eventData: any, triggeredBy: any, refs: any) {
   // Actualiza todos los gráficos excepto el que inició el evento
   graphRefs.forEach((ref) => {
     if (ref !== triggeredBy) {
+      // @ts-ignore
       if (ref.current) {
         try {
+          // @ts-ignore
           Plotly.relayout(ref.current, {
             'xaxis.range': [startIndex, endIndex],
           });
@@ -507,8 +506,10 @@ async function descargarDatosVisibles(divId: string, wearable: any) {
 function plotHeatmap(
   wearableData: any,
   divId: HTMLElement | null,
+  // @ts-ignore
   title: string,
   columns: (number | string)[],
+  // @ts-ignore
   playTime: number,
 ) {
   if (!divId) {
@@ -522,9 +523,10 @@ function plotHeatmap(
   );
 
   const df = concat({ dfList: frames, axis: 1 });
-
+  // @ts-ignore
   let datos = df.iloc({ rows: [':'], columns: columns });
 
+  // @ts-ignore
   let zData;
   if (datos instanceof DataFrame) {
     // Intenta convertir DataFrame directamente a una matriz
@@ -554,6 +556,7 @@ function plotHeatmap(
   };
 
   // Usar Plotly.newPlot para renderizar el mapa de calor en el div especificado
+  // @ts-ignore
   Plotly.newPlot(divId, data, layout);
 }
 export default WearablesData;

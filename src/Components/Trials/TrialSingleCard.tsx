@@ -1,9 +1,7 @@
-import Long from 'long'; // Ensure Long is imported
 import { AiOutlineEdit } from 'react-icons/ai';
 import { FaIdCard } from 'react-icons/fa';
-import { FaCalendarDay } from 'react-icons/fa6';
 import { MdOutlineDelete } from 'react-icons/md';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { getIDFromAPI } from '../../Services/Read/CreateWearablesURL';
 import { useEffect, useState } from 'react';
 
@@ -59,12 +57,12 @@ const TrialSingleCard = ({ SWDatas }: { SWDatas: any }) => {
   }, [participantId, swId]);
 
   const navigate = useNavigate();
-  const handleEditClick = (event) => {
+  const handleEditClick = (event: any) => {
     event.stopPropagation();
     navigate(`/trials/edit/${SWDatas.id}`);
   };
 
-  const handleDeleteClick = (event) => {
+  const handleDeleteClick = (event: any) => {
     event.stopPropagation();
     navigate(`/trials/delete/${SWDatas.id}`);
   };
@@ -181,10 +179,3 @@ const TrialSingleCard = ({ SWDatas }: { SWDatas: any }) => {
 };
 
 export default TrialSingleCard;
-function setError(arg0: string) {
-  throw new Error('Function not implemented.');
-}
-
-function setData(arg0: { experimentId: any; wearablesIds: any }) {
-  throw new Error('Function not implemented.');
-}

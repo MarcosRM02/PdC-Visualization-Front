@@ -1,9 +1,7 @@
-import Long from 'long'; // Ensure Long is imported
 import { AiOutlineEdit } from 'react-icons/ai';
 import { FaIdCard } from 'react-icons/fa';
-import { FaCalendarDay } from 'react-icons/fa6';
 import { MdOutlineDelete } from 'react-icons/md';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
   // const timestampLong = new Long(
@@ -32,12 +30,12 @@ const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
   //   " " +
   //   date.toLocaleTimeString("en-US");
   const navigate = useNavigate();
-  const handleEditClick = (event) => {
+  const handleEditClick = (event: any) => {
     event.stopPropagation();
     navigate(`/experiments/edit/${SWDatas.id}`);
   };
 
-  const handleDeleteClick = (event) => {
+  const handleDeleteClick = (event: any) => {
     event.stopPropagation();
     navigate(`/experiments/delete/${SWDatas.id}`);
   };
