@@ -1,10 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { WearableDataProps } from '../../Types/Interfaces';
-import { DataFrame, Series, concat, toCSV, toJSON } from 'danfojs';
-
+import { DataFrame, Series, concat, toCSV } from 'danfojs';
 import Plotly from 'plotly.js-dist-min';
-import Plot from 'react-plotly.js';
 
 const WearablesData = ({ wearables = [] }: WearableDataProps) => {
   const refs = {
@@ -26,8 +24,6 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
   const rightWearables = wearables.filter(
     (wearable) => wearable.wearableType === 'R',
   );
-
-  const [data, setData] = useState<DataPoint[]>([]);
   const [playTime, setPlayTime] = useState<number>(0);
   const playerRef = useRef<ReactPlayer | null>(null);
   const handleProgress = (state: { playedSeconds: number }) => {
@@ -35,7 +31,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
     // updateAllGraphs(state.playedSeconds);
   };
   // Función para manejar clics en los puntos del gráfico
-  const handlePointClick = (data) => {
+  const handlePointClick = (data: any) => {
     if (data.points && data.points.length > 0) {
       const pointTime = data.points[0].x;
       setPlayTime(pointTime); // Actualiza el tiempo de reproducción en el estado
@@ -45,30 +41,18 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
     }
   };
   useEffect(() => {
+    console.log(refs.leftPressureSensor.current);
+    console.log('leftWearables', refs.leftPressureSensor.current);
     plotWearablesData(leftWearables, rightWearables, refs, playTime);
 
     Object.values(refs).forEach((ref) => {
       if (ref.current) {
-        ref.current.on('plotly_relayout', (eventData) =>
+        (ref.current as any).on('plotly_relayout', (eventData: any) =>
           handleRelayout(eventData, ref.current, refs),
         );
       }
     });
   }, [wearables, ...Object.values(refs)]);
-
-  interface DataPoint {
-    time: number;
-    value: number;
-  }
-
-  // Simula datos; en la práctica real, estos datos pueden venir de una API o ser calculados
-  useEffect(() => {
-    const simulatedData = Array.from({ length: 600 }, (_, i) => ({
-      time: i,
-      value: Math.random() * 100,
-    }));
-    setData(simulatedData);
-  }, []);
 
   // const updateAllGraphs = (currentTime: number) => {
   //   Object.values(refs).forEach((ref) => {
@@ -82,7 +66,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
   useEffect(() => {
     Object.values(refs).forEach((ref) => {
       if (ref.current) {
-        ref.current.on('plotly_click', handlePointClick);
+        (ref.current as any).on('plotly_click', handlePointClick);
       }
     });
   }, []);
@@ -91,10 +75,11 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
     updateCurrentTimeLine(playTime);
   }, [playTime]);
 
-  const updateCurrentTimeLine = (currentTime) => {
+  const updateCurrentTimeLine = (currentTime: any) => {
     Object.values(refs).forEach((ref) => {
       if (ref.current) {
         Plotly.relayout(ref.current, {
+          // @ts-ignore
           'shapes[0].x0': currentTime,
           'shapes[0].x1': currentTime,
         });
@@ -116,13 +101,23 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
       }
     });
   };
+  useEffect(() => {
+    plotData(
+      leftWearables,
+      refs.leftPressureSensor.current,
+      'Pressure Sensor',
+      [':32'],
+      playTime,
+    );
+  });
 
   return (
     <div className="relative flex flex-col items-center">
+      <div ref={refs.leftPressureSensor}></div>
       <div className="absolute z-10 w-full h-auto">
         <ReactPlayer
           ref={playerRef}
-          url="https://youtu.be/hMS8RtYVouc?t=31"
+          // url="https://youtu.be/hMS8RtYVouc?t=31"
           playing
           onProgress={handleProgress}
           width="auto"
@@ -188,45 +183,53 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
       </div>
       <div className="mt-12 flex flex-row justify-between w-full">
         <div id="Left-Side" className="flex-1 overflow-auto p-4">
-          {leftWearables.map((wearable, index) => (
-            <div key={index} className="wearable-item">
-              <h4>Left Wearable - {wearable.wearablesId} </h4>
-              <div ref={refs.leftHeatmap} id="leftHeatmap"></div>
-              <div ref={refs.leftPressureSensor} id="leftPressureSensor"></div>
-              <div className="flex justify-end">
-                <button
-                  onClick={() =>
-                    descargarDatosVisibles('leftPressureSensor', leftWearables)
-                  }
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
-                >
-                  Download CSV
-                </button>
-              </div>
-              <div ref={refs.leftAccelerometer} id="leftAccelerometer"></div>
-              <div className="flex justify-end">
-                <button
-                  onClick={() =>
-                    descargarDatosVisibles('leftAccelerometer', leftWearables)
-                  }
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
-                >
-                  Download CSV
-                </button>
-              </div>
-              <div ref={refs.leftGyroscope} id="leftGyroscope"></div>
-              <div className="flex justify-end">
-                <button
-                  onClick={() =>
-                    descargarDatosVisibles('leftGyroscope', leftWearables)
-                  }
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
-                >
-                  Download CSV
-                </button>
-              </div>
-            </div>
-          ))}
+          <>
+            {leftWearables.map((wearable, index) => (
+              <Fragment key={index}>
+                <h4>Left Wearable - {wearable.wearablesId} </h4>
+                <div ref={refs.leftHeatmap} id="leftHeatmap"></div>
+                <div
+                  ref={refs.leftPressureSensor}
+                  id="leftPressureSensor"
+                ></div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={() =>
+                      descargarDatosVisibles(
+                        'leftPressureSensor',
+                        leftWearables,
+                      )
+                    }
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
+                  >
+                    Download CSV
+                  </button>
+                </div>
+                <div ref={refs.leftAccelerometer} id="leftAccelerometer"></div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={() =>
+                      descargarDatosVisibles('leftAccelerometer', leftWearables)
+                    }
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
+                  >
+                    Download CSV
+                  </button>
+                </div>
+                <div ref={refs.leftGyroscope} id="leftGyroscope"></div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={() =>
+                      descargarDatosVisibles('leftGyroscope', leftWearables)
+                    }
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
+                  >
+                    Download CSV
+                  </button>
+                </div>
+              </Fragment>
+            ))}
+          </>
         </div>
 
         <div id="right-side" className="flex-1 overflow-auto p-4">
@@ -292,6 +295,7 @@ function plotWearablesData(
 }
 
 function plotLeftWearable(leftWearables: any, refs: any, playTime: any) {
+  console.log('leftWearables', refs.leftHeatmap.current);
   plotHeatmap(
     leftWearables,
     refs.leftHeatmap.current,
@@ -384,6 +388,7 @@ function plotData(
   columns: (number | string)[],
   playTime: number,
 ) {
+  console.log('divId', divId);
   if (!divId) {
     console.error('Invalid div element');
     return;
@@ -395,10 +400,12 @@ function plotData(
 
   const df = concat({ dfList: frames, axis: 1 });
 
+  // @ts-ignore
   let datos = df.iloc({ rows: [':'], columns: columns });
 
   const traces = datos.columns.map((column: string) => ({
     x: datos.index.values,
+    // @ts-ignore
     y: datos[column].values,
     type: 'scatter',
     mode: 'lines',
@@ -406,6 +413,7 @@ function plotData(
   }));
 
   const layout = generateLayout(title);
+  // @ts-ignore
   layout.shapes = [
     {
       type: 'line',
@@ -421,7 +429,8 @@ function plotData(
       },
     },
   ];
-
+  console.log('traces', traces);
+  // @ts-ignore
   Plotly.newPlot(divId, traces, layout);
 }
 
@@ -443,8 +452,10 @@ function handleRelayout(eventData: any, triggeredBy: any, refs: any) {
   // Actualiza todos los gráficos excepto el que inició el evento
   graphRefs.forEach((ref) => {
     if (ref !== triggeredBy) {
+      // @ts-ignore
       if (ref.current) {
         try {
+          // @ts-ignore
           Plotly.relayout(ref.current, {
             'xaxis.range': [startIndex, endIndex],
           });
@@ -495,8 +506,10 @@ async function descargarDatosVisibles(divId: string, wearable: any) {
 function plotHeatmap(
   wearableData: any,
   divId: HTMLElement | null,
+  // @ts-ignore
   title: string,
   columns: (number | string)[],
+  // @ts-ignore
   playTime: number,
 ) {
   if (!divId) {
@@ -510,10 +523,10 @@ function plotHeatmap(
   );
 
   const df = concat({ dfList: frames, axis: 1 });
-
+  // @ts-ignore
   let datos = df.iloc({ rows: [':'], columns: columns });
 
-
+  // @ts-ignore
   let zData;
   if (datos instanceof DataFrame) {
     // Intenta convertir DataFrame directamente a una matriz
@@ -543,6 +556,7 @@ function plotHeatmap(
   };
 
   // Usar Plotly.newPlot para renderizar el mapa de calor en el div especificado
+  // @ts-ignore
   Plotly.newPlot(divId, data, layout);
 }
 export default WearablesData;

@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
-import BackButton from '../../Components/BackButton';
 import Spinner from '../../Components/Spinner';
 import SWDataCard from '../../Components/Experiments/ExperimentCard';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import Long from 'long';
 import { MdOutlineAddBox } from 'react-icons/md';
 
 const ShowSWData = () => {

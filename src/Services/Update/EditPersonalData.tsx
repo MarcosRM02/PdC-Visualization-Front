@@ -6,7 +6,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
 const EditPersonalData = () => {
-  const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();

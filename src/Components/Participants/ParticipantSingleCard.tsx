@@ -1,9 +1,7 @@
-import Long from 'long'; // Ensure Long is imported
 import { AiOutlineEdit } from 'react-icons/ai';
 import { FaIdCard } from 'react-icons/fa';
-import { FaCalendarDay } from 'react-icons/fa6';
 import { MdOutlineDelete } from 'react-icons/md';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import UserModal from './UserModal';
 import { BiShow } from 'react-icons/bi';
 import { useEffect, useState } from 'react';
@@ -13,26 +11,23 @@ const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
   const navigate = useNavigate();
 
   const [showModal, setShowModal] = useState(false);
-  useEffect(() => {
-  }, [showModal]);
+  useEffect(() => {}, [showModal]);
 
-  const handleEditClick = (event) => {
+  const handleEditClick = (event: any) => {
     event.stopPropagation();
     navigate(`/participants/edit/${SWDatas.id}`);
   };
 
-  const handleDeleteClick = (event) => {
+  const handleDeleteClick = (event: any) => {
     event.stopPropagation();
     navigate(`/participants/delete/${SWDatas.id}`);
   };
 
-
   const [modalData, setModalData] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [, setLoading] = useState(false);
+  const [, setError] = useState('');
   useEffect(() => {
     if (showModal && SWDatas.personalData.id) {
-
       setLoading(true);
       axios
         .get(`http://localhost:3000/personalData/${SWDatas.personalData.id}`)
@@ -47,7 +42,6 @@ const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
         });
     }
   }, [showModal, SWDatas.personalData.id]);
-
 
   return (
     <div
