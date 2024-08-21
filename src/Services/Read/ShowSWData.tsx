@@ -43,8 +43,11 @@ const ShowSWData = () => {
   const handleFilter = () => {
     const filtered = sWDatas.filter((data) => {
       const timestampLong = new Long(
+        //@ts-ignore
         data.timestamp.low,
+        //@ts-ignore
         data.timestamp.high,
+        //@ts-ignore
         data.timestamp.unsigned,
       );
       const timestampNumber = timestampLong.toNumber();
@@ -75,6 +78,7 @@ const ShowSWData = () => {
           <div className="flex justify-center my-4">
             <DatePicker
               selected={startDate}
+              //@ts-ignore
               onChange={(date) => setStartDate(date)}
               selectsStart
               startDate={startDate}
@@ -88,6 +92,7 @@ const ShowSWData = () => {
             />
             <DatePicker
               selected={endDate}
+              //@ts-ignore
               onChange={(date) => setEndDate(date)}
               selectsEnd
               startDate={startDate}

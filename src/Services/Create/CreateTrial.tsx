@@ -95,7 +95,9 @@ const CreateTrial = () => {
           >
             <option value="">Select SW Id</option>
             {swIds.map((sw) => (
+              // @ts-ignore
               <option key={sw.id} value={sw.id}>
+                {/* @ts-ignore */}
                 {sw.id}{' '}
                 {/* O el campo que quieras mostrar como texto en el dropdown */}
               </option>

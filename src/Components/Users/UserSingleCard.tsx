@@ -1,8 +1,6 @@
-import { Link, useNavigate } from 'react-router-dom';
-import { BiShow, BiUserCircle } from 'react-icons/bi';
+import { useNavigate } from 'react-router-dom';
+import { BiUserCircle } from 'react-icons/bi';
 import { MdEmail, MdOutlineDelete } from 'react-icons/md';
-import { useState } from 'react';
-
 import { FaIdCard } from 'react-icons/fa';
 import { AiOutlineEdit } from 'react-icons/ai';
 
@@ -20,12 +18,12 @@ const UserSingleCard = ({ professional }: { professional: any }) => {
   }
 
   // LOS HAGO, PQ NO PUEDE HABER NESTED LINKS, DA ERRORES EN EL DOM
-  const handleEditClick = (event) => {
+  const handleEditClick = (event: any) => {
     event.stopPropagation();
     navigate(`/professionals/edit/${professional.id}`);
   };
 
-  const handleDeleteClick = (event) => {
+  const handleDeleteClick = (event: any) => {
     event.stopPropagation();
     navigate(`/professionals/delete/${professional.id}`);
   };
