@@ -7,10 +7,10 @@ import { useNavigate,  } from 'react-router-dom';
 const UserModal = ({ user, onClose }: { user: any; onClose: any }) => {
   const navigate = useNavigate();
 
-  if (!user) {
-    // retun null, // asi sale vacio
-    return <div>No personal data available.</div>;
-  }
+  // if (!user) {
+  //   // retun null, // asi sale vacio
+  //   return <div>No personal data available.</div>;
+  // }
 
   // LOS HAGO, PQ NO PUEDE HABER NESTED LINKS, DA ERRORES EN EL DOM
   const handleEditClick = (event: any) => {

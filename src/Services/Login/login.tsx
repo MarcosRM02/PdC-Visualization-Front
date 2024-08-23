@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -7,13 +7,21 @@ const Login = () => {
   const [welcomeMessage, setWelcomeMessage] = useState<string>('');
   const navigate = useNavigate();
 
+  // Efecto para verificar la existencia de un token y validar su vigencia
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    const expiresIn = localStorage.getItem('expiresIn');
+    if (token && expiresIn && new Date().getTime() < parseInt(expiresIn)) {
+      // Queda lo de comprobar si es un token valido para el servidor. al cerrar sesion se debe borrar el token y redirigir al login.
+      navigate(`/experiments/by-token/token`, {
+        replace: true,
+      });
+    }
+  }, [navigate]);
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(process.env.REACT_APP_URL); // Debe mostrar la URL
-    console.log(`la url es: ${process.env.REACT_APP_URL}/authentication/login`); // Debe mostrar la URL completa
     const apiUrl = import.meta.env.VITE_API_URL;
-    console.log('url2: ', apiUrl); // Debe mostrar la URL
-    console.log(import.meta.env.VITE_API_URL); // Debe mostrar la URL
 
     try {
       const response = await fetch(`${apiUrl}/authentication/login`, {
@@ -23,21 +31,17 @@ const Login = () => {
         },
         body: JSON.stringify({ email, password }),
       });
-      console.log('Login response:', response);
       if (response.ok) {
         const data = await response.json();
-        sessionStorage.setItem('accessToken', data.accessToken); // Guardar el token en sessionStorage
-        sessionStorage.setItem('expiresIn', data.expiresIn); // Opcional, guardar la expiración
-        setWelcomeMessage('Welcome! Loading your user profile...');
-        setTimeout(() => {
-          setWelcomeMessage('');
-          navigate(`/experiments/by-professional/${data.id}`, {
-            replace: true,
-          });
-        }, 1000); // Comentar esto si no quiero que tarde
+        localStorage.setItem('accessToken', data.accessToken);
+        const expiration = new Date().getTime() + data.expiresIn * 1000;
+        localStorage.setItem('expiresIn', expiration.toString());
+        navigate(`/experiments/by-professional/${data.id}`, {
+          replace: true,
+        });
       } else {
         const errorData = await response.json();
-        setWelcomeMessage(errorData.message); // Usa el mensaje del servidor
+        setWelcomeMessage(errorData.message);
         setTimeout(() => {
           setWelcomeMessage('');
         }, 3000);
@@ -58,7 +62,6 @@ const Login = () => {
           Sign in to your account
         </h2>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <input type="hidden" name="remember" defaultValue="true" />
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
               <label htmlFor="email" className="sr-only">
@@ -93,7 +96,6 @@ const Login = () => {
               />
             </div>
           </div>
-
           {welcomeMessage && (
             <div className="rounded-md bg-green-50 p-4">
               <p className="text-sm font-medium text-green-800">
@@ -101,15 +103,12 @@ const Login = () => {
               </p>
             </div>
           )}
-
-          <div>
-            <button
-              type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Sign in
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Sign in
+          </button>
         </form>
       </div>
     </div>
