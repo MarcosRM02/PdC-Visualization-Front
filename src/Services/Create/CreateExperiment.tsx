@@ -90,7 +90,7 @@ const CreateBooks = () => {
             className="border-2 border-gray-500 px-4 py-2  w-full "
           />
         </div> */}
-        <div className="my-4">
+        {/* <div className="my-4">
           <label className="text-xl mr-4 text-gray-500">Notes (optional)</label>
           <input
             type="text"
@@ -98,7 +98,7 @@ const CreateBooks = () => {
             onChange={(e) => setNotes(e.target.value)}
             className="border-2 border-gray-500 px-4 py-2  w-full "
           />
-        </div>
+        </div> */}
 
         <button className="p-2 bg-sky-300 m-8" onClick={handleSaveBook}>
           Save

@@ -29,6 +29,8 @@ const App = () => {
         path="experiments/by-professional/:id"
         element={<ShowExperiments />}
       />
+      <Route path="experiments/by-token/token" element={<ShowExperiments />} />
+
       <Route path="/participants/create/:id" element={<CreateParticipant />} />
       <Route path="/participants/edit/:id" element={<EditParticipant />} />
       <Route path="/participants/delete/:id" element={<DeleteParticipant />} />
