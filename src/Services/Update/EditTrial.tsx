@@ -16,7 +16,7 @@ const EditTrial = () => {
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
-  const accessToken = sessionStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {

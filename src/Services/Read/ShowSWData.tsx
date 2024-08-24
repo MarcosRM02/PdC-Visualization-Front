@@ -14,7 +14,7 @@ const ShowSWData = () => {
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
 
-  const accessToken = sessionStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {

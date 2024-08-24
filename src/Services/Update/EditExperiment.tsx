@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
-const EditUser = () => {
+const EditExperiment = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -16,7 +16,7 @@ const EditUser = () => {
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
-  const accessToken = sessionStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -147,4 +147,4 @@ const EditUser = () => {
   );
 };
 
-export default EditUser;
+export default EditExperiment;

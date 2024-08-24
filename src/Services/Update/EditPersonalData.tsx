@@ -15,7 +15,7 @@ const EditPersonalData = () => {
   const [footLength, setfootLength] = useState('');
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
-  const accessToken = sessionStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -62,7 +62,7 @@ const EditPersonalData = () => {
       .put(`${apiUrl}/personalData/edit/${id}`, data, config)
       .then(() => {
         setLoading(false);
-        enqueueSnackbar('Participant Edited successfully', {
+        enqueueSnackbar('Personal Data Edited successfully', {
           variant: 'success',
         });
         navigate(-1);

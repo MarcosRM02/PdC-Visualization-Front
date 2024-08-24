@@ -11,11 +11,36 @@ const Login = () => {
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     const expiresIn = localStorage.getItem('expiresIn');
+
     if (token && expiresIn && new Date().getTime() < parseInt(expiresIn)) {
-      // Queda lo de comprobar si es un token valido para el servidor. al cerrar sesion se debe borrar el token y redirigir al login.
-      navigate(`/experiments/by-token/token`, {
-        replace: true,
-      });
+      const apiUrl = import.meta.env.VITE_API_URL;
+
+      // Verificar el token con el servidor
+      fetch(`${apiUrl}/experiments/by-token/token`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`, // Enviar el token en el encabezado
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          if (data) {
+            // Redirigir al usuario a la ruta deseada con el id del profesional
+            navigate(`/experiments/by-professional/${data}`, {
+              replace: true,
+            });
+          } else {
+            console.log('No se encontró el id del profesional');
+          }
+        })
+        .catch((error) => {
+          console.error('Error al verificar el token:', error);
+          // Opcional: manejar errores y redirigir al login si es necesario
+        });
+    } else {
+      console.log('No hay token o ha expirado');
     }
   }, [navigate]);
 

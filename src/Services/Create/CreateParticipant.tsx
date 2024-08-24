@@ -5,8 +5,7 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
-
-const CreateBooks = () => {
+const CreateParticipant = () => {
   const [height, setHeight] = useState('');
   const [weight, setweight] = useState('');
   const [footLength, setfootLength] = useState('');
@@ -18,7 +17,7 @@ const CreateBooks = () => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams();
-  const accessToken = sessionStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem('accessToken');
 
   console.log(accessToken);
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -153,4 +152,4 @@ const CreateBooks = () => {
   );
 };
 
-export default CreateBooks;
+export default CreateParticipant;

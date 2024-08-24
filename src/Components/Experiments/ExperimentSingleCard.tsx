@@ -3,11 +3,11 @@ import { FaIdCard } from 'react-icons/fa';
 import { MdOutlineDelete } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
-const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
+const ExperimentSingleCard = ({ experiments }: { experiments: any }) => {
   // const timestampLong = new Long(
-  //   SWDatas.timestamp.low,
-  //   SWDatas.timestamp.high,
-  //   SWDatas.timestamp.unsigned
+  //   experiments.timestamp.low,
+  //   experiments.timestamp.high,
+  //   experiments.timestamp.unsigned
   // );
 
   // console.log("timestampLong", timestampLong);
@@ -32,66 +32,66 @@ const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
   const navigate = useNavigate();
   const handleEditClick = (event: any) => {
     event.stopPropagation();
-    navigate(`/experiments/edit/${SWDatas.id}`);
+    navigate(`/experiments/edit/${experiments.id}`);
   };
 
   const handleDeleteClick = (event: any) => {
     event.stopPropagation();
-    navigate(`/experiments/delete/${SWDatas.id}`);
+    navigate(`/experiments/delete/${experiments.id}`);
   };
 
   return (
     <div
-      onClick={() => navigate(`/participants/by-experiment/${SWDatas.id}`)}
+      onClick={() => navigate(`/participants/by-experiment/${experiments.id}`)}
       className="border-2 border-gray-500 rounded-lg px-4 py-2 m-4 relative hover:shadow-xl no-underline cursor-pointer"
     >
-      <div key={SWDatas.id} className="my-2">
+      <div key={experiments.id} className="my-2">
         <span className="text-gray-600"></span>
         <div className="flex justify-start items-center gap-x-2">
           <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500"> ID: {SWDatas.id}</h4>
+          <h4 className="my-2 text-gray-500"> ID: {experiments.id}</h4>
         </div>
         <div className="flex justify-start items-center gap-x-2">
           <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500"> name: {SWDatas.name}</h4>
+          <h4 className="my-2 text-gray-500"> name: {experiments.name}</h4>
         </div>
         {/* <div className="flex justify-start items-center gap-x-2">
               <FaIdCard className="text-red-300 text-2xl" />
               <h4 className="my-2 text-gray-500">
                 {" "}
-                Professional Id: {SWDatas.professionalId.id}
+                Professional Id: {experiments.professionalId.id}
               </h4>
             </div>  uN PRO DEBE TENER VARTIOS DE ESTOS */}
         <div className="flex justify-start items-center gap-x-2">
           <FaIdCard className="text-red-300 text-2xl" />
           <h4 className="my-2 text-gray-500">
             {' '}
-            description: {SWDatas.description}
+            description: {experiments.description}
           </h4>
         </div>
         <div className="flex justify-start items-center gap-x-2">
           <FaIdCard className="text-red-300 text-2xl" />
           <h4 className="my-2 text-gray-500">
             {' '}
-            Start date: {SWDatas.startDate}
+            Start date: {experiments.startDate}
           </h4>
         </div>
         <div className="flex justify-start items-center gap-x-2">
           <FaIdCard className="text-red-300 text-2xl" />
           <h4 className="my-2 text-gray-500">
             {' '}
-            Finish Date: {SWDatas.finishDate}
+            Finish Date: {experiments.finishDate}
           </h4>
         </div>
         <div className="flex justify-start items-center gap-x-2">
           <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500"> Notes: {SWDatas.notes}</h4>
+          <h4 className="my-2 text-gray-500"> Notes: {experiments.notes}</h4>
         </div>
         <div className="flex justify-start items-center gap-x-2">
           <FaIdCard className="text-red-300 text-2xl" />
           <h4 className="my-2 text-gray-500">
             {' '}
-            Num of Participants: {SWDatas.numberOfParticipants}
+            Num of Participants: {experiments.numberOfParticipants}
           </h4>
         </div>
 
@@ -99,7 +99,7 @@ const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
           <FaIdCard className="text-red-300 text-2xl" />
           <h4 className="my-2 text-gray-500">
             {" "}
-            ID: {SWDatas.syncronized_wearables_id}
+            ID: {experiments.syncronized_wearables_id}
           </h4>
         </div>  No es necesario, pq ya esta en la pagina anterior, queda redundante.*/}
         {/* 
@@ -108,7 +108,7 @@ const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
             <h4 className="my-2 text-gray-500"> Date: {dateString}</h4>
           </div> */}
         {/* <div className="flex justify-start items-center gap-x-2 flex-wrap">
-            {SWDatas.wearableData.map((item: any, index: any) => (
+            {experiments.wearableData.map((item: any, index: any) => (
               <div key={index} className="flex items-center gap-x-2">
                 <FaIdCard className="text-red-300 text-2xl" />
                 <h4 className="my-2 text-gray-500">Wearable Id: {item}</h4>
@@ -146,4 +146,4 @@ const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
   );
 };
 
-export default SWDataSingleCard;
+export default ExperimentSingleCard;

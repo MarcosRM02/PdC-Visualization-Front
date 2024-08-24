@@ -3,16 +3,16 @@ import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
 import BackButton from '../../Components/BackButton';
 import Spinner from '../../Components/Spinner';
-import SWDataCard from '../../Components/Participants/ParticipantCard';
+import ParticipantCard from '../../Components/Participants/ParticipantCard';
 import 'react-datepicker/dist/react-datepicker.css';
 import { MdOutlineAddBox } from 'react-icons/md';
 
-const ShowSWData = () => {
+const ShowParticipant = () => {
   const [sWDatas, setSWDatas] = useState([]);
   const [filteredSWDatas, setFilteredSWDatas] = useState([]);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
-  const accessToken = sessionStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -51,7 +51,7 @@ const ShowSWData = () => {
       ) : sWDatas.length > 0 ? (
         <div>
           <div>
-            <SWDataCard participants={filteredSWDatas} />
+            <ParticipantCard participants={filteredSWDatas} />
           </div>
         </div>
       ) : (
@@ -65,4 +65,4 @@ const ShowSWData = () => {
   );
 };
 
-export default ShowSWData;
+export default ShowParticipant;

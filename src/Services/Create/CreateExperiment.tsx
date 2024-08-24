@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
-const CreateBooks = () => {
+const CreateExperiment = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState('');
@@ -14,7 +14,7 @@ const CreateBooks = () => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams();
-  const accessToken = sessionStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleSaveBook = () => {
@@ -108,4 +108,4 @@ const CreateBooks = () => {
   );
 };
 
-export default CreateBooks;
+export default CreateExperiment;

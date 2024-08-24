@@ -13,7 +13,7 @@ const SWDataSingleCard = ({
     !SynchronizedWearables.wearables ||
     !SynchronizedWearables.description
   ) {
-    return <div>No user data available.</div>; // Mostrar un mensaje o retornar null
+    return <div>No SW data available.</div>; // Mostrar un mensaje o retornar null
   }
   return (
     <Link
