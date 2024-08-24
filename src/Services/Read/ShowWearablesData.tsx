@@ -5,6 +5,7 @@ import BackButton from '../../Components/BackButton';
 import Spinner from '../../Components/Spinner';
 import { WearableData } from '../../Types/Interfaces';
 import WearablesData from '../../Components/WearableData/WearableData';
+import LogoutButton from '../../Components/LogoutButton';
 
 const ShowWearables = () => {
   const [wearables, setWearables] = useState<WearableData[]>([]);
@@ -46,6 +47,7 @@ const ShowWearables = () => {
   return (
     <div className="p-4">
       <BackButton />
+      <LogoutButton />
       {loading ? (
         <Spinner />
       ) : wearables.length > 0 ? (
