@@ -7,7 +7,7 @@ import axios from 'axios';
  * @returns {Promise<number>} El ID obtenido de la API.
  */
 const getIDFromAPI = async (participantId: any, swId: any) => {
-  const accessToken = sessionStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const config = {

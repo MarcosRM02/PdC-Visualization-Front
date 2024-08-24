@@ -1,7 +1,7 @@
-import SWDataSingleCard from "./SWSingleCard";
-import { SynchronizedWearablesCardProps } from "../../Types/Interfaces";
+import SWDataSingleCard from './SWSingleCard';
+import { SynchronizedWearablesCardProps } from '../../Types/Interfaces';
 
-const UserCard = ({
+const SWCard = ({
   SynchronizedWearables = [],
 }: SynchronizedWearablesCardProps) => {
   return (
@@ -13,4 +13,4 @@ const UserCard = ({
   );
 };
 
-export default UserCard;
+export default SWCard;

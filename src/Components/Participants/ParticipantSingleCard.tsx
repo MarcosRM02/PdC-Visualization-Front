@@ -7,7 +7,7 @@ import { BiShow } from 'react-icons/bi';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
+const ParticipantSingleCard = ({ participants }: { participants: any }) => {
   const navigate = useNavigate();
 
   const [showModal, setShowModal] = useState(false);
@@ -15,22 +15,22 @@ const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
 
   const handleEditClick = (event: any) => {
     event.stopPropagation();
-    navigate(`/participants/edit/${SWDatas.id}`);
+    navigate(`/participants/edit/${participants.id}`);
   };
 
   const handleDeleteClick = (event: any) => {
     event.stopPropagation();
-    navigate(`/participants/delete/${SWDatas.id}`);
+    navigate(`/participants/delete/${participants.id}`);
   };
 
   const [modalData, setModalData] = useState(null);
   const [, setLoading] = useState(false);
   const [, setError] = useState('');
   useEffect(() => {
-    if (showModal && SWDatas.personalData.id) {
+    if (showModal && participants.personalData.id) {
       setLoading(true);
       axios
-        .get(`http://localhost:3000/personalData/${SWDatas.personalData.id}`)
+        .get(`http://localhost:3000/personalData/${participants.personalData.id}`)
         .then((response) => {
           setModalData(response.data);
           setLoading(false);
@@ -41,28 +41,28 @@ const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
           setLoading(false);
         });
     }
-  }, [showModal, SWDatas.personalData.id]);
+  }, [showModal, participants.personalData.id]);
 
   return (
     <div
-      onClick={() => navigate(`/trials/by-participant/${SWDatas.id}`)}
+      onClick={() => navigate(`/trials/by-participant/${participants.id}`)}
       className="border-2 border-gray-500 rounded-lg px-4 py-2 m-4 relative hover:shadow-xl no-underline cursor-pointer"
     >
-      <div key={SWDatas.id} className="my-2">
+      <div key={participants.id} className="my-2">
         <span className="text-gray-600"></span>
         <div className="flex justify-start items-center gap-x-2">
           <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500"> ID: {SWDatas.id}</h4>
+          <h4 className="my-2 text-gray-500"> ID: {participants.id}</h4>
         </div>
         <div className="flex justify-start items-center gap-x-2">
           <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500"> code: {SWDatas.code}</h4>
+          <h4 className="my-2 text-gray-500"> code: {participants.code}</h4>
         </div>
       </div>
       <div className="flex justify-between items-center gap-x-2 mt-4 p-4">
         <div
           onClick={() =>
-            navigate(`/trials/by-participant/${SWDatas.personalData.id}`)
+            navigate(`/trials/by-participant/${participants.personalData.id}`)
           }
           className="border-2 border-gray-500 rounded-lg px-4 py-2 m-4 relative hover:shadow-xl no-underline cursor-pointer"
         >
@@ -98,4 +98,4 @@ const SWDataSingleCard = ({ SWDatas }: { SWDatas: any }) => {
   );
 };
 
-export default SWDataSingleCard;
+export default ParticipantSingleCard;

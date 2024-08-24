@@ -19,7 +19,7 @@ const ShowWearables = () => {
   }, [wearableIds]);
   const apiUrl = import.meta.env.VITE_API_URL;
   useEffect(() => {
-    const accessToken = sessionStorage.getItem('accessToken');
+    const accessToken = localStorage.getItem('accessToken');
     if (!accessToken) return; // Si no hay token, no ejecutar la llamada.
 
     const config = {

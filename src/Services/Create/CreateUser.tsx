@@ -5,17 +5,17 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
-const CreateBooks = () => {
+const CreateUser = () => {
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-  const accessToken = sessionStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  const handleSaveBook = () => {
+  const handleSaveUser = () => {
     const data = {
       name,
       surname,
@@ -83,7 +83,7 @@ const CreateBooks = () => {
             className="border-2 border-gray-500 px-4 py-2  w-full "
           />
         </div>
-        <button className="p-2 bg-sky-300 m-8" onClick={handleSaveBook}>
+        <button className="p-2 bg-sky-300 m-8" onClick={handleSaveUser}>
           Save
         </button>
       </div>
@@ -91,4 +91,4 @@ const CreateBooks = () => {
   );
 };
 
-export default CreateBooks;
+export default CreateUser;

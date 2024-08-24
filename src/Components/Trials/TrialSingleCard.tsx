@@ -5,11 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { getIDFromAPI } from '../../Services/Read/CreateWearablesURL';
 import { useEffect, useState } from 'react';
 
-const TrialSingleCard = ({ SWDatas }: { SWDatas: any }) => {
+const TrialSingleCard = ({ trials }: { trials: any }) => {
   // const timestampLong = new Long(
-  //   SWDatas.timestamp.low,
-  //   SWDatas.timestamp.high,
-  //   SWDatas.timestamp.unsigned
+  //   trials.timestamp.low,
+  //   trials.timestamp.high,
+  //   trials.timestamp.unsigned
   // );
 
   // console.log("timestampLong", timestampLong);
@@ -37,8 +37,8 @@ const TrialSingleCard = ({ SWDatas }: { SWDatas: any }) => {
     wearablesIds: [],
   });
   const [error, setError] = useState('');
-  const participantId = SWDatas.participant.id;
-  const swId = SWDatas.sw.id;
+  const participantId = trials.participant.id;
+  const swId = trials.sw.id;
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -59,15 +59,15 @@ const TrialSingleCard = ({ SWDatas }: { SWDatas: any }) => {
   const navigate = useNavigate();
   const handleEditClick = (event: any) => {
     event.stopPropagation();
-    navigate(`/trials/edit/${SWDatas.id}`);
+    navigate(`/trials/edit/${trials.id}`);
   };
 
   const handleDeleteClick = (event: any) => {
     event.stopPropagation();
-    navigate(`/trials/delete/${SWDatas.id}`);
+    navigate(`/trials/delete/${trials.id}`);
   };
   // Construcción de la URL para el Link
-  const detailsBasePath = `/swData/getData/${data.experimentId}/${participantId}/${swId}/${SWDatas.id}`;
+  const detailsBasePath = `/swData/getData/${data.experimentId}/${participantId}/${swId}/${trials.id}`;
   const wearableQuery = data.wearablesIds
     .map((id) => `wearableIds=${id}`)
     .join('&');
@@ -78,37 +78,37 @@ const TrialSingleCard = ({ SWDatas }: { SWDatas: any }) => {
       className="border-2 border-gray-500 rounded-lg px-4 py-2 m-4 relative hover:shadow-xl no-underline cursor-pointer"
     >
       {' '}
-      <div key={SWDatas.id} className="my-2">
+      <div key={trials.id} className="my-2">
         <span className="text-gray-600"></span>
         <div className="flex justify-start items-center gap-x-2">
           <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500"> ID: {SWDatas.id}</h4>
+          <h4 className="my-2 text-gray-500"> ID: {trials.id}</h4>
         </div>
         <div className="flex justify-start items-center gap-x-2">
           <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500"> date: {SWDatas.date}</h4>
+          <h4 className="my-2 text-gray-500"> date: {trials.date}</h4>
         </div>
         <div className="flex justify-start items-center gap-x-2">
           <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500"> code: {SWDatas.code}</h4>
+          <h4 className="my-2 text-gray-500"> code: {trials.code}</h4>
         </div>
         <div className="flex justify-start items-center gap-x-2">
           <FaIdCard className="text-red-300 text-2xl" />
           <h4 className="my-2 text-gray-500">
             {' '}
-            description: {SWDatas.description}
+            description: {trials.description}
           </h4>
         </div>
         <div className="flex justify-start items-center gap-x-2">
           <FaIdCard className="text-red-300 text-2xl" />
           <h4 className="my-2 text-gray-500">
             {' '}
-            Annotation: {SWDatas.annotation}
+            Annotation: {trials.annotation}
           </h4>
         </div>
         <div className="flex justify-start items-center gap-x-2">
           <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500"> swId: {SWDatas.sw.id}</h4>
+          <h4 className="my-2 text-gray-500"> swId: {trials.sw.id}</h4>
         </div>
         <div>
           <h1>Experiment and Wearables IDs</h1>
@@ -125,7 +125,7 @@ const TrialSingleCard = ({ SWDatas }: { SWDatas: any }) => {
           <FaIdCard className="text-red-300 text-2xl" />
           <h4 className="my-2 text-gray-500">
             {" "}
-            ID: {SWDatas.syncronized_wearables_id}
+            ID: {trials.syncronized_wearables_id}
           </h4>
         </div>  No es necesario, pq ya esta en la pagina anterior, queda redundante.*/}
         {/* 
@@ -134,7 +134,7 @@ const TrialSingleCard = ({ SWDatas }: { SWDatas: any }) => {
             <h4 className="my-2 text-gray-500"> Date: {dateString}</h4>
           </div> */}
         {/* <div className="flex justify-start items-center gap-x-2 flex-wrap">
-            {SWDatas.wearableData.map((item: any, index: any) => (
+            {trials.wearableData.map((item: any, index: any) => (
               <div key={index} className="flex items-center gap-x-2">
                 <FaIdCard className="text-red-300 text-2xl" />
                 <h4 className="my-2 text-gray-500">Wearable Id: {item}</h4>

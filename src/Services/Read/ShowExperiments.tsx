@@ -2,17 +2,17 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link, useParams } from 'react-router-dom';
 import Spinner from '../../Components/Spinner';
-import SWDataCard from '../../Components/Experiments/ExperimentCard';
+import ExperimentCard from '../../Components/Experiments/ExperimentCard';
 import 'react-datepicker/dist/react-datepicker.css';
 import { MdOutlineAddBox } from 'react-icons/md';
 
-const ShowSWData = () => {
-  const [sWDatas, setSWDatas] = useState([]);
-  const [filteredSWDatas, setFilteredSWDatas] = useState([]);
+const ShowExperiment = () => {
+  const [experiments, setExperiments] = useState([]);
+  const [filteredExperiments, setFilteredExperiments] = useState([]);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
 
-  const accessToken = sessionStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -25,8 +25,8 @@ const ShowSWData = () => {
     axios
       .get(`${apiUrl}/experiments/by-professional/${id}`, config)
       .then((response) => {
-        setSWDatas(response.data);
-        setFilteredSWDatas(response.data);
+        setExperiments(response.data);
+        setFilteredExperiments(response.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -73,7 +73,7 @@ const ShowSWData = () => {
       </div>
       {loading ? (
         <Spinner />
-      ) : sWDatas.length > 0 ? (
+      ) : experiments.length > 0 ? (
         <div>
           {/* <div className="flex justify-center my-4">
             <DatePicker
@@ -119,7 +119,7 @@ const ShowSWData = () => {
           </div> */}
 
           <div>
-            <SWDataCard experiments={filteredSWDatas} />
+            <ExperimentCard experiments={filteredExperiments} />
           </div>
         </div>
       ) : (
@@ -133,4 +133,4 @@ const ShowSWData = () => {
   );
 };
 
-export default ShowSWData;
+export default ShowExperiment;
