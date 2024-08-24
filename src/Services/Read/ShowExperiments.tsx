@@ -5,6 +5,7 @@ import Spinner from '../../Components/Spinner';
 import ExperimentCard from '../../Components/Experiments/ExperimentCard';
 import 'react-datepicker/dist/react-datepicker.css';
 import { MdOutlineAddBox } from 'react-icons/md';
+import LogoutButton from '../../Components/LogoutButton';
 
 const ShowExperiment = () => {
   const [experiments, setExperiments] = useState([]);
@@ -63,6 +64,7 @@ const ShowExperiment = () => {
   return (
     <div className="p-4">
       {/* <BackButton /> */}
+      <LogoutButton />
       <h1 className="text-3xl my-4 font-bold">
         <span> Experiments</span>{' '}
       </h1>

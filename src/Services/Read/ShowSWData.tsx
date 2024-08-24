@@ -7,6 +7,7 @@ import SWDataCard from '../../Components/SWData/SWDataCard';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Long from 'long';
+import LogoutButton from '../../Components/LogoutButton';
 
 const ShowSWData = () => {
   const [sWDatas, setSWDatas] = useState([]);
@@ -68,6 +69,7 @@ const ShowSWData = () => {
   return (
     <div className="p-4">
       <BackButton />
+      <LogoutButton />
       {loading ? (
         <Spinner />
       ) : sWDatas.length > 0 ? (

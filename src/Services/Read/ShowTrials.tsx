@@ -6,6 +6,7 @@ import Spinner from '../../Components/Spinner';
 import TrialCard from '../../Components/Trials/TrialCard';
 import 'react-datepicker/dist/react-datepicker.css';
 import { MdOutlineAddBox } from 'react-icons/md';
+import LogoutButton from '../../Components/LogoutButton';
 
 const ShowTrials = () => {
   const [sWDatas, setSWDatas] = useState([]);
@@ -128,6 +129,7 @@ const ShowTrials = () => {
 
     <div className="p-4">
       <BackButton />
+      <LogoutButton />
       <h1 className="text-3xl my-4 font-bold">
         <span> Trials</span>{' '}
       </h1>
