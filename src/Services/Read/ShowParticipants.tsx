@@ -6,6 +6,7 @@ import Spinner from '../../Components/Spinner';
 import ParticipantCard from '../../Components/Participants/ParticipantCard';
 import 'react-datepicker/dist/react-datepicker.css';
 import { MdOutlineAddBox } from 'react-icons/md';
+import LogoutButton from '../../Components/LogoutButton';
 
 const ShowParticipant = () => {
   const [sWDatas, setSWDatas] = useState([]);
@@ -38,6 +39,7 @@ const ShowParticipant = () => {
   return (
     <div className="p-4">
       <BackButton />
+      <LogoutButton />
       <h1 className="text-3xl my-4 font-bold">
         <span> Participants</span>{' '}
       </h1>
