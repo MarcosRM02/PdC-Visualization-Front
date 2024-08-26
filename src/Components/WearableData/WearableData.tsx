@@ -193,7 +193,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
                   id="leftPressureSensor"
                 ></div>
                 <div className="flex justify-end">
-                  <button
+                  {/* <button
                     onClick={() =>
                       descargarDatosVisibles(
                         'leftPressureSensor',
@@ -203,18 +203,18 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
                   >
                     Download CSV
-                  </button>
+                  </button> */}
                 </div>
                 <div ref={refs.leftAccelerometer} id="leftAccelerometer"></div>
                 <div className="flex justify-end">
-                  <button
+                  {/* <button
                     onClick={() =>
                       descargarDatosVisibles('leftAccelerometer', leftWearables)
                     }
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
                   >
                     Download CSV
-                  </button>
+                  </button> */}
                 </div>
                 <div ref={refs.leftGyroscope} id="leftGyroscope"></div>
                 <div className="flex justify-end">
@@ -242,7 +242,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
                 id="rightPressureSensor"
               ></div>
               <div className="flex justify-end">
-                <button
+                {/* <button
                   onClick={() =>
                     descargarDatosVisibles(
                       'rightPressureSensor',
@@ -252,18 +252,18 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
                 >
                   Download CSV
-                </button>
+                </button> */}
               </div>
               <div ref={refs.rightAccelerometer} id="rightAccelerometer"></div>
               <div className="flex justify-end">
-                <button
+                {/* <button
                   onClick={() =>
                     descargarDatosVisibles('rightAccelerometer', rightWearables)
                   }
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
                 >
                   Download CSV
-                </button>
+                </button> */}
               </div>
               <div ref={refs.rightGyroscope} id="rightGyroscope"></div>
               <div className="flex justify-end">
