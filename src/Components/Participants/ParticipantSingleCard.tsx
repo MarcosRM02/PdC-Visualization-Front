@@ -26,11 +26,19 @@ const ParticipantSingleCard = ({ participants }: { participants: any }) => {
   const [modalData, setModalData] = useState(null);
   const [, setLoading] = useState(false);
   const [, setError] = useState('');
+  const accessToken = localStorage.getItem('accessToken');
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     if (showModal && participants.personalData.id) {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
       setLoading(true);
       axios
-        .get(`http://localhost:3000/personalData/${participants.personalData.id}`)
+        .get(`${apiUrl}/personalData/${participants.personalData.id}`, config)
         .then((response) => {
           setModalData(response.data);
           setLoading(false);
@@ -70,8 +78,10 @@ const ParticipantSingleCard = ({ participants }: { participants: any }) => {
           <BiShow
             className="text-3xl text-blue-800 hover:text-black cursor-pointer"
             onClick={(e) => {
+              console.log('Attempting to open modal');
               e.stopPropagation();
               setShowModal(true);
+              console.log(showModal);
             }}
           />
           {showModal && (
