@@ -393,7 +393,7 @@ function plotData(
     x: datos.index.values,
     // @ts-ignore
     y: datos[column].values,
-    type: 'scatter',
+    type: 'scattergl',
     mode: 'lines',
     name: column,
   }));
@@ -528,7 +528,7 @@ function plotHeatmap(
   const data = [
     {
       z: datos.values,
-      type: 'heatmap',
+      type: 'heatmapgl',
       colorscale: 'Viridis',
     },
   ];
