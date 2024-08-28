@@ -112,55 +112,6 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
           height="auto"
         />
       </div>
-      {/* <div className="mt-24">
-        <Plot
-          data={[
-            {
-              x: data.map((d) => d.time),
-              y: data.map((d) => d.value),
-              type: 'scatter',
-              mode: 'lines+markers',
-              marker: { color: 'blue' },
-            },
-            {
-              x: [playTime, playTime],
-              y: [0, Math.max(...data.map((d) => d.value))],
-              type: 'scatter',
-              mode: 'lines',
-              line: { color: 'red', width: 2 },
-              name: 'Current Time',
-            },
-          ]}
-          layout={{
-            width: 720,
-            height: 440,
-            title: 'Data Response to Video Time',
-            xaxis: {
-              title: 'Time (seconds)',
-              range: [0, Math.max(...data.map((d) => d.time))],
-            },
-            yaxis: {
-              title: 'Value',
-            },
-            shapes: [
-              {
-                type: 'line',
-                x0: playTime,
-                x1: playTime,
-                y0: 0,
-                y1: 1,
-                yref: 'paper',
-                line: {
-                  color: 'red',
-                  width: 3,
-                  dash: 'dot',
-                },
-              },
-            ],
-          }}
-          onClick={handlePointClick}
-        />
-      </div> */}
       <div>
         <button
           onClick={resetGraphs}
@@ -180,8 +131,8 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
                   ref={refs.leftPressureSensor}
                   id="leftPressureSensor"
                 ></div>
-                {/* <div className="flex justify-end">
-                   <button
+                {/*<div className="flex justify-end">
+                  <button
                     onClick={() =>
                       descargarDatosVisibles(
                         'leftPressureSensor',
@@ -191,8 +142,8 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
                   >
                     Download CSV
-                  </button> 
-                </div> */}
+                  </button>
+                </div>*/}
                 <div ref={refs.leftAccelerometer} id="leftAccelerometer"></div>
                 {/* <div className="flex justify-end">
                   <button
@@ -208,7 +159,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
                 <div className="flex justify-end">
                   <button
                     onClick={() =>
-                      descargarDatosVisibles('leftGyroscope', leftWearables)
+                      descargarDatosVisibles(refs.leftGyroscope, leftWearables)
                     }
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
                   >
@@ -452,10 +403,14 @@ function handleRelayout(eventData: any, triggeredBy: any, refs: any) {
   });
 }
 
-async function descargarDatosVisibles(divId: string, wearable: any) {
-  var plotInstance = document.getElementById(divId);
+async function descargarDatosVisibles(divId: any, wearable: any) {
+  var plotInstance = document.getElementById(divId.current.id);
   // @ts-ignore
   var xRange = plotInstance.layout.xaxis.range; // Rango del eje X visible actualmente
+
+  if (xRange[0] < 0) {
+    xRange[0] = 0;
+  }
 
   // Calcular el índice de inicio y fin basado en xRange
   var startIndex = Math.floor(xRange[0]);
