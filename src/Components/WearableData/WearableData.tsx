@@ -105,7 +105,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
       <div className="absolute z-10 w-full h-auto">
         <ReactPlayer
           ref={playerRef}
-          // url="https://youtu.be/hMS8RtYVouc?t=31"
+          url="http://localhost:3000/uploads/videos/1"
           playing
           onProgress={handleProgress}
           width="auto"

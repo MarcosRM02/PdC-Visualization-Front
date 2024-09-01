@@ -4,6 +4,7 @@ import Spinner from '../../Components/Spinner';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { NumericFormat } from 'react-number-format';
 
 const EditPersonalData = () => {
   const [loading, setLoading] = useState(false);
@@ -43,7 +44,7 @@ const EditPersonalData = () => {
       });
   }, []);
 
-  const handleEditExperiment = () => {
+  const handleEditPersonalData = () => {
     const data = {
       name,
       age,
@@ -78,7 +79,7 @@ const EditPersonalData = () => {
   return (
     <div className="p-4">
       <BackButton />
-      <h1 className="text-3xl my-4">Edit Personal Data</h1>
+      <h1 className="text-3xl my-4">Create Participant</h1>
       {loading ? <Spinner /> : ''}
       <div className="flex flex-col border-2 border-sky-400 rounded-xl w-[600px] p-4 mx-auto">
         <div className="my-4">
@@ -97,42 +98,71 @@ const EditPersonalData = () => {
             value={age}
             onChange={(e) => setAge(e.target.value)}
             className="border-2 border-gray-500 px-4 py-2 w-full"
+            min="1" // Evita números menores que 1
+            step="1" // Solo permite números enteros
           />
         </div>
         <div className="my-4">
           <label className="text-xl mr-4 text-gray-500">
             Height (optional){' '}
           </label>
-          <input
-            type="number"
+          <NumericFormat
             value={height}
-            onChange={(e) => setHeight(e.target.value)}
+            onValueChange={(values) => {
+              const { floatValue } = values;
+              //@ts-ignore
+              setHeight(floatValue);
+            }}
             className="border-2 border-gray-500 px-4 py-2 w-full"
+            decimalScale={2}
+            fixedDecimalScale={true}
+            allowNegative={false}
+            decimalSeparator="."
+            thousandSeparator={false}
+            placeholder="Enter height in meters"
           />
         </div>
         <div className="my-4">
           <label className="text-xl mr-4 text-gray-500">
             Weight (optional)
           </label>
-          <input
-            type="number"
+          <NumericFormat
             value={weight}
-            onChange={(e) => setweight(e.target.value)}
+            onValueChange={(values) => {
+              const { floatValue } = values;
+              //@ts-ignore
+              setweight(floatValue);
+            }}
             className="border-2 border-gray-500 px-4 py-2 w-full"
+            decimalScale={2}
+            fixedDecimalScale={true}
+            allowNegative={false}
+            decimalSeparator="."
+            thousandSeparator={false}
+            placeholder="Enter weight in kg"
           />
         </div>
         <div className="my-4">
           <label className="text-xl mr-4 text-gray-500">
             Foot Length (optional)
           </label>
-          <input
-            type="number"
+          <NumericFormat
             value={footLength}
-            onChange={(e) => setfootLength(e.target.value)}
+            onValueChange={(values) => {
+              const { floatValue } = values;
+              //@ts-ignore
+              setFootLength(floatValue);
+            }}
             className="border-2 border-gray-500 px-4 py-2 w-full"
+            decimalScale={2}
+            fixedDecimalScale={true}
+            allowNegative={false}
+            decimalSeparator="."
+            thousandSeparator={false}
+            placeholder="Enter footlength in cm"
           />
         </div>
-        <button className="p-2 bg-sky-300 m-8" onClick={handleEditExperiment}>
+        <button className="p-2 bg-sky-300 m-8" onClick={handleEditPersonalData}>
           Save
         </button>
       </div>
