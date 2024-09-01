@@ -142,7 +142,6 @@ const TrialSingleCard = ({ trials }: { trials: any }) => {
               </div>
             ))}
           </div> */}
-        PONER LOS WEARABLES QUE CONTIENE CADA SW COMO UN MODAL
       </div>
       {/*
         <div className="flex justify-between items-center gap-x-2 mt-4 p-4">

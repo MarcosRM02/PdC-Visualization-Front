@@ -4,11 +4,12 @@ import Spinner from '../../Components/Spinner';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { NumericFormat } from 'react-number-format';
 
 const CreateParticipant = () => {
   const [height, setHeight] = useState('');
   const [weight, setweight] = useState('');
-  const [footLength, setfootLength] = useState('');
+  const [footLength, setFootLength] = useState('');
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
 
@@ -105,43 +106,72 @@ const CreateParticipant = () => {
         <div className="my-4">
           <label className="text-xl mr-4 text-gray-500">Age (optional)</label>
           <input
-            type="text"
+            type="number"
             value={age}
             onChange={(e) => setAge(e.target.value)}
             className="border-2 border-gray-500 px-4 py-2 w-full"
+            min="1" // Evita números menores que 1
+            step="1" // Solo permite números enteros
           />
         </div>
         <div className="my-4">
           <label className="text-xl mr-4 text-gray-500">
             Height (optional){' '}
           </label>
-          <input
-            type="number"
+          <NumericFormat
             value={height}
-            onChange={(e) => setHeight(e.target.value)}
+            onValueChange={(values) => {
+              const { floatValue } = values;
+              //@ts-ignore
+              setHeight(floatValue);
+            }}
             className="border-2 border-gray-500 px-4 py-2 w-full"
+            decimalScale={2}
+            fixedDecimalScale={true}
+            allowNegative={false}
+            decimalSeparator="."
+            thousandSeparator={false}
+            placeholder="Enter height in meters"
           />
         </div>
         <div className="my-4">
           <label className="text-xl mr-4 text-gray-500">
             Weight (optional)
           </label>
-          <input
-            type="text"
+          <NumericFormat
             value={weight}
-            onChange={(e) => setweight(e.target.value)}
+            onValueChange={(values) => {
+              const { floatValue } = values;
+              //@ts-ignore
+              setweight(floatValue);
+            }}
             className="border-2 border-gray-500 px-4 py-2 w-full"
+            decimalScale={2}
+            fixedDecimalScale={true}
+            allowNegative={false}
+            decimalSeparator="."
+            thousandSeparator={false}
+            placeholder="Enter weight in kg"
           />
         </div>
         <div className="my-4">
           <label className="text-xl mr-4 text-gray-500">
             Foot Length (optional)
           </label>
-          <input
-            type="number"
+          <NumericFormat
             value={footLength}
-            onChange={(e) => setfootLength(e.target.value)}
+            onValueChange={(values) => {
+              const { floatValue } = values;
+              //@ts-ignore
+              setFootLength(floatValue);
+            }}
             className="border-2 border-gray-500 px-4 py-2 w-full"
+            decimalScale={2}
+            fixedDecimalScale={true}
+            allowNegative={false}
+            decimalSeparator="."
+            thousandSeparator={false}
+            placeholder="Enter footlength in cm"
           />
         </div>
         <button className="p-2 bg-sky-300 m-8" onClick={handleSequentialPost}>

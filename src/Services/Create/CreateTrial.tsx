@@ -17,6 +17,7 @@ const CreateTrial = () => {
   const { id } = useParams();
   const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
+  console.log(accessToken);
 
   const [swIds, setSWIds] = useState([]);
 
@@ -44,7 +45,7 @@ const CreateTrial = () => {
       swId: Number(swId),
       participantId: Number(id),
       ...(description && { description: String(description) }),
-      ...(code && { weight: String(code) }),
+      ...(code && { code: String(code) }),
       ...(annotation && { annotation: String(annotation) }),
     };
     const config = {
@@ -52,13 +53,14 @@ const CreateTrial = () => {
         Authorization: `Bearer ${accessToken}`,
       },
     };
+    console.log(config);
     setLoading(true);
     // First POST request
     axios
       .post(`${apiUrl}/trials/create`, dataToSend, config)
       .then(() => {
         setLoading(false);
-        enqueueSnackbar('Experiment Created successfully', {
+        enqueueSnackbar('Trial Created successfully', {
           variant: 'success',
         });
         navigate(-1);
