@@ -208,7 +208,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
               <div className="flex justify-end">
                 <button
                   onClick={() =>
-                    descargarDatosVisibles('rightGyroscope', rightWearables)
+                    descargarDatosVisibles(refs.rightGyroscope, rightWearables)
                   }
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
                 >
