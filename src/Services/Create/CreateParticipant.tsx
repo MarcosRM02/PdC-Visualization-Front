@@ -43,7 +43,6 @@ const CreateParticipant = () => {
       .then((response1) => {
         // Assume response1.data contains the ID needed for the next request
         const newId = response1.data;
-        console.log('newId', newId);
         // Data for the second PUT request, using the ID from the first response
         const data = {
           code,

@@ -9,7 +9,6 @@ const CreateTrial = () => {
   const [description, setDescription] = useState('');
   const [annotation, setAnnotation] = useState('');
   const [code, setCode] = useState('');
-  const [date, setDate] = useState('');
   const [swId, setSWId] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -40,8 +39,13 @@ const CreateTrial = () => {
   }, [apiUrl, accessToken]);
 
   const handleSequentialPost = () => {
+    if (!swId) {
+      enqueueSnackbar('Please select a valid SW ID before proceeding', {
+        variant: 'warning',
+      });
+      return;
+    }
     const dataToSend = {
-      date: new Date(date),
       swId: Number(swId),
       participantId: Number(id),
       ...(description && { description: String(description) }),
@@ -80,28 +84,20 @@ const CreateTrial = () => {
       {loading ? <Spinner /> : ''}
       <div className="flex flex-col border-2 border-sky-400 rounded-xl w-[600px] p-4 mx-auto">
         <div className="my-4">
-          <label className="text-xl mr-4 text-gray-500">Date</label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="border-2 border-gray-500 px-4 py-2 w-full"
-          />
-        </div>
-        <div className="my-4">
-          <label className="text-xl mr-4 text-gray-500">SW Id</label>
+          <label className="text-xl mr-4 text-gray-500">
+            SW (ID - Description)
+          </label>
           <select
             value={swId}
             onChange={(e) => setSWId(e.target.value)}
             className="border-2 border-gray-500 px-4 py-2 w-full"
           >
-            <option value="">Select SW Id</option>
+            <option value="">Select SW</option>
             {swIds.map((sw) => (
               // @ts-ignore
               <option key={sw.id} value={sw.id}>
                 {/* @ts-ignore */}
-                {sw.id}{' '}
-                {/* O el campo que quieras mostrar como texto en el dropdown */}
+                {sw.id} - {sw.description}
               </option>
             ))}
           </select>
