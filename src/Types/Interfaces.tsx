@@ -35,10 +35,12 @@ export interface WearableData {
   wearablesId: string;
   wearableType: string;
   dataframe: DataFrameRow;
+  frequency: number;
 }
 
 export interface WearableDataProps {
   wearables: WearableData[];
+  trialId: number;
 }
 
 export interface IExperimentProp {

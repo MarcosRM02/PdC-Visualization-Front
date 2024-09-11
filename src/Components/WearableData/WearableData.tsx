@@ -3,8 +3,9 @@ import ReactPlayer from 'react-player';
 import { WearableDataProps } from '../../Types/Interfaces';
 import { DataFrame, Series, concat, toCSV } from 'danfojs';
 import Plotly from 'plotly.js-dist-min';
+import axios from 'axios';
 
-const WearablesData = ({ wearables = [] }: WearableDataProps) => {
+const WearablesData = ({ wearables, trialId }: WearableDataProps) => {
   const refs = {
     leftPressureSensor: useRef(null),
     leftAccelerometer: useRef(null),
@@ -15,12 +16,13 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
     leftHeatmap: useRef(null),
     rightHeatmap: useRef(null),
   };
+  console.log(wearables[0].frequency);
 
   // Extraer el tipo de las url, y asi ya lo tengo todo preparado para pasarselo a la funcion de plotWearablesData, pq de la nueva manera, no va como antes.
   const leftWearables = wearables.filter(
     (wearable) => wearable.wearableType === 'L',
   );
-
+  console.log('l?', leftWearables[0].frequency);
   const rightWearables = wearables.filter(
     (wearable) => wearable.wearableType === 'R',
   );
@@ -28,7 +30,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
   const playerRef = useRef<ReactPlayer | null>(null);
   const handleProgress = (state: { playedSeconds: number }) => {
     setPlayTime(state.playedSeconds);
-    // updateAllGraphs(state.playedSeconds);
+    //updateAllGraphs(state.playedSeconds);
   };
   // Función para manejar clics en los puntos del gráfico
   const handlePointClick = (data: any) => {
@@ -36,6 +38,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
       const pointTime = data.points[0].x;
       setPlayTime(pointTime); // Actualiza el tiempo de reproducción en el estado
       if (playerRef.current) {
+        console.log('Seeking to:', pointTime);
         playerRef.current.seekTo(pointTime, 'seconds'); // Cambia el video al tiempo seleccionado
       }
     }
@@ -100,17 +103,95 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
     });
   };
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const accessToken = localStorage.getItem('accessToken');
+
+  const [videoSrc, setVideoSrc] = useState('');
+
+  useEffect(() => {
+    const fetchVideo = async () => {
+      try {
+        const response = await axios.get(
+          `${apiUrl}/trials/retrieve-video/${trialId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+            responseType: 'blob', // Importante: obtiene la respuesta como un blob
+          },
+        );
+
+        const videoBlob = response.data;
+        const videoUrl = URL.createObjectURL(videoBlob);
+        setVideoSrc(videoUrl);
+      } catch (error) {
+        console.error('Error fetching the video:', error);
+      }
+    };
+
+    fetchVideo();
+
+    // Limpieza: liberar la memoria asociada con la URL del blob
+    return () => {
+      if (videoSrc) {
+        URL.revokeObjectURL(videoSrc);
+      }
+    };
+  }, [trialId]);
+
+  //@ts-ignore
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const changePlaybackRate = (rate: any) => {
+    if (playerRef.current) {
+      playerRef.current.getInternalPlayer().playbackRate = rate;
+      setPlaybackRate(rate);
+    }
+  };
+
   return (
     <div className="relative flex flex-col items-center">
-      <div className="absolute z-10 w-full h-auto">
+      <div className="flex-grow w-full max-w-6xl">
         <ReactPlayer
           ref={playerRef}
-          url="http://localhost:3000/uploads/videos/1"
-          playing
+          url={videoSrc}
+          //playing
           onProgress={handleProgress}
-          width="auto"
-          height="auto"
+          width="100%"
+          height="100%"
+          controls={true}
+          config={{
+            file: {
+              attributes: {
+                controlsList: 'nodownload', // Intenta evitar que el video sea descargable
+                disablePictureInPicture: true, // Deshabilita Picture in Picture
+              },
+            },
+          }}
         />
+        <button
+          onClick={() => changePlaybackRate(1 / 50)}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          0.15x
+        </button>
+        <button
+          onClick={() => changePlaybackRate(0.25)}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          0.25x
+        </button>
+        <button
+          onClick={() => changePlaybackRate(1)}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          1x
+        </button>
+        <button
+          onClick={() => changePlaybackRate(2)}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        >
+          2x
+        </button>
       </div>
       <div>
         <button
@@ -126,7 +207,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
             {leftWearables.map((wearable, index) => (
               <Fragment key={index}>
                 <h4>Left Wearable - {wearable.wearablesId} </h4>
-                <div ref={refs.leftHeatmap} id="leftHeatmap"></div>
+                {/* <div ref={refs.leftHeatmap} id="leftHeatmap"></div> */}
                 <div
                   ref={refs.leftPressureSensor}
                   id="leftPressureSensor"
@@ -175,7 +256,7 @@ const WearablesData = ({ wearables = [] }: WearableDataProps) => {
           {rightWearables.map((wearable, index) => (
             <div key={index} className="wearable-item">
               <h4>Right Wearable - {wearable.wearablesId}</h4>
-              <div ref={refs.rightHeatmap} id="rightHeatmap"></div>
+              {/* <div ref={refs.rightHeatmap} id="rightHeatmap"></div> */}
               <div
                 ref={refs.rightPressureSensor}
                 id="rightPressureSensor"
@@ -229,6 +310,7 @@ function plotWearablesData(
   refs: any,
   playTime: any,
 ) {
+  console.log('f2!', leftWearables.frequency);
   plotLeftWearable(leftWearables, refs, playTime);
   plotrightWearable(rightWearables, refs, playTime);
 }
@@ -308,7 +390,7 @@ function generateLayout(title: string) {
       borderwidth: 1,
       font: { family: 'Arial', size: 10, color: '#fff' },
     },
-    width: 1000,
+    autosize: true, // Asegura que se ajuste automáticamente
     yaxis: {
       title: 'Value',
       fixedrange: true,
@@ -316,6 +398,7 @@ function generateLayout(title: string) {
     xaxis: {
       title: 'Time',
     },
+    responsive: true,
   };
 }
 
@@ -330,7 +413,7 @@ function plotData(
     console.error('Invalid div element');
     return;
   }
-
+  console.log('frequency', wearable.length);
   const frames = wearable.map(
     (wearable: any) => new DataFrame(wearable.dataframe),
   );
@@ -341,7 +424,9 @@ function plotData(
   let datos = df.iloc({ rows: [':'], columns: columns });
 
   const traces = datos.columns.map((column: string) => ({
-    x: datos.index.values,
+    x: Array.from(datos.index.values()).map(
+      (index: any) => (index * 1) / wearable[0].frequency,
+    ),
     // @ts-ignore
     y: datos[column].values,
     type: 'scattergl',
