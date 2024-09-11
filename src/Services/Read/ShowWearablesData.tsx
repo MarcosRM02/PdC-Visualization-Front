@@ -54,7 +54,10 @@ const ShowWearables = () => {
         <div>
           <h1 className="text-3xl my-4 font-bold">Wearables Data</h1>
           <div>
-            <WearablesData wearables={wearables} />
+            <WearablesData
+              wearables={wearables}
+              trialId={parseInt(trialId || '0')}
+            />
           </div>
         </div>
       ) : (
