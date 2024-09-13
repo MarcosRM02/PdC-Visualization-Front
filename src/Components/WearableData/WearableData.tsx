@@ -5,7 +5,13 @@ import { DataFrame, Series, concat, toCSV } from 'danfojs';
 import Plotly from 'plotly.js-dist-min';
 import axios from 'axios';
 
-const WearablesData = ({ wearables, trialId }: WearableDataProps) => {
+const WearablesData = ({
+  wearables,
+  trialId,
+  experimentId,
+  swId,
+  participantId,
+}: WearableDataProps) => {
   const refs = {
     leftPressureSensor: useRef(null),
     leftAccelerometer: useRef(null),
@@ -241,6 +247,10 @@ const WearablesData = ({ wearables, trialId }: WearableDataProps) => {
                       descargarDatosVisibles(
                         refs.leftGyroscope,
                         leftWearables,
+                        experimentId,
+                        participantId,
+                        trialId,
+                        swId,
                         'L',
                       )
                     }
@@ -294,6 +304,10 @@ const WearablesData = ({ wearables, trialId }: WearableDataProps) => {
                     descargarDatosVisibles(
                       refs.rightGyroscope,
                       rightWearables,
+                      experimentId,
+                      participantId,
+                      trialId,
+                      swId,
                       'R',
                     )
                   }
@@ -492,7 +506,15 @@ function handleRelayout(eventData: any, triggeredBy: any, refs: any) {
   });
 }
 
-async function descargarDatosVisibles(divId: any, wearable: any, type: string) {
+async function descargarDatosVisibles(
+  divId: any,
+  wearable: any,
+  experimentId: number,
+  participantId: number,
+  trialId: number,
+  swId: number,
+  type: string,
+) {
   var plotInstance = document.getElementById(divId.current.id);
   // @ts-ignore
   var xRange = plotInstance.layout.xaxis.range.map(
@@ -526,9 +548,33 @@ async function descargarDatosVisibles(divId: any, wearable: any, type: string) {
     var link = document.createElement('a');
     link.setAttribute('href', encodedUri);
     if (type === 'L') {
-      link.setAttribute('download', 'left_data.csv');
+      link.setAttribute(
+        'download',
+        'exp_' +
+          experimentId +
+          '_part_' +
+          participantId +
+          '_trial_' +
+          trialId +
+          '_sw_' +
+          swId +
+          '_L' +
+          '.csv',
+      );
     } else {
-      link.setAttribute('download', 'right_data.csv');
+      link.setAttribute(
+        'download',
+        'exp_' +
+          experimentId +
+          '_part_' +
+          participantId +
+          '_trial_' +
+          trialId +
+          '_sw_' +
+          swId +
+          '_R' +
+          '.csv',
+      );
     }
     document.body.appendChild(link);
     link.click();
