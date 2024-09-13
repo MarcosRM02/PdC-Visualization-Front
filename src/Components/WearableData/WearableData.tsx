@@ -16,13 +16,11 @@ const WearablesData = ({ wearables, trialId }: WearableDataProps) => {
     leftHeatmap: useRef(null),
     rightHeatmap: useRef(null),
   };
-  console.log(wearables[0].frequency);
 
   // Extraer el tipo de las url, y asi ya lo tengo todo preparado para pasarselo a la funcion de plotWearablesData, pq de la nueva manera, no va como antes.
   const leftWearables = wearables.filter(
     (wearable) => wearable.wearableType === 'L',
   );
-  console.log('l?', leftWearables[0].frequency);
   const rightWearables = wearables.filter(
     (wearable) => wearable.wearableType === 'R',
   );
@@ -240,7 +238,11 @@ const WearablesData = ({ wearables, trialId }: WearableDataProps) => {
                 <div className="flex justify-end">
                   <button
                     onClick={() =>
-                      descargarDatosVisibles(refs.leftGyroscope, leftWearables)
+                      descargarDatosVisibles(
+                        refs.leftGyroscope,
+                        leftWearables,
+                        'L',
+                      )
                     }
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
                   >
@@ -289,7 +291,11 @@ const WearablesData = ({ wearables, trialId }: WearableDataProps) => {
               <div className="flex justify-end">
                 <button
                   onClick={() =>
-                    descargarDatosVisibles(refs.rightGyroscope, rightWearables)
+                    descargarDatosVisibles(
+                      refs.rightGyroscope,
+                      rightWearables,
+                      'R',
+                    )
                   }
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
                 >
@@ -310,7 +316,6 @@ function plotWearablesData(
   refs: any,
   playTime: any,
 ) {
-  console.log('f2!', leftWearables.frequency);
   plotLeftWearable(leftWearables, refs, playTime);
   plotrightWearable(rightWearables, refs, playTime);
 }
@@ -413,7 +418,6 @@ function plotData(
     console.error('Invalid div element');
     return;
   }
-  console.log('frequency', wearable.length);
   const frames = wearable.map(
     (wearable: any) => new DataFrame(wearable.dataframe),
   );
@@ -425,7 +429,7 @@ function plotData(
 
   const traces = datos.columns.map((column: string) => ({
     x: Array.from(datos.index.values()).map(
-      (index: any) => (index * 1) / wearable[0].frequency,
+      (index: any) => index / wearable[0].frequency,
     ),
     // @ts-ignore
     y: datos[column].values,
@@ -488,10 +492,12 @@ function handleRelayout(eventData: any, triggeredBy: any, refs: any) {
   });
 }
 
-async function descargarDatosVisibles(divId: any, wearable: any) {
+async function descargarDatosVisibles(divId: any, wearable: any, type: string) {
   var plotInstance = document.getElementById(divId.current.id);
   // @ts-ignore
-  var xRange = plotInstance.layout.xaxis.range; // Rango del eje X visible actualmente
+  var xRange = plotInstance.layout.xaxis.range.map(
+    (value: any) => value * wearable[0].frequency,
+  );
 
   if (xRange[0] < 0) {
     xRange[0] = 0;
@@ -519,7 +525,11 @@ async function descargarDatosVisibles(divId: any, wearable: any) {
     var encodedUri = encodeURI(csvContent);
     var link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'selected_data.csv'); // Cambiar el nombre del archivo, al timestamp, el id de plantilla y el tipo
+    if (type === 'L') {
+      link.setAttribute('download', 'left_data.csv');
+    } else {
+      link.setAttribute('download', 'right_data.csv');
+    }
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link); // Limpiar después de la descarga
