@@ -56,7 +56,10 @@ const ShowWearables = () => {
           <div>
             <WearablesData
               wearables={wearables}
+              experimentId={parseInt(experimentId || '0')}
               trialId={parseInt(trialId || '0')}
+              participantId={parseInt(participantId || '0')}
+              swId={parseInt(swId || '0')}
             />
           </div>
         </div>

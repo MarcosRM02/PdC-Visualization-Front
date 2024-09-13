@@ -41,6 +41,9 @@ export interface WearableData {
 export interface WearableDataProps {
   wearables: WearableData[];
   trialId: number;
+  experimentId: number;
+  participantId: number;
+  swId: number;
 }
 
 export interface IExperimentProp {
