@@ -1,33 +1,68 @@
-import React from 'react';
-
-// La función que convierte un valor numérico a un color según el rango [minValue, maxValue]
-function valueToColor(value, minValue, maxValue) {
-  const normalizedValue = (value - minValue) / (maxValue - minValue);
-  const hue = (1 - normalizedValue) * 240; // Escala de azul (frío) a rojo (caliente)
-  return `hsl(${hue}, 100%, 50%)`; // Retorna el color en formato HSL
+interface ColorStop {
+  value: number;
+  color: string;
 }
 
-const ColorLegend = ({ minValue, maxValue, width = 30, height = 300 }) => {
-  // Calcular el color correspondiente para el valor mínimo y el valor máximo
-  const minColor = valueToColor(minValue, minValue, maxValue);
-  const maxColor = valueToColor(maxValue, minValue, maxValue);
+const ColorLegend = ({
+  width = 30,
+  height = 820,
+  colorStops,
+}: {
+  width?: number;
+  height?: number;
+  colorStops: ColorStop[];
+}) => {
+  // Crear el gradiente de color
+  const gradientColors = colorStops
+    .map((stop) => `${stop.color} ${(stop.value / 4095) * 100}%`)
+    .join(', ');
 
-  // Crear un gradiente de color vertical que va de minColor a maxColor
-  const gradientStyle = {
-    background: `linear-gradient(to top, ${minColor}, ${maxColor})`,
+  const gradientStyle: React.CSSProperties = {
+    background: `linear-gradient(to top, ${gradientColors})`,
     width: `${width}px`,
     height: `${height}px`,
+    border: '2px solid black',
+    position: 'relative',
   };
 
   return (
-    <div className="flex flex-col items-center">
-      {/* Gradiente de color */}
-      <span>{maxValue}</span>
-      <div style={gradientStyle} />
-      {/* Mostrar valores máximo y mínimo */}
-      <span>{minValue}</span>
+    <div className="flex items-center">
+      {/* Contenedor de la leyenda de color con gradiente suave */}
+      <div style={gradientStyle}>
+        {/* Añadir las etiquetas en el punto de cambio */}
+        {colorStops.map((stop, index) => (
+          <div
+            key={index}
+            style={{
+              position: 'absolute',
+              left: '100%', // Posiciona a la derecha del gradiente
+              top: `${(1 - stop.value / 4095) * 100}%`, // Calcula la posición en el eje Y
+              transform: 'translateX(5px) translateY(-50%)', // Ajusta la posición de la etiqueta
+              fontSize: '12px',
+              color: '#000', // Puedes cambiarlo a un color más visible si lo prefieres
+              whiteSpace: 'nowrap', // Para que el texto no se rompa en varias líneas
+            }}
+          >
+            {stop.value}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
 
-export default ColorLegend;
+// Define los color stops
+const colorStops = [
+  { value: 0, color: '#0000FF' }, // Azul
+  { value: 100, color: '#00FFFF' }, // Cyan
+  { value: 200, color: '#00FF00' }, // Verde
+  { value: 300, color: '#FFFF00' }, // Amarillo
+  { value: 400, color: '#FFA500' }, // Naranja
+  { value: 500, color: '#FF4500' }, // Rojo Naranja
+  { value: 1000, color: '#FF0000' }, // Rojo
+  { value: 2000, color: '#8B0000' }, // Rojo Oscuro
+  { value: 3000, color: '#800080' }, // Púrpura
+  { value: 4095, color: '#FFFFFF' }, // Blanco para el valor máximo
+];
+
+export default () => <ColorLegend colorStops={colorStops} />;
