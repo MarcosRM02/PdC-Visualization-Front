@@ -1,9 +1,11 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { WearableDataProps } from '../../Types/Interfaces';
-import { DataFrame, Series, concat, toCSV } from 'danfojs';
+import { DataFrame, concat, toCSV } from 'danfojs';
 import Plotly from 'plotly.js-dist-min';
 import axios from 'axios';
+import ImagePlotCanvas from './canvas';
+import ColorLegend from './ColorLegend';
 
 const WearablesData = ({
   wearables,
@@ -152,6 +154,98 @@ const WearablesData = ({
     }
   };
 
+  const frames = leftWearables.map(
+    (wearable: any) => new DataFrame(wearable.dataframe),
+  );
+
+  const df = concat({ dfList: frames, axis: 1 });
+  // @ts-ignore
+  let datos = df.iloc({ rows: [':'], columns: [':32'] });
+
+  const traces = datos.columns.map((column: string) => ({
+    // @ts-ignore
+    y: datos[column].values,
+  }));
+
+  console.log('Traces:', traces);
+
+  const frames2 = rightWearables.map(
+    (wearable: any) => new DataFrame(wearable.dataframe),
+  );
+
+  const df2 = concat({ dfList: frames2, axis: 1 });
+  // @ts-ignore
+  let datos2 = df2.iloc({ rows: [':'], columns: [':32'] });
+
+  const traces2 = datos2.columns.map((column: string) => ({
+    // @ts-ignore
+    y: datos2[column].values,
+  }));
+
+  console.log('Traces:', traces2);
+
+  // Inicializar el array points con values como un array vacío
+  const points = [
+    { x: 210, y: 40, values: [] },
+    { x: 95, y: 145, values: [] },
+    { x: 155, y: 185, values: [] },
+    { x: 140, y: 75, values: [] },
+    { x: 138, y: 263, values: [] },
+    { x: 120, y: 340, values: [] },
+    { x: 201, y: 352, values: [] },
+    { x: 66, y: 228, values: [] },
+    { x: 40, y: 395, values: [] },
+    { x: 44, y: 310, values: [] },
+    { x: 150, y: 410, values: [] },
+    { x: 73, y: 475, values: [] },
+    { x: 93, y: 725, values: [] },
+    { x: 98, y: 811, values: [] },
+    { x: 88, y: 552, values: [] },
+    { x: 85, y: 636, values: [] },
+    { x: 275, y: 81, values: [] },
+    { x: 297, y: 159, values: [] },
+    { x: 231, y: 197, values: [] },
+    { x: 203, y: 114, values: [] },
+    { x: 223, y: 280, values: [] },
+    { x: 290, y: 332, values: [] },
+    { x: 270, y: 410, values: [] },
+    { x: 305, y: 250, values: [] },
+    { x: 228, y: 982, values: [] },
+    { x: 245, y: 895, values: [] },
+    { x: 235, y: 808, values: [] },
+    { x: 172, y: 923, values: [] },
+    { x: 172, y: 763, values: [] },
+    { x: 172, y: 847, values: [] },
+    { x: 120, y: 982, values: [] },
+    { x: 100, y: 900, values: [] },
+  ];
+
+  const maxWidth = 350;
+
+  const mirroredPoints = points.map((point) => ({
+    x: maxWidth - point.x, // Refleja el punto en el eje X
+    y: point.y, // Mantén la coordenada Y igual
+    values: [...point.values], // Mantén los mismos valores (al ppio vacios)
+  }));
+
+  points.forEach((point, index) => {
+    if (traces[index]) {
+      point.values = traces[index].y; // Asigna los valores desde traces a cada punto
+    }
+  });
+
+  // Verificar si los datos se han asignado correctamente
+  console.log('Datos después de la asignación:');
+  points.forEach((point, index) => {
+    console.log(`Punto ${index}:`, point);
+  });
+
+  mirroredPoints.forEach((point, index) => {
+    if (traces2[index]) {
+      point.values = traces2[index].y; // Asigna los valores desde traces a cada punto
+    }
+  });
+
   return (
     <div className="relative flex flex-col items-center">
       <div className="flex-grow w-full max-w-6xl">
@@ -173,7 +267,7 @@ const WearablesData = ({
           }}
         />
         <button
-          onClick={() => changePlaybackRate(1 / 50)}
+          onClick={() => changePlaybackRate(1 / leftWearables[0].frequency)}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           0.15x
@@ -205,13 +299,43 @@ const WearablesData = ({
           Reset Graphs
         </button>
       </div>
+      <div className="border-2 border-gray-300 p-6 shadow-md mt-12 flex justify-center">
+        {/* Contenedor expandido para incluir ambos gráficos y la leyenda */}
+        <div className="flex justify-between items-start gap-8 w-full max-w-7xl">
+          {/* Contenedor de las dos plantillas */}
+          <div className="flex flex-1 justify-between items-center gap-8">
+            <div className="flex-1 pr-4 border-r-2 border-gray-400">
+              {/* Añade padding a la derecha del primer canvas para separarlo de la línea */}
+              <ImagePlotCanvas
+                width={350}
+                height={1040}
+                points={points}
+                interval={1 / leftWearables[0].frequency} // 200 hz son 5 ms
+              />
+            </div>
+            <div className="flex-1 pl-4 border-r-2 border-gray-400">
+              {/* Añade padding a la izquierda del segundo canvas para separarlo de la línea */}
+              <ImagePlotCanvas
+                width={350}
+                height={1040}
+                points={mirroredPoints}
+                interval={1 / rightWearables[0].frequency}
+              />
+            </div>
+          </div>
+          {/* Leyenda de color a la derecha */}
+          <div className="ml-8 pl-4  flex flex-col justify-center">
+            <ColorLegend />
+          </div>
+        </div>
+      </div>
+
       <div className="mt-12 flex flex-row justify-between w-full">
         <div id="Left-Side" className="flex-1 overflow-auto p-4">
           <>
             {leftWearables.map((wearable, index) => (
               <Fragment key={index}>
                 <h4>Left Wearable - {wearable.wearablesId} </h4>
-                {/* <div ref={refs.leftHeatmap} id="leftHeatmap"></div> */}
                 <div
                   ref={refs.leftPressureSensor}
                   id="leftPressureSensor"
@@ -268,7 +392,6 @@ const WearablesData = ({
           {rightWearables.map((wearable, index) => (
             <div key={index} className="wearable-item">
               <h4>Right Wearable - {wearable.wearablesId}</h4>
-              {/* <div ref={refs.rightHeatmap} id="rightHeatmap"></div> */}
               <div
                 ref={refs.rightPressureSensor}
                 id="rightPressureSensor"
@@ -335,13 +458,6 @@ function plotWearablesData(
 }
 
 function plotLeftWearable(leftWearables: any, refs: any, playTime: any) {
-  plotHeatmap(
-    leftWearables,
-    refs.leftHeatmap.current,
-    'Left Pressure Sensor Heatmap',
-    [':37'], // Asumiendo que estos son los datos relevantes para el mapa de calor
-    playTime,
-  );
   plotData(
     leftWearables,
     refs.leftPressureSensor.current,
@@ -366,13 +482,6 @@ function plotLeftWearable(leftWearables: any, refs: any, playTime: any) {
 }
 
 function plotrightWearable(rightWearables: any, refs: any, playTime: any) {
-  plotHeatmap(
-    rightWearables,
-    refs.rightHeatmap.current,
-    'Right Pressure Sensor Heatmap',
-    [':37'], // Asumiendo que estos son los datos relevantes para el mapa de calor
-    playTime,
-  );
   plotData(
     rightWearables,
     refs.rightPressureSensor.current,
@@ -584,60 +693,4 @@ async function descargarDatosVisibles(
   }
 }
 
-function plotHeatmap(
-  wearableData: any,
-  divId: HTMLElement | null,
-  // @ts-ignore
-  title: string,
-  columns: (number | string)[],
-  // @ts-ignore
-  playTime: number,
-) {
-  if (!divId) {
-    console.error('Invalid div element');
-    return;
-  }
-
-  // Crear DataFrames desde los datos del wearable y concatenarlos en un solo DataFrame
-  const frames = wearableData.map(
-    (wearable: any) => new DataFrame(wearable.dataframe),
-  );
-
-  const df = concat({ dfList: frames, axis: 1 });
-  // @ts-ignore
-  let datos = df.iloc({ rows: [':'], columns: columns });
-
-  // @ts-ignore
-  let zData;
-  if (datos instanceof DataFrame) {
-    // Intenta convertir DataFrame directamente a una matriz
-    zData = datos.values;
-  } else if (datos instanceof Series) {
-    // Convierte Series a DataFrame y luego a una matriz
-    zData = new DataFrame([datos]).values;
-  } //else {
-  //   console.error('Invalid data type');
-  //   return;
-  // }
-
-  // Configurar los datos del mapa de calor
-  const data = [
-    {
-      z: datos.values,
-      type: 'heatmapgl',
-      colorscale: 'Viridis',
-    },
-  ];
-
-  const layout = {
-    title: 'Mapa de Calor de Datos de Sensores',
-    xaxis: { title: 'Índice de Tiempo' },
-    yaxis: { title: 'Índice de Sensor' },
-    autosize: true,
-  };
-
-  // Usar Plotly.newPlot para renderizar el mapa de calor en el div especificado
-  // @ts-ignore
-  Plotly.newPlot(divId, data, layout);
-}
 export default WearablesData;
