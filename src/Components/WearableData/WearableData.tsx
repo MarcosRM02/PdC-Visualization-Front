@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { WearableDataProps } from '../../Types/Interfaces';
-import { DataFrame, Series, concat, toCSV } from 'danfojs';
+import { DataFrame, concat, toCSV } from 'danfojs';
 import Plotly from 'plotly.js-dist-min';
 import axios from 'axios';
 import ImagePlotCanvas from './canvas';
@@ -154,306 +154,70 @@ const WearablesData = ({
     }
   };
 
-  const imageUrl = 'src/Components/WearableData/plantilla_sensores_n.png';
-  // const points = [
-  //   { x: 210, y: 40 },
-  //   { x: 95, y: 145 },
-  //   { x: 155, y: 185 },
-  //   { x: 140, y: 75 },
-  //   { x: 138, y: 263 },
-  //   { x: 120, y: 340 },
-  //   { x: 201, y: 352 },
-  //   { x: 66, y: 228 },
-  //   { x: 40, y: 395 },
-  //   { x: 44, y: 310 },
-  //   { x: 150, y: 410 },
-  //   { x: 73, y: 475 },
-  //   { x: 93, y: 725 },
-  //   { x: 98, y: 811 },
-  //   { x: 88, y: 552 },
-  //   { x: 85, y: 636 },
-  //   { x: 275, y: 81 },
-  //   { x: 297, y: 159 },
-  //   { x: 231, y: 197 },
-  //   { x: 203, y: 114 },
-  //   { x: 223, y: 280 },
-  //   { x: 290, y: 332 },
-  //   { x: 270, y: 410 },
-  //   { x: 305, y: 250 },
-  //   { x: 228, y: 982 },
-  //   { x: 245, y: 895 },
-  //   { x: 235, y: 808 },
-  //   { x: 172, y: 923 },
-  //   { x: 172, y: 763 },
-  //   { x: 172, y: 847 },
-  //   { x: 120, y: 982 },
-  //   { x: 100, y: 900 },
-  // ];
+  const frames = leftWearables.map(
+    (wearable: any) => new DataFrame(wearable.dataframe),
+  );
 
-  // const maxWidth = 350; // Lo que tenia puesto david
-  // const mirroredPoints = points.map((point) => ({
-  //   x: maxWidth - point.x,
-  //   y: point.y,
-  // }));
+  const df = concat({ dfList: frames, axis: 1 });
+  // @ts-ignore
+  let datos = df.iloc({ rows: [':'], columns: [':32'] });
 
+  const traces = datos.columns.map((column: string) => ({
+    // @ts-ignore
+    y: datos[column].values,
+  }));
+
+  console.log('Traces:', traces);
+
+  const frames2 = rightWearables.map(
+    (wearable: any) => new DataFrame(wearable.dataframe),
+  );
+
+  const df2 = concat({ dfList: frames2, axis: 1 });
+  // @ts-ignore
+  let datos2 = df2.iloc({ rows: [':'], columns: [':32'] });
+
+  const traces2 = datos2.columns.map((column: string) => ({
+    // @ts-ignore
+    y: datos2[column].values,
+  }));
+
+  console.log('Traces:', traces2);
+
+  // Inicializar el array points con values como un array vacío
   const points = [
-    {
-      x: 210,
-      y: 40,
-      values: [
-        50, 100, 500, 1000, 2000, 3000, 4000, 4500, 5000, 5500, 6000, 6500,
-        7000, 7500, 8000, 8500, 9000, 9500, 10000, 10500,
-      ],
-    },
-    {
-      x: 95,
-      y: 145,
-      values: [
-        10, 500, 1000, 1500, 2000, 3000, 4000, 5000, 6000, 7000, 7500, 8000,
-        8500, 9000, 9500, 10000, 10500, 11000, 11500, 12000,
-      ],
-    },
-    {
-      x: 155,
-      y: 185,
-      values: [
-        500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000,
-        6500, 7000, 7500, 8000, 8500, 9000, 9500, 10000,
-      ],
-    },
-    {
-      x: 140,
-      y: 75,
-      values: [
-        300, 600, 1200, 1800, 2400, 3000, 3600, 4200, 4800, 5400, 6000, 6600,
-        7200, 7800, 8400, 9000, 9600, 10200, 10800, 11400,
-      ],
-    },
-    {
-      x: 138,
-      y: 263,
-      values: [
-        500, 1500, 2000, 2500, 3500, 4000, 4500, 5000, 6000, 6500, 7000, 7500,
-        8000, 8500, 9000, 9500, 10000, 10500, 11000, 11500,
-      ],
-    },
-    {
-      x: 120,
-      y: 340,
-      values: [
-        1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000,
-        12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000,
-      ],
-    },
-    {
-      x: 201,
-      y: 352,
-      values: [
-        2500, 3000, 3500, 4000, 4500, 5000, 6000, 7000, 8000, 9000, 10000,
-        10500, 11000, 11500, 12000, 12500, 13000, 13500, 14000, 14500,
-      ],
-    },
-    {
-      x: 66,
-      y: 228,
-      values: [
-        5000, 5500, 6000, 6500, 7000, 7500, 8000, 8500, 9000, 9500, 10000,
-        10500, 11000, 11500, 12000, 12500, 13000, 13500, 14000, 14500,
-      ],
-    },
-    {
-      x: 40,
-      y: 395,
-      values: [
-        10, 100, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000,
-        5500, 6000, 6500, 7000, 7500, 8000, 8500, 9000,
-      ],
-    },
-    {
-      x: 44,
-      y: 310,
-      values: [
-        800, 1600, 2400, 3200, 4000, 4800, 5600, 6400, 7200, 8000, 8800, 9600,
-        10400, 11200, 12000, 12800, 13600, 14400, 15200, 16000,
-      ],
-    },
-    {
-      x: 150,
-      y: 410,
-      values: [
-        1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000,
-        12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000,
-      ],
-    },
-    {
-      x: 73,
-      y: 475,
-      values: [
-        1500, 3000, 4500, 6000, 7500, 9000, 10500, 12000, 13500, 15000, 16500,
-        18000, 19500, 21000, 22500, 24000, 25500, 27000, 28500, 30000,
-      ],
-    },
-    {
-      x: 93,
-      y: 725,
-      values: [
-        2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000, 22500, 25000,
-        27500, 30000, 32500, 35000, 37500, 40000, 42500, 45000, 47500, 50000,
-      ],
-    },
-    {
-      x: 98,
-      y: 811,
-      values: [
-        50, 150, 250, 350, 450, 550, 650, 750, 850, 950, 1050, 1150, 1250, 1350,
-        1450, 1550, 1650, 1750, 1850, 1950,
-      ],
-    },
-    {
-      x: 88,
-      y: 552,
-      values: [
-        800, 1600, 2400, 3200, 4000, 4800, 5600, 6400, 7200, 8000, 8800, 9600,
-        10400, 11200, 12000, 12800, 13600, 14400, 15200, 16000,
-      ],
-    },
-    {
-      x: 85,
-      y: 636,
-      values: [
-        100, 500, 1500, 2500, 3500, 4500, 5500, 6500, 7500, 8500, 9500, 10500,
-        11500, 12500, 13500, 14500, 15500, 16500, 17500, 18500,
-      ],
-    },
-    {
-      x: 275,
-      y: 81,
-      values: [
-        500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000,
-        6500, 7000, 7500, 8000, 8500, 9000, 9500, 10000,
-      ],
-    },
-    {
-      x: 297,
-      y: 159,
-      values: [
-        800, 1600, 2400, 3200, 4000, 4800, 5600, 6400, 7200, 8000, 8800, 9600,
-        10400, 11200, 12000, 12800, 13600, 14400, 15200, 16000,
-      ],
-    },
-    {
-      x: 231,
-      y: 197,
-      values: [
-        100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750,
-        800, 850, 900, 950, 1000, 1050,
-      ],
-    },
-    {
-      x: 203,
-      y: 114,
-      values: [
-        500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000,
-        12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000,
-      ],
-    },
-
-    {
-      x: 223,
-      y: 280,
-      values: [
-        310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 410, 420, 430, 440,
-        450, 460, 470, 480, 490, 500,
-      ],
-    },
-    {
-      x: 290,
-      y: 332,
-      values: [
-        400, 410, 420, 430, 440, 450, 460, 470, 480, 490, 500, 510, 520, 530,
-        540, 550, 560, 570, 580, 590,
-      ],
-    },
-    {
-      x: 270,
-      y: 410,
-      values: [
-        360, 370, 380, 390, 400, 410, 420, 430, 440, 450, 460, 470, 480, 490,
-        500, 510, 520, 530, 540, 550,
-      ],
-    },
-    {
-      x: 305,
-      y: 250,
-      values: [
-        390, 400, 410, 420, 430, 440, 450, 460, 470, 480, 490, 500, 510, 520,
-        530, 540, 550, 560, 570, 580,
-      ],
-    },
-    {
-      x: 228,
-      y: 982,
-      values: [
-        410, 420, 430, 440, 450, 460, 470, 480, 490, 500, 510, 520, 530, 540,
-        550, 560, 570, 580, 590, 600,
-      ],
-    },
-    {
-      x: 245,
-      y: 895,
-      values: [
-        430, 440, 450, 460, 470, 480, 490, 500, 510, 520, 530, 540, 550, 560,
-        570, 580, 590, 600, 610, 620,
-      ],
-    },
-    {
-      x: 235,
-      y: 808,
-      values: [
-        310, 320, 330, 340, 350, 360, 370, 380, 390, 400, 410, 420, 430, 440,
-        450, 460, 470, 480, 490, 500,
-      ],
-    },
-    {
-      x: 172,
-      y: 923,
-      values: [
-        420, 430, 440, 450, 460, 470, 480, 490, 500, 510, 520, 530, 540, 550,
-        560, 570, 580, 590, 600, 610,
-      ],
-    },
-    {
-      x: 172,
-      y: 763,
-      values: [
-        150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280,
-        290, 300, 310, 320, 330, 340,
-      ],
-    },
-    {
-      x: 172,
-      y: 847,
-      values: [
-        390, 400, 410, 420, 430, 440, 450, 460, 470, 480, 490, 500, 510, 520,
-        530, 540, 550, 560, 570, 580,
-      ],
-    },
-    {
-      x: 120,
-      y: 982,
-      values: [
-        370, 380, 390, 400, 410, 420, 430, 440, 450, 460, 470, 480, 490, 500,
-        510, 520, 530, 540, 550, 560,
-      ],
-    },
-    {
-      x: 100,
-      y: 900,
-      values: [
-        -999, 330, 340, 350, 360, 370, 380, 390, 400, 410, 420, 430, 440, 450,
-        460, 470, 480, 490, 500, 510,
-      ],
-    },
+    { x: 210, y: 40, values: [] },
+    { x: 95, y: 145, values: [] },
+    { x: 155, y: 185, values: [] },
+    { x: 140, y: 75, values: [] },
+    { x: 138, y: 263, values: [] },
+    { x: 120, y: 340, values: [] },
+    { x: 201, y: 352, values: [] },
+    { x: 66, y: 228, values: [] },
+    { x: 40, y: 395, values: [] },
+    { x: 44, y: 310, values: [] },
+    { x: 150, y: 410, values: [] },
+    { x: 73, y: 475, values: [] },
+    { x: 93, y: 725, values: [] },
+    { x: 98, y: 811, values: [] },
+    { x: 88, y: 552, values: [] },
+    { x: 85, y: 636, values: [] },
+    { x: 275, y: 81, values: [] },
+    { x: 297, y: 159, values: [] },
+    { x: 231, y: 197, values: [] },
+    { x: 203, y: 114, values: [] },
+    { x: 223, y: 280, values: [] },
+    { x: 290, y: 332, values: [] },
+    { x: 270, y: 410, values: [] },
+    { x: 305, y: 250, values: [] },
+    { x: 228, y: 982, values: [] },
+    { x: 245, y: 895, values: [] },
+    { x: 235, y: 808, values: [] },
+    { x: 172, y: 923, values: [] },
+    { x: 172, y: 763, values: [] },
+    { x: 172, y: 847, values: [] },
+    { x: 120, y: 982, values: [] },
+    { x: 100, y: 900, values: [] },
   ];
 
   const maxWidth = 350;
@@ -461,18 +225,26 @@ const WearablesData = ({
   const mirroredPoints = points.map((point) => ({
     x: maxWidth - point.x, // Refleja el punto en el eje X
     y: point.y, // Mantén la coordenada Y igual
-    values: [...point.values], // Mantén los mismos valores
+    values: [...point.values], // Mantén los mismos valores (al ppio vacios)
   }));
 
-  // Unir ambos arrays
-  const combinedPoints = [...points, ...mirroredPoints];
+  points.forEach((point, index) => {
+    if (traces[index]) {
+      point.values = traces[index].y; // Asigna los valores desde traces a cada punto
+    }
+  });
 
-  // Extraer todos los valores de 'values' en un solo array
-  const allValues = combinedPoints.flatMap((point) => point.values);
+  // Verificar si los datos se han asignado correctamente
+  console.log('Datos después de la asignación:');
+  points.forEach((point, index) => {
+    console.log(`Punto ${index}:`, point);
+  });
 
-  // Calcular el valor mínimo y máximo
-  const minValue = Math.min(...allValues);
-  const maxValue = Math.max(...allValues);
+  mirroredPoints.forEach((point, index) => {
+    if (traces2[index]) {
+      point.values = traces2[index].y; // Asigna los valores desde traces a cada punto
+    }
+  });
 
   return (
     <div className="relative flex flex-col items-center">
@@ -495,7 +267,7 @@ const WearablesData = ({
           }}
         />
         <button
-          onClick={() => changePlaybackRate(1 / 50)}
+          onClick={() => changePlaybackRate(1 / leftWearables[0].frequency)}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           0.15x
@@ -538,10 +310,7 @@ const WearablesData = ({
                 width={350}
                 height={1040}
                 points={points}
-                interval={500}
-                minValue={minValue}
-                maxValue={maxValue}
-                
+                interval={1 / leftWearables[0].frequency} // 200 hz son 5 ms
               />
             </div>
             <div className="flex-1 pl-4 border-r-2 border-gray-400">
@@ -550,16 +319,13 @@ const WearablesData = ({
                 width={350}
                 height={1040}
                 points={mirroredPoints}
-                interval={500}
-                minValue={minValue}
-                maxValue={maxValue}
-                
+                interval={1 / rightWearables[0].frequency}
               />
             </div>
           </div>
           {/* Leyenda de color a la derecha */}
           <div className="ml-8 pl-4  flex flex-col justify-center">
-            <ColorLegend minValue={minValue} maxValue={maxValue} />
+            <ColorLegend />
           </div>
         </div>
       </div>
@@ -570,7 +336,6 @@ const WearablesData = ({
             {leftWearables.map((wearable, index) => (
               <Fragment key={index}>
                 <h4>Left Wearable - {wearable.wearablesId} </h4>
-                <div ref={refs.leftHeatmap} id="leftHeatmap"></div>
                 <div
                   ref={refs.leftPressureSensor}
                   id="leftPressureSensor"
@@ -627,7 +392,6 @@ const WearablesData = ({
           {rightWearables.map((wearable, index) => (
             <div key={index} className="wearable-item">
               <h4>Right Wearable - {wearable.wearablesId}</h4>
-              <div ref={refs.rightHeatmap} id="rightHeatmap"></div>
               <div
                 ref={refs.rightPressureSensor}
                 id="rightPressureSensor"
@@ -694,13 +458,6 @@ function plotWearablesData(
 }
 
 function plotLeftWearable(leftWearables: any, refs: any, playTime: any) {
-  plotHeatmap(
-    leftWearables,
-    refs.leftHeatmap.current,
-    'Left Pressure Sensor Heatmap',
-    [':32'], // Asumiendo que estos son los datos relevantes para el mapa de calor
-    playTime,
-  );
   plotData(
     leftWearables,
     refs.leftPressureSensor.current,
@@ -725,13 +482,6 @@ function plotLeftWearable(leftWearables: any, refs: any, playTime: any) {
 }
 
 function plotrightWearable(rightWearables: any, refs: any, playTime: any) {
-  plotHeatmap(
-    rightWearables,
-    refs.rightHeatmap.current,
-    'Right Pressure Sensor Heatmap',
-    [':32'], // Asumiendo que estos son los datos relevantes para el mapa de calor
-    playTime,
-  );
   plotData(
     rightWearables,
     refs.rightPressureSensor.current,
@@ -941,76 +691,6 @@ async function descargarDatosVisibles(
   } catch (error) {
     console.error('Error al cargar o procesar el archivo CSV:', error);
   }
-}
-
-function plotHeatmap(
-  wearableData: any,
-  divId: HTMLElement | null,
-  // @ts-ignore
-  title: string,
-  columns: (number | string)[],
-  // @ts-ignore
-  playTime: number,
-) {
-  if (!divId) {
-    console.error('Invalid div element');
-    return;
-  }
-
-  // Crear DataFrames desde los datos del wearable y concatenarlos en un solo DataFrame
-  const frames = wearableData.map(
-    (wearable: any) => new DataFrame(wearable.dataframe),
-  );
-
-  const df = concat({ dfList: frames, axis: 1 });
-  // @ts-ignore
-  let datos = df.iloc({ rows: [':'], columns: columns });
-
-  // @ts-ignore
-  let zData;
-  if (datos instanceof DataFrame) {
-    // Intenta convertir DataFrame directamente a una matriz
-    zData = datos.values;
-  } else if (datos instanceof Series) {
-    // Convierte Series a DataFrame y luego a una matriz
-    zData = new DataFrame([datos]).values;
-  } //else {
-  //   console.error('Invalid data type');
-  //   return;
-  // }
-
-  // Configurar los datos del mapa de calor
-  const data = [
-    {
-      z: datos.values,
-      type: 'heatmapgl',
-      colorscale: 'Viridis',
-    },
-  ];
-
-  const layout = {
-    title: title,
-    xaxis: { title: 'Índice de Tiempo' },
-    yaxis: { title: 'Índice de Sensor' },
-    autosize: true,
-    images: [
-      {
-        source: 'src/Components/WearableData/plantilla_sensores_n.png', // Asegúrate de cambiar esto por la URL o ruta de tu imagen
-        xref: 'x',
-        yref: 'y',
-        x: 0,
-        y: 0,
-        sizex: df.shape[1], // Ajusta el tamaño de la imagen al tamaño del eje x del gráfico
-        sizey: df.shape[0], // Ajusta el tamaño de la imagen al tamaño del eje y del gráfico
-        sizing: 'stretch',
-        opacity: 0.5,
-        layer: 'below',
-      },
-    ],
-  };
-  // Usar Plotly.newPlot para renderizar el mapa de calor en el div especificado
-  // @ts-ignore
-  Plotly.newPlot(divId, data, layout);
 }
 
 export default WearablesData;
