@@ -310,7 +310,7 @@ const WearablesData = ({
                 width={350}
                 height={1040}
                 points={points}
-                interval={1 / leftWearables[0].frequency} // 200 hz son 5 ms
+                interval={(1 / leftWearables[0].frequency) * 1000} // 200 hz son 5 ms
               />
             </div>
             <div className="flex-1 pl-4 border-r-2 border-gray-400">
@@ -319,7 +319,7 @@ const WearablesData = ({
                 width={350}
                 height={1040}
                 points={mirroredPoints}
-                interval={1 / rightWearables[0].frequency}
+                interval={(1 / rightWearables[0].frequency) * 1000}
               />
             </div>
           </div>
