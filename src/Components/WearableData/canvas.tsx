@@ -5,7 +5,7 @@ const ImagePlotCanvas = ({
   height = 1040,
   //@ts-ignore
   points,
-  interval = 1 / 50, // Intervalo de tiempo el ms.
+  interval = (1 / 50) * 1000, // Intervalo de tiempo el ms.
 }) => {
   const canvasRef = useRef(null);
   const [currentFrame, setCurrentFrame] = useState(0);
