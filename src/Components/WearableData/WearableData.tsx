@@ -186,42 +186,77 @@ const WearablesData = ({
   console.log('Traces:', traces2);
 
   // Inicializar el array points con values como un array vacío
+  // const points = [
+  //   { x: 210, y: 40, values: [] },
+  //   { x: 95, y: 145, values: [] },
+  //   { x: 155, y: 185, values: [] },
+  //   { x: 140, y: 75, values: [] },
+  //   { x: 138, y: 263, values: [] },
+  //   { x: 120, y: 340, values: [] },
+  //   { x: 201, y: 352, values: [] },
+  //   { x: 66, y: 228, values: [] },
+  //   { x: 40, y: 395, values: [] },
+  //   { x: 44, y: 310, values: [] },
+  //   { x: 150, y: 410, values: [] },
+  //   { x: 73, y: 475, values: [] },
+  //   { x: 93, y: 725, values: [] },
+  //   { x: 98, y: 811, values: [] },
+  //   { x: 88, y: 552, values: [] },
+  //   { x: 85, y: 636, values: [] },
+  //   { x: 275, y: 81, values: [] },
+  //   { x: 297, y: 159, values: [] },
+  //   { x: 231, y: 197, values: [] },
+  //   { x: 203, y: 114, values: [] },
+  //   { x: 223, y: 280, values: [] },
+  //   { x: 290, y: 332, values: [] },
+  //   { x: 270, y: 410, values: [] },
+  //   { x: 305, y: 250, values: [] },
+  //   { x: 228, y: 982, values: [] },
+  //   { x: 245, y: 895, values: [] },
+  //   { x: 235, y: 808, values: [] },
+  //   { x: 172, y: 923, values: [] },
+  //   { x: 172, y: 763, values: [] },
+  //   { x: 172, y: 847, values: [] },
+  //   { x: 120, y: 982, values: [] },
+  //   { x: 100, y: 900, values: [] },
+  // ];
+
   const points = [
-    { x: 210, y: 40, values: [] },
-    { x: 95, y: 145, values: [] },
-    { x: 155, y: 185, values: [] },
-    { x: 140, y: 75, values: [] },
-    { x: 138, y: 263, values: [] },
-    { x: 120, y: 340, values: [] },
-    { x: 201, y: 352, values: [] },
-    { x: 66, y: 228, values: [] },
-    { x: 40, y: 395, values: [] },
-    { x: 44, y: 310, values: [] },
-    { x: 150, y: 410, values: [] },
-    { x: 73, y: 475, values: [] },
-    { x: 93, y: 725, values: [] },
-    { x: 98, y: 811, values: [] },
-    { x: 88, y: 552, values: [] },
-    { x: 85, y: 636, values: [] },
-    { x: 275, y: 81, values: [] },
-    { x: 297, y: 159, values: [] },
-    { x: 231, y: 197, values: [] },
-    { x: 203, y: 114, values: [] },
-    { x: 223, y: 280, values: [] },
-    { x: 290, y: 332, values: [] },
-    { x: 270, y: 410, values: [] },
-    { x: 305, y: 250, values: [] },
-    { x: 228, y: 982, values: [] },
-    { x: 245, y: 895, values: [] },
-    { x: 235, y: 808, values: [] },
-    { x: 172, y: 923, values: [] },
-    { x: 172, y: 763, values: [] },
-    { x: 172, y: 847, values: [] },
-    { x: 120, y: 982, values: [] },
-    { x: 100, y: 900, values: [] },
+    { x: 105, y: 20, values: [] },
+    { x: 47.5, y: 72.5, values: [] },
+    { x: 77.5, y: 92.5, values: [] },
+    { x: 70, y: 37.5, values: [] },
+    { x: 69, y: 131.5, values: [] },
+    { x: 60, y: 170, values: [] },
+    { x: 100.5, y: 176, values: [] },
+    { x: 33, y: 114, values: [] },
+    { x: 20, y: 197.5, values: [] },
+    { x: 22, y: 155, values: [] },
+    { x: 75, y: 205, values: [] },
+    { x: 36.5, y: 237.5, values: [] },
+    { x: 46.5, y: 362.5, values: [] },
+    { x: 49, y: 405.5, values: [] },
+    { x: 44, y: 276, values: [] },
+    { x: 42.5, y: 318, values: [] },
+    { x: 137.5, y: 40.5, values: [] },
+    { x: 148.5, y: 79.5, values: [] },
+    { x: 115.5, y: 98.5, values: [] },
+    { x: 101.5, y: 57, values: [] },
+    { x: 111.5, y: 140, values: [] },
+    { x: 145, y: 166, values: [] },
+    { x: 135, y: 205, values: [] },
+    { x: 152.5, y: 125, values: [] },
+    { x: 114, y: 491, values: [] },
+    { x: 122.5, y: 447.5, values: [] },
+    { x: 117.5, y: 404, values: [] },
+    { x: 86, y: 461.5, values: [] },
+    { x: 86, y: 381.5, values: [] },
+    { x: 86, y: 423.5, values: [] },
+    { x: 60, y: 491, values: [] },
+    { x: 50, y: 450, values: [] },
   ];
 
-  const maxWidth = 350;
+  const maxWidth = 175; // antes era 350
 
   const mirroredPoints = points.map((point) => ({
     x: maxWidth - point.x, // Refleja el punto en el eje X
@@ -249,6 +284,12 @@ const WearablesData = ({
 
   console.log(leftWearables[0].frequency);
   console.log(rightWearables[0].frequency);
+
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const handlePlay = () => setIsPlaying(true);
+  const handlePause = () => setIsPlaying(false);
+  const handleReset = () => setIsPlaying(false);
 
   return (
     <div className="relative flex flex-col items-center">
@@ -304,31 +345,35 @@ const WearablesData = ({
         </button>
       </div>
       <div className="border-2 border-gray-300 p-6 shadow-md mt-12 flex justify-center">
-        {/* Contenedor expandido para incluir ambos gráficos y la leyenda */}
         <div className="flex justify-between items-start gap-8 w-full max-w-7xl">
-          {/* Contenedor de las dos plantillas */}
           <div className="flex flex-1 justify-between items-center gap-8">
             <div className="flex-1 pr-4 border-r-2 border-gray-400">
-              {/* Añade padding a la derecha del primer canvas para separarlo de la línea */}
               <ImagePlotCanvas
-                width={350}
-                height={1040}
+                width={175}
+                height={520}
                 points={points}
-                interval={(1 / leftWearables[0].frequency) * 1000} // 200 hz son 5 ms
+                interval={(1 / leftWearables[0].frequency) * 1000}
+                onPlay={handlePlay}
+                onPause={handlePause}
+                onReset={handleReset}
+                isPlaying={isPlaying}
               />
             </div>
             <div className="flex-1 pl-4 border-r-2 border-gray-400">
-              {/* Añade padding a la izquierda del segundo canvas para separarlo de la línea */}
               <ImagePlotCanvas
-                width={350}
-                height={1040}
+                width={175}
+                height={520}
                 points={mirroredPoints}
                 interval={(1 / rightWearables[0].frequency) * 1000}
+                onPlay={handlePlay}
+                onPause={handlePause}
+                onReset={handleReset}
+                isPlaying={isPlaying}
               />
             </div>
           </div>
-          {/* Leyenda de color a la derecha */}
-          <div className="ml-8 pl-4  flex flex-col justify-center">
+
+          <div className="ml-8 pl-4 flex flex-col justify-center">
             <ColorLegend />
           </div>
         </div>

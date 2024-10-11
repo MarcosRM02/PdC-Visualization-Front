@@ -31,8 +31,8 @@ const ImagePlotCanvas: React.FC<ImagePlotCanvasProps> = ({
   const animationRef = useRef<number | null>(null);
 
   // Definir la cuadrícula de baja resolución
-  const gridWidth = 30; // Resolución horizontal de la cuadrícula
-  const gridHeight = 85; // Resolución vertical de la cuadrícula
+  const gridWidth = 15; // Resolución horizontal de la cuadrícula
+  const gridHeight = 44; // Resolución vertical de la cuadrícula
 
   // Memoizar las posiciones de la cuadrícula para evitar recalculaciones
   const { xi, yi } = useMemo(() => {
