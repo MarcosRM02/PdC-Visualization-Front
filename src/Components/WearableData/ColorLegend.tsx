@@ -7,7 +7,7 @@ interface ColorStop {
 
 const ColorLegend = ({
   width = 30,
-  height = 820,
+  height = 410,
   colorStops,
 }: {
   width?: number;
