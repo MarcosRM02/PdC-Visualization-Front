@@ -32,6 +32,7 @@ const WearablesData = ({
   const rightWearables = wearables.filter(
     (wearable) => wearable.wearableType === 'R',
   );
+
   const [playTime, setPlayTime] = useState<number>(0);
   const playerRef = useRef<ReactPlayer | null>(null);
   const handleProgress = (state: { playedSeconds: number }) => {
@@ -245,6 +246,9 @@ const WearablesData = ({
       point.values = traces2[index].y; // Asigna los valores desde traces a cada punto
     }
   });
+
+  console.log(leftWearables[0].frequency);
+  console.log(rightWearables[0].frequency);
 
   return (
     <div className="relative flex flex-col items-center">
@@ -636,7 +640,9 @@ async function descargarDatosVisibles(
 
   // Calcular el índice de inicio y fin basado en xRange
   var startIndex = Math.floor(xRange[0]);
+  console.log('Start Index:', startIndex);
   var endIndex = Math.ceil(xRange[1]);
+  console.log('End Index:', endIndex);
 
   const frames = wearable.map(
     (wearable: any) => new DataFrame(wearable.dataframe),
