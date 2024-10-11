@@ -25,10 +25,27 @@ const ImagePlotCanvas: React.FC<ImagePlotCanvasProps> = ({
   points,
   interval = 20, // 1/50 * 1000 = 20 ms
 }) => {
+  // Referencia al elemento canvas
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [currentFrame, setCurrentFrame] = useState(0);
+
+  // Estado para controlar la reproducción de la animación
   const [isPlaying, setIsPlaying] = useState(false);
+  const isPlayingRef = useRef(isPlaying);
+
+  // Estado para el contador de FPS
+  const [fps, setFps] = useState(0);
+  const frameCountRef = useRef(0);
+  const fpsIntervalRef = useRef<number | null>(null);
+
+  // Referencia para el frame actual y la animación
+  const currentFrameRef = useRef<number>(0);
   const animationRef = useRef<number | null>(null);
+  const lastFrameTimeRef = useRef<number>(0); // Tiempo del último frame
+
+  // Sincronizar isPlaying con isPlayingRef
+  useEffect(() => {
+    isPlayingRef.current = isPlaying;
+  }, [isPlaying]);
 
   // Definir la cuadrícula de baja resolución
   const gridWidth = 15; // Resolución horizontal de la cuadrícula
@@ -211,39 +228,14 @@ const ImagePlotCanvas: React.FC<ImagePlotCanvasProps> = ({
     [],
   );
 
-  // Función de animación usando requestAnimationFrame
-  const animate = useCallback(() => {
-    setCurrentFrame((prevFrame) => {
-      const nextFrame = prevFrame + 1;
-      if (nextFrame >= points[0].values.length) {
-        setIsPlaying(false);
-        return 0;
-      }
-      return nextFrame;
-    });
-    animationRef.current = requestAnimationFrame(animate);
-  }, [points]);
-
-  // Efecto para manejar la animación
-  useEffect(() => {
-    if (isPlaying) {
-      animationRef.current = requestAnimationFrame(animate);
-      return () => {
-        if (animationRef.current) {
-          cancelAnimationFrame(animationRef.current);
-        }
-      };
-    }
-  }, [isPlaying, animate]);
-
-  // Efecto para dibujar en el canvas cuando cambian los puntos o el frame
-  useEffect(() => {
+  // Función para dibujar todo en el canvas
+  const draw = useCallback(() => {
     if (!points || points.length === 0) return;
 
     const xCoords = points.map((point) => point.x);
     const yCoords = points.map((point) => point.y);
     const pressures = points.map(
-      (point) => point.values[currentFrame % point.values.length],
+      (point) => point.values[currentFrameRef.current % point.values.length],
     );
 
     const heatmapData = circularHeatMap(xCoords, yCoords, pressures);
@@ -255,39 +247,116 @@ const ImagePlotCanvas: React.FC<ImagePlotCanvasProps> = ({
     if (context) {
       plotPoints(context, points);
     }
-  }, [points, currentFrame, circularHeatMap, plotHeatMap, plotPoints]);
+  }, [points, circularHeatMap, plotHeatMap, plotPoints]);
+
+  // Función de animación optimizada usando requestAnimationFrame
+  const animate = useCallback(
+    (timestamp: number) => {
+      if (!lastFrameTimeRef.current) {
+        lastFrameTimeRef.current = timestamp;
+      }
+
+      const elapsed = timestamp - lastFrameTimeRef.current;
+
+      if (elapsed >= interval) {
+        currentFrameRef.current += 1;
+        if (currentFrameRef.current >= points[0].values.length) {
+          setIsPlaying(false);
+          cancelAnimationFrame(animationRef.current!);
+          animationRef.current = null;
+          return;
+        }
+        lastFrameTimeRef.current = timestamp - (elapsed % interval);
+        draw(); // Dibujar inmediatamente después de actualizar el frame
+      }
+
+      // Incrementar el contador de frames para FPS
+      frameCountRef.current += 1;
+
+      if (isPlayingRef.current) {
+        animationRef.current = requestAnimationFrame(animate);
+      }
+    },
+    [interval, points, draw],
+  );
 
   // Función para iniciar la animación
-  const startAnimation = () => {
+  const startAnimation = useCallback(() => {
     if (!isPlaying) {
       setIsPlaying(true);
     }
-  };
+  }, [isPlaying]);
 
   // Función para detener la animación
-  const stopAnimation = () => {
+  const stopAnimation = useCallback(() => {
     if (isPlaying) {
       setIsPlaying(false);
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
       }
     }
-  };
+  }, [isPlaying]);
 
   // Función para resetear el frame y detener la animación
-  const resetFrame = () => {
-    setCurrentFrame(0);
+  const resetFrame = useCallback(() => {
+    currentFrameRef.current = 0;
     stopAnimation();
-  };
+    setFps(0); // Resetear el estado de FPS a 0
+    frameCountRef.current = 0; // Resetear el contador de frames a 0
+    draw(); // Dibujar el frame inicial
+  }, [stopAnimation, draw]);
 
-  // Limpiar la animación cuando el componente se desmonte
+  // Efecto para manejar la animación
   useEffect(() => {
+    if (isPlaying) {
+      animationRef.current = requestAnimationFrame(animate);
+    }
+
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
     };
+  }, [isPlaying, animate]);
+
+  // Efecto para contar los FPS
+  useEffect(() => {
+    if (isPlaying) {
+      // Iniciar el intervalo para contar FPS
+      fpsIntervalRef.current = window.setInterval(() => {
+        setFps(frameCountRef.current);
+        frameCountRef.current = 0;
+      }, 1000); // Cada 1000 ms (1 segundo)
+    } else {
+      if (fpsIntervalRef.current) {
+        clearInterval(fpsIntervalRef.current);
+      }
+    }
+
+    return () => {
+      if (fpsIntervalRef.current) {
+        clearInterval(fpsIntervalRef.current);
+      }
+    };
+  }, [isPlaying]);
+
+  // Limpiar la animación y los intervalos cuando el componente se desmonte
+  useEffect(() => {
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      if (fpsIntervalRef.current) {
+        clearInterval(fpsIntervalRef.current);
+      }
+    };
   }, []);
+
+  // Dibujar el frame inicial cuando los puntos cambian
+  useEffect(() => {
+    draw();
+  }, [draw]);
 
   return (
     <div className="flex flex-col items-center">
@@ -314,6 +383,9 @@ const ImagePlotCanvas: React.FC<ImagePlotCanvasProps> = ({
         >
           Reset
         </button>
+      </div>
+      <div className="mt-2 text-lg">
+        <span>FPS: {fps}</span>
       </div>
     </div>
   );
