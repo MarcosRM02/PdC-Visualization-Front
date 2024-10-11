@@ -53,7 +53,7 @@ const ImagePlotCanvas: React.FC<ImagePlotCanvasProps> = ({
 
   // Memoizar las posiciones de la cuadrícula para evitar recalculaciones
   const { xi, yi } = useMemo(() => {
-    const xi = Array.from({ length: gridHeight }, (_, y) =>
+    const xi = Array.from({ length: gridHeight }, (_) =>
       Array.from({ length: gridWidth }, (_, x) => (x / gridWidth) * width),
     );
     const yi = Array.from({ length: gridHeight }, (_, y) =>
