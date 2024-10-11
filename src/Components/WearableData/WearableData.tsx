@@ -285,11 +285,6 @@ const WearablesData = ({
   console.log(leftWearables[0].frequency);
   console.log(rightWearables[0].frequency);
 
-  const [isPlaying, setIsPlaying] = useState(false);
-
-  const handlePlay = () => setIsPlaying(true);
-  const handlePause = () => setIsPlaying(false);
-  const handleReset = () => setIsPlaying(false);
 
   return (
     <div className="relative flex flex-col items-center">
@@ -353,10 +348,6 @@ const WearablesData = ({
                 height={520}
                 points={points}
                 interval={(1 / leftWearables[0].frequency) * 1000}
-                onPlay={handlePlay}
-                onPause={handlePause}
-                onReset={handleReset}
-                isPlaying={isPlaying}
               />
             </div>
             <div className="flex-1 pl-4 border-r-2 border-gray-400">
@@ -365,10 +356,6 @@ const WearablesData = ({
                 height={520}
                 points={mirroredPoints}
                 interval={(1 / rightWearables[0].frequency) * 1000}
-                onPlay={handlePlay}
-                onPause={handlePause}
-                onReset={handleReset}
-                isPlaying={isPlaying}
               />
             </div>
           </div>
