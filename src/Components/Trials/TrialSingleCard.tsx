@@ -36,7 +36,7 @@ const TrialSingleCard = ({ trials }: { trials: any }) => {
     experimentId: null,
     wearablesIds: [],
   });
-  const [error, setError] = useState('');
+  const [_error, setError] = useState('');
   const participantId = trials.participant.id;
   const swId = trials.sw.id;
   useEffect(() => {
