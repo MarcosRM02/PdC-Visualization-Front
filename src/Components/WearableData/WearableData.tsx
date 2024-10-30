@@ -385,7 +385,7 @@ const WearablesData = ({
       <div className="mt-12 flex flex-row justify-between w-full">
         <div id="Left-Side" className="flex-1 overflow-auto p-4">
           <>
-            {leftWearables.map((wearable, index) => (
+            {leftWearables.map((_wearable, index) => (
               <Fragment key={index}>
                 <div
                   ref={refs.leftPressureSensor}
@@ -432,7 +432,7 @@ const WearablesData = ({
         </div>
 
         <div id="right-side" className="flex-1 overflow-auto p-4">
-          {rightWearables.map((wearable, index) => (
+          {rightWearables.map((_wearable, index) => (
             <div key={index} className="wearable-item">
               <div
                 ref={refs.rightPressureSensor}
@@ -779,7 +779,7 @@ async function descargarDatosVisibles(
   const zip = new JSZip();
 
   // Función auxiliar para generar CSV en un rango específico
-  const generarCSVEnRango = (divId: any, wearable: any, type: string) => {
+  const generarCSVEnRango = (divId: any, wearable: any, _type: string) => {
     const plotInstance = document.getElementById(divId.current.id);
     // @ts-ignore
     let xRange = plotInstance.layout.xaxis.range.map(
