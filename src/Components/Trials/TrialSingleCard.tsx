@@ -110,55 +110,7 @@ const TrialSingleCard = ({ trials }: { trials: any }) => {
           <FaIdCard className="text-red-300 text-2xl" />
           <h4 className="my-2 text-gray-500"> swId: {trials.sw.id}</h4>
         </div>
-        <div>
-          <h1>Experiment and Wearables IDs</h1>
-          {error ? (
-            <p>Error: {error}</p>
-          ) : (
-            <div>
-              <p>Experiment ID: {data.experimentId}</p>
-              <p>Wearables IDs: {data.wearablesIds.join(', ')}</p>
-            </div>
-          )}
-        </div>
-        {/* <div className="flex justify-start items-center gap-x-2">
-          <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500">
-            {" "}
-            ID: {trials.syncronized_wearables_id}
-          </h4>
-        </div>  No es necesario, pq ya esta en la pagina anterior, queda redundante.*/}
-        {/* 
-          <div className="flex justify-start items-center gap-x-2">
-            <FaCalendarDay className="text-red-300 text-2xl" />
-            <h4 className="my-2 text-gray-500"> Date: {dateString}</h4>
-          </div> */}
-        {/* <div className="flex justify-start items-center gap-x-2 flex-wrap">
-            {trials.wearableData.map((item: any, index: any) => (
-              <div key={index} className="flex items-center gap-x-2">
-                <FaIdCard className="text-red-300 text-2xl" />
-                <h4 className="my-2 text-gray-500">Wearable Id: {item}</h4>
-                <br />
-              </div>
-            ))}
-          </div> */}
       </div>
-      {/*
-        <div className="flex justify-between items-center gap-x-2 mt-4 p-4">
-          <BiShow
-            className="text-3xl text-blue-800 hover:text-black cursor-pointer"
-            onClick={() => setShowModal(true)}
-          />
-        <Link to={`/books/details/${User._id}`}>
-          <BsInfoCircle className="text-2xl text-green-800 hover:text-black" />
-        </Link>
-        <Link to={`/books/edit/${User._id}`}>
-          <AiOutlineEdit className="text-2xl text-yellow-600 hover:text-black" />
-        </Link>
-        <Link to={`/books/delete/${User._id}`}>
-          <MdOutlineDelete className="text-2xl text-red-600 hover:text-black" />
-        </Link>
-      </div> */}
       <div className="flex justify-between items-center gap-x-2 mt-4 p-4">
         <button
           onClick={handleEditClick}
