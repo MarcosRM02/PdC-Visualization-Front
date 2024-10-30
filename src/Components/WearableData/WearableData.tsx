@@ -1,3 +1,5 @@
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 import { Fragment, useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { WearableDataProps } from '../../Types/Interfaces';
@@ -33,6 +35,19 @@ const WearablesData = ({
     (wearable) => wearable.wearableType === 'R',
   );
 
+  // Convertir los datos a DataFrames
+  const leftFrames = leftWearables.map(
+    (wearable: any) => new DataFrame(wearable.dataframe),
+  );
+  const rightFrames = rightWearables.map(
+    (wearable: any) => new DataFrame(wearable.dataframe),
+  );
+
+  const minLength = Math.min(
+    ...leftFrames.map((frame) => frame.shape[0]),
+    ...rightFrames.map((frame) => frame.shape[0]),
+  );
+
   const [playTime, setPlayTime] = useState<number>(0);
   const playerRef = useRef<ReactPlayer | null>(null);
   const handleProgress = (state: { playedSeconds: number }) => {
@@ -51,7 +66,7 @@ const WearablesData = ({
     }
   };
   useEffect(() => {
-    plotWearablesData(leftWearables, rightWearables, refs, playTime);
+    plotWearablesData(leftWearables, rightWearables, refs, playTime, minLength);
 
     Object.values(refs).forEach((ref) => {
       if (ref.current) {
@@ -161,14 +176,13 @@ const WearablesData = ({
 
   const df = concat({ dfList: frames, axis: 1 });
   // @ts-ignore
-  let datos = df.iloc({ rows: [':'], columns: [':32'] });
+  //let datos = df.iloc({ rows: [':'], columns: [':32'] });
+  let datos = df.iloc({ rows: [`0:${minLength}`], columns: [':32'] });
 
   const traces = datos.columns.map((column: string) => ({
     // @ts-ignore
     y: datos[column].values,
   }));
-
-  console.log('Traces:', traces);
 
   const frames2 = rightWearables.map(
     (wearable: any) => new DataFrame(wearable.dataframe),
@@ -176,50 +190,14 @@ const WearablesData = ({
 
   const df2 = concat({ dfList: frames2, axis: 1 });
   // @ts-ignore
-  let datos2 = df2.iloc({ rows: [':'], columns: [':32'] });
+  let datos2 = df2.iloc({ rows: [`0:${minLength}`], columns: [':32'] });
 
   const traces2 = datos2.columns.map((column: string) => ({
     // @ts-ignore
     y: datos2[column].values,
   }));
 
-  console.log('Traces:', traces2);
-
-  // Inicializar el array points con values como un array vacío
-  // const points = [
-  //   { x: 210, y: 40, values: [] },
-  //   { x: 95, y: 145, values: [] },
-  //   { x: 155, y: 185, values: [] },
-  //   { x: 140, y: 75, values: [] },
-  //   { x: 138, y: 263, values: [] },
-  //   { x: 120, y: 340, values: [] },
-  //   { x: 201, y: 352, values: [] },
-  //   { x: 66, y: 228, values: [] },
-  //   { x: 40, y: 395, values: [] },
-  //   { x: 44, y: 310, values: [] },
-  //   { x: 150, y: 410, values: [] },
-  //   { x: 73, y: 475, values: [] },
-  //   { x: 93, y: 725, values: [] },
-  //   { x: 98, y: 811, values: [] },
-  //   { x: 88, y: 552, values: [] },
-  //   { x: 85, y: 636, values: [] },
-  //   { x: 275, y: 81, values: [] },
-  //   { x: 297, y: 159, values: [] },
-  //   { x: 231, y: 197, values: [] },
-  //   { x: 203, y: 114, values: [] },
-  //   { x: 223, y: 280, values: [] },
-  //   { x: 290, y: 332, values: [] },
-  //   { x: 270, y: 410, values: [] },
-  //   { x: 305, y: 250, values: [] },
-  //   { x: 228, y: 982, values: [] },
-  //   { x: 245, y: 895, values: [] },
-  //   { x: 235, y: 808, values: [] },
-  //   { x: 172, y: 923, values: [] },
-  //   { x: 172, y: 763, values: [] },
-  //   { x: 172, y: 847, values: [] },
-  //   { x: 120, y: 982, values: [] },
-  //   { x: 100, y: 900, values: [] },
-  // ];
+  // Inicializar el array points con values como un array vací
 
   const points = [
     { x: 105, y: 20, values: [] },
@@ -270,139 +248,153 @@ const WearablesData = ({
     }
   });
 
-  // Verificar si los datos se han asignado correctamente
-  console.log('Datos después de la asignación:');
-  points.forEach((point, index) => {
-    console.log(`Punto ${index}:`, point);
-  });
-
   mirroredPoints.forEach((point, index) => {
     if (traces2[index]) {
       point.values = traces2[index].y; // Asigna los valores desde traces a cada punto
     }
   });
 
-  console.log(leftWearables[0].frequency);
-  console.log(rightWearables[0].frequency);
-
-
   return (
     <div className="relative flex flex-col items-center">
-      <div className="flex-grow w-full max-w-6xl">
-        <ReactPlayer
-          ref={playerRef}
-          url={videoSrc}
-          //playing
-          onProgress={handleProgress}
-          width="100%"
-          height="100%"
-          controls={true}
-          config={{
-            file: {
-              attributes: {
-                controlsList: 'nodownload', // Intenta evitar que el video sea descargable
-                disablePictureInPicture: true, // Deshabilita Picture in Picture
-              },
-            },
-          }}
-        />
-        <button
-          onClick={() => changePlaybackRate(1 / leftWearables[0].frequency)}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          0.15x
-        </button>
-        <button
-          onClick={() => changePlaybackRate(0.25)}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          0.25x
-        </button>
-        <button
-          onClick={() => changePlaybackRate(1)}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          1x
-        </button>
-        <button
-          onClick={() => changePlaybackRate(2)}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          2x
-        </button>
+      <div className="flex flex-col md:flex-row w-full max-w-6xl p-4 mx-auto">
+        {/* Sección Izquierda: Reproductor de Video y Botones */}
+        <div className="flex flex-col md:w-2/3 w-full md:mr-6 h-[530px]">
+          {/* Contenedor del Reproductor */}
+          <div className="flex-grow relative">
+            <ReactPlayer
+              ref={playerRef}
+              url={videoSrc}
+              onProgress={handleProgress}
+              width="100%"
+              height="100%"
+              controls={true}
+              className="object-cover" // Asegura que el video cubra todo el espacio disponible
+              config={{
+                file: {
+                  attributes: {
+                    controlsList: 'nodownload', // Intenta evitar que el video sea descargable
+                    disablePictureInPicture: true, // Deshabilita Picture in Picture
+                  },
+                },
+              }}
+            />
+
+            {/* Overlay para mensaje de video no disponible */}
+            {!videoSrc && (
+              <div className="absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center text-white text-2xl font-bold">
+                No hay ningún video disponible
+              </div>
+            )}
+          </div>
+
+          {/* Botones de velocidad de reproducción */}
+          <div className="mt-4 flex space-x-2">
+            <button
+              onClick={() => changePlaybackRate(1 / leftWearables[0].frequency)}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              0.15x
+            </button>
+            <button
+              onClick={() => changePlaybackRate(0.25)}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              0.25x
+            </button>
+            <button
+              onClick={() => changePlaybackRate(1)}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              1x
+            </button>
+            <button
+              onClick={() => changePlaybackRate(2)}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              2x
+            </button>
+          </div>
+        </div>
+
+        {/* Sección Derecha: Mapas de Calor y Leyenda */}
+        <div className="flex flex-col md:w-1/3 w-full h-[530px] mt-6 md:mt-0">
+          {/* Contenedor de Mapas de Calor y Leyenda */}
+          <div className="flex flex-row flex-grow">
+            {/* Contenedor de los Mapas de Calor */}
+            <div className="flex flex-col flex-grow">
+              <div className="flex space-x-4 flex-grow">
+                {/* Primer Mapa de Calor */}
+                <div className="flex-shrink-0">
+                  <ImagePlotCanvas
+                    width={175}
+                    height={530}
+                    points={points}
+                    interval={(1 / leftWearables[0].frequency) * 1000}
+                  />
+                </div>
+
+                {/* Segundo Mapa de Calor */}
+                <div className="flex-shrink-0">
+                  <ImagePlotCanvas
+                    width={175}
+                    height={530}
+                    points={mirroredPoints}
+                    interval={(1 / rightWearables[0].frequency) * 1000}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Leyenda de Colores */}
+            <div className="ml-4 flex-shrink-0">
+              <ColorLegend />
+            </div>
+          </div>
+        </div>
       </div>
-      <div>
+
+      <div className="flex space-x-4 mt-40">
+        {/* Botón de Reset */}
         <button
           onClick={resetGraphs}
-          className="mt-40 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
+          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
         >
           Reset Graphs
         </button>
-      </div>
-      <div className="border-2 border-gray-300 p-6 shadow-md mt-12 flex justify-center">
-        <div className="flex justify-between items-start gap-8 w-full max-w-7xl">
-          <div className="flex flex-1 justify-between items-center gap-8">
-            <div className="flex-1 pr-4 border-r-2 border-gray-400">
-              <ImagePlotCanvas
-                width={175}
-                height={520}
-                points={points}
-                interval={(1 / leftWearables[0].frequency) * 1000}
-              />
-            </div>
-            <div className="flex-1 pl-4 border-r-2 border-gray-400">
-              <ImagePlotCanvas
-                width={175}
-                height={520}
-                points={mirroredPoints}
-                interval={(1 / rightWearables[0].frequency) * 1000}
-              />
-            </div>
-          </div>
 
-          <div className="ml-8 pl-4 flex flex-col justify-center">
-            <ColorLegend />
-          </div>
-        </div>
+        {/* Botón para Descargar Datos en ZIP */}
+        <button
+          onClick={() =>
+            descargarDatosVisibles(
+              refs.leftPressureSensor,
+              refs.rightPressureSensor,
+              leftWearables,
+              rightWearables,
+              experimentId,
+              participantId,
+              trialId,
+              swId,
+            )
+          }
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
+        >
+          Descargar Datos (ZIP)
+        </button>
       </div>
 
       <div className="mt-12 flex flex-row justify-between w-full">
         <div id="Left-Side" className="flex-1 overflow-auto p-4">
           <>
-            {leftWearables.map((wearable, index) => (
+            {leftWearables.map((_wearable, index) => (
               <Fragment key={index}>
-                <h4>Left Wearable - {wearable.wearablesId} </h4>
                 <div
                   ref={refs.leftPressureSensor}
                   id="leftPressureSensor"
                 ></div>
-                {/*<div className="flex justify-end">
-                  <button
-                    onClick={() =>
-                      descargarDatosVisibles(
-                        'leftPressureSensor',
-                        leftWearables,
-                      )
-                    }
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
-                  >
-                    Download CSV
-                  </button>
-                </div>*/}
                 <div ref={refs.leftAccelerometer} id="leftAccelerometer"></div>
-                {/* <div className="flex justify-end">
-                  <button
-                    onClick={() =>
-                      descargarDatosVisibles('leftAccelerometer', leftWearables)
-                    }
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
-                  >
-                    Download CSV
-                  </button> 
-                </div> */}
                 <div ref={refs.leftGyroscope} id="leftGyroscope"></div>
                 <div className="flex justify-end">
-                  <button
+                  {/* <button
                     onClick={() =>
                       descargarDatosVisibles(
                         refs.leftGyroscope,
@@ -417,7 +409,22 @@ const WearablesData = ({
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
                   >
                     Download CSV
-                  </button>
+                  </button> */}
+                  {/* <button
+                    onClick={() =>
+                      descargarDatosVisibles(
+                        leftWearables,
+                        rightWearables,
+                        experimentId,
+                        participantId,
+                        trialId,
+                        swId,
+                      )
+                    }
+                    className="mt-40 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
+                  >
+                    Descargar Datos (ZIP)
+                  </button> */}
                 </div>
               </Fragment>
             ))}
@@ -425,40 +432,16 @@ const WearablesData = ({
         </div>
 
         <div id="right-side" className="flex-1 overflow-auto p-4">
-          {rightWearables.map((wearable, index) => (
+          {rightWearables.map((_wearable, index) => (
             <div key={index} className="wearable-item">
-              <h4>Right Wearable - {wearable.wearablesId}</h4>
               <div
                 ref={refs.rightPressureSensor}
                 id="rightPressureSensor"
               ></div>
-              {/* <div className="flex justify-end">
-                 <button
-                  onClick={() =>
-                    descargarDatosVisibles(
-                      'rightPressureSensor',
-                      rightWearables,
-                    )
-                  }
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
-                >
-                  Download CSV
-                </button> 
-              </div> */}
               <div ref={refs.rightAccelerometer} id="rightAccelerometer"></div>
-              {/* <div className="flex justify-end">
-                 <button
-                  onClick={() =>
-                    descargarDatosVisibles('rightAccelerometer', rightWearables)
-                  }
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
-                >
-                  Download CSV
-                </button> 
-              </div> */}
               <div ref={refs.rightGyroscope} id="rightGyroscope"></div>
               <div className="flex justify-end">
-                <button
+                {/* <button
                   onClick={() =>
                     descargarDatosVisibles(
                       refs.rightGyroscope,
@@ -473,7 +456,7 @@ const WearablesData = ({
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-lg hover:shadow-xl transition duration-150 ease-in-out"
                 >
                   Download CSV
-                </button>
+                </button> */}
               </div>
             </div>
           ))}
@@ -488,18 +471,25 @@ function plotWearablesData(
   rightWearables: any,
   refs: any,
   playTime: any,
+  minLength: number,
 ) {
-  plotLeftWearable(leftWearables, refs, playTime);
-  plotrightWearable(rightWearables, refs, playTime);
+  plotLeftWearable(leftWearables, refs, playTime, minLength);
+  plotrightWearable(rightWearables, refs, playTime, minLength);
 }
 
-function plotLeftWearable(leftWearables: any, refs: any, playTime: any) {
+function plotLeftWearable(
+  leftWearables: any,
+  refs: any,
+  playTime: any,
+  minLength: number,
+) {
   plotData(
     leftWearables,
     refs.leftPressureSensor.current,
     'Pressure Sensor',
     [':32'],
     playTime,
+    minLength,
   );
   plotData(
     leftWearables,
@@ -507,6 +497,7 @@ function plotLeftWearable(leftWearables: any, refs: any, playTime: any) {
     'Accelerometer',
     [32, 33, 34],
     playTime,
+    minLength,
   );
   plotData(
     leftWearables,
@@ -514,16 +505,23 @@ function plotLeftWearable(leftWearables: any, refs: any, playTime: any) {
     'Gyroscope',
     [35, 36, 37],
     playTime,
+    minLength,
   );
 }
 
-function plotrightWearable(rightWearables: any, refs: any, playTime: any) {
+function plotrightWearable(
+  rightWearables: any,
+  refs: any,
+  playTime: any,
+  minLength: number,
+) {
   plotData(
     rightWearables,
     refs.rightPressureSensor.current,
     'Pressure Sensor',
     [':32'],
     playTime,
+    minLength,
   );
   plotData(
     rightWearables,
@@ -531,6 +529,7 @@ function plotrightWearable(rightWearables: any, refs: any, playTime: any) {
     'Accelerometer',
     [32, 33, 34],
     playTime,
+    minLength,
   );
   plotData(
     rightWearables,
@@ -538,6 +537,7 @@ function plotrightWearable(rightWearables: any, refs: any, playTime: any) {
     'Gyroscope',
     [35, 36, 37],
     playTime,
+    minLength,
   );
 }
 
@@ -557,6 +557,7 @@ function generateLayout(title: string) {
     autosize: true, // Asegura que se ajuste automáticamente
     yaxis: {
       title: 'Value',
+      // range: [0, 4096], // Esto es lo que tengo que modificar para fijar los rangos de el eje y en los graficos.
       fixedrange: true,
     },
     xaxis: {
@@ -572,6 +573,7 @@ function plotData(
   title: string,
   columns: (number | string)[],
   playTime: number,
+  minLength: number,
 ) {
   if (!divId) {
     console.error('Invalid div element');
@@ -580,11 +582,12 @@ function plotData(
   const frames = wearable.map(
     (wearable: any) => new DataFrame(wearable.dataframe),
   );
+  console.log('Frames:', frames);
 
   const df = concat({ dfList: frames, axis: 1 });
 
   // @ts-ignore
-  let datos = df.iloc({ rows: [':'], columns: columns });
+  let datos = df.iloc({ rows: [`0:${minLength}`], columns: columns });
 
   const traces = datos.columns.map((column: string) => ({
     x: Array.from(datos.index.values()).map(
@@ -614,8 +617,40 @@ function plotData(
       },
     },
   ];
+
+  const config = {
+    modeBarButtonsToShow: ['toImage'], // Solo mostrar botones específicos
+    modeBarButtonsToRemove: [
+      'select2d',
+      'lasso2d',
+      'autoScale2d',
+      'resetScale2d',
+      'hoverClosestCartesian',
+      'hoverCompareCartesian',
+      'zoomIn2d',
+      'zoomOut2d',
+      'toggleSpikelines',
+      'resetViews',
+      'toggleHover',
+      'toggleSelect',
+      'drawline',
+      'drawopenpath',
+      'drawclosedpath',
+      'drawcircle',
+      'drawrect',
+      'eraseshape',
+      'zoom2d',
+      'pan2d',
+    ],
+    displaylogo: false, // Ocultar el logotipo de Plotly
+    displayModeBar: true, // Asegura que la modebar siempre esté visible
+    toImageButtonOptions: {
+      filename: title,
+    },
+  };
+
   // @ts-ignore
-  Plotly.newPlot(divId, traces, layout);
+  Plotly.newPlot(divId, traces, layout, config);
 }
 
 function handleRelayout(eventData: any, triggeredBy: any, refs: any) {
@@ -651,84 +686,142 @@ function handleRelayout(eventData: any, triggeredBy: any, refs: any) {
   });
 }
 
+// async function descargarDatosVisibles(
+//   divId: any,
+//   wearable: any,
+//   experimentId: number,
+//   participantId: number,
+//   trialId: number,
+//   swId: number,
+//   type: string,
+// ) {
+//   var plotInstance = document.getElementById(divId.current.id);
+//   // @ts-ignore
+//   var xRange = plotInstance.layout.xaxis.range.map(
+//     (value: any) => value * wearable[0].frequency,
+//   );
+
+//   if (xRange[0] < 0) {
+//     xRange[0] = 0;
+//   }
+
+//   // Calcular el índice de inicio y fin basado en xRange
+//   var startIndex = Math.floor(xRange[0]);
+//   console.log('Start Index:', startIndex);
+//   var endIndex = Math.ceil(xRange[1]);
+//   console.log('End Index:', endIndex);
+
+//   const frames = wearable.map(
+//     (wearable: any) => new DataFrame(wearable.dataframe),
+//   );
+
+//   const df = concat({ dfList: frames, axis: 1 });
+//   var csv = toCSV(df);
+
+//   try {
+//     // @ts-ignore
+//     const lines = csv.split('\n');
+//     const selectedData = lines.slice(startIndex, endIndex + 1).join('\n');
+
+//     var csvContent = 'data:text/csv;charset=utf-8,' + selectedData;
+
+//     // Crear un enlace y descargar el CSV
+//     var encodedUri = encodeURI(csvContent);
+//     var link = document.createElement('a');
+//     link.setAttribute('href', encodedUri);
+//     if (type === 'L') {
+//       link.setAttribute(
+//         'download',
+//         'exp_' +
+//           experimentId +
+//           '_part_' +
+//           participantId +
+//           '_trial_' +
+//           trialId +
+//           '_sw_' +
+//           swId +
+//           '_L' +
+//           '.csv',
+//       );
+//     } else {
+//       link.setAttribute(
+//         'download',
+//         'exp_' +
+//           experimentId +
+//           '_part_' +
+//           participantId +
+//           '_trial_' +
+//           trialId +
+//           '_sw_' +
+//           swId +
+//           '_R' +
+//           '.csv',
+//       );
+//     }
+//     document.body.appendChild(link);
+//     link.click();
+//     document.body.removeChild(link); // Limpiar después de la descarga
+//   } catch (error) {
+//     console.error('Error al cargar o procesar el archivo CSV:', error);
+//   }
+// }
+
 async function descargarDatosVisibles(
-  divId: any,
-  wearable: any,
+  leftDivId: any,
+  rightDivId: any,
+  leftWearable: any,
+  rightWearable: any,
   experimentId: number,
   participantId: number,
   trialId: number,
   swId: number,
-  type: string,
 ) {
-  var plotInstance = document.getElementById(divId.current.id);
-  // @ts-ignore
-  var xRange = plotInstance.layout.xaxis.range.map(
-    (value: any) => value * wearable[0].frequency,
-  );
+  const zip = new JSZip();
 
-  if (xRange[0] < 0) {
-    xRange[0] = 0;
-  }
-
-  // Calcular el índice de inicio y fin basado en xRange
-  var startIndex = Math.floor(xRange[0]);
-  console.log('Start Index:', startIndex);
-  var endIndex = Math.ceil(xRange[1]);
-  console.log('End Index:', endIndex);
-
-  const frames = wearable.map(
-    (wearable: any) => new DataFrame(wearable.dataframe),
-  );
-
-  const df = concat({ dfList: frames, axis: 1 });
-  var csv = toCSV(df);
-
-  try {
+  // Función auxiliar para generar CSV en un rango específico
+  const generarCSVEnRango = (divId: any, wearable: any, _type: string) => {
+    const plotInstance = document.getElementById(divId.current.id);
     // @ts-ignore
+    let xRange = plotInstance.layout.xaxis.range.map(
+      (value: any) => value * wearable[0].frequency,
+    );
+
+    if (xRange[0] < 0) {
+      xRange[0] = 0;
+    }
+
+    const startIndex = Math.floor(xRange[0]);
+    const endIndex = Math.ceil(xRange[1]);
+
+    const frames = wearable.map((item: any) => new DataFrame(item.dataframe));
+    const df = concat({ dfList: frames, axis: 1 });
+    const csv = toCSV(df) || '';
+
+    // Recortar el CSV a las filas especificadas por startIndex y endIndex
     const lines = csv.split('\n');
     const selectedData = lines.slice(startIndex, endIndex + 1).join('\n');
 
-    var csvContent = 'data:text/csv;charset=utf-8,' + selectedData;
+    return selectedData;
+  };
 
-    // Crear un enlace y descargar el CSV
-    var encodedUri = encodeURI(csvContent);
-    var link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    if (type === 'L') {
-      link.setAttribute(
-        'download',
-        'exp_' +
-          experimentId +
-          '_part_' +
-          participantId +
-          '_trial_' +
-          trialId +
-          '_sw_' +
-          swId +
-          '_L' +
-          '.csv',
-      );
-    } else {
-      link.setAttribute(
-        'download',
-        'exp_' +
-          experimentId +
-          '_part_' +
-          participantId +
-          '_trial_' +
-          trialId +
-          '_sw_' +
-          swId +
-          '_R' +
-          '.csv',
-      );
-    }
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link); // Limpiar después de la descarga
-  } catch (error) {
-    console.error('Error al cargar o procesar el archivo CSV:', error);
-  }
+  // Generar los CSV para cada wearable usando el rango
+  const csvLeft = generarCSVEnRango(leftDivId, leftWearable, 'L');
+  const csvRight = generarCSVEnRango(rightDivId, rightWearable, 'R');
+
+  // Agregar los CSV al archivo ZIP
+  zip.file(
+    `exp_${experimentId}_part_${participantId}_trial_${trialId}_sw_${swId}_L.csv`,
+    csvLeft,
+  );
+  zip.file(
+    `exp_${experimentId}_part_${participantId}_trial_${trialId}_sw_${swId}_R.csv`,
+    csvRight,
+  );
+
+  // Generar el archivo ZIP y descargarlo
+  zip.generateAsync({ type: 'blob' }).then((content) => {
+    saveAs(content, `wearables_data_exp_${experimentId}_trial_${trialId}.zip`);
+  });
 }
 
 export default WearablesData;
