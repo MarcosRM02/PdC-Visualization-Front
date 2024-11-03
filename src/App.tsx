@@ -18,7 +18,6 @@ import ShowWearables from './Services/Read/ShowWearablesData';
 import PrivateRoute from './PrivateRoute';
 
 const App = () => {
-  console.log(process.env.REACT_APP_API_URL);
   return (
     <Routes>
       <Route path="/" element={<Login />} />

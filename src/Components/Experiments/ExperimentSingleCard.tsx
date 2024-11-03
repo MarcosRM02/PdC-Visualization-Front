@@ -1,149 +1,151 @@
+import React from 'react';
 import { AiOutlineEdit } from 'react-icons/ai';
-import { FaIdCard } from 'react-icons/fa';
+import {
+  FaIdCard,
+  FaUser,
+  FaInfoCircle,
+  FaCalendarCheck,
+  FaCalendarTimes,
+  FaStickyNote,
+  FaUsers,
+} from 'react-icons/fa';
 import { MdOutlineDelete } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
-const ExperimentSingleCard = ({ experiments }: { experiments: any }) => {
-  // const timestampLong = new Long(
-  //   experiments.timestamp.low,
-  //   experiments.timestamp.high,
-  //   experiments.timestamp.unsigned
-  // );
+// Definir una interfaz para los props
+interface Experiment {
+  id: number;
+  name: string;
+  description: string;
+  startDate: string;
+  finishDate?: string; // Optional Attribute
+  notes?: string; // Optional Attribute
+  numberOfParticipants: number;
+}
 
-  // console.log("timestampLong", timestampLong);
+interface ExperimentSingleCardProps {
+  experiments: Experiment;
+}
 
-  // const readableTimestamp = timestampLong.toString(); // El timestamp en formato string
-  // console.log("readableTimestamp", readableTimestamp);
-
-  // const timestampNumber = timestampLong.toNumber();
-
-  // // Create a Date object
-  // const date = new Date(timestampNumber);
-
-  // const dateString =
-  //   date.toLocaleDateString("en-US", {
-  //     weekday: "long",
-  //     year: "numeric",
-  //     month: "long",
-  //     day: "numeric",
-  //   }) +
-  //   " " +
-  //   date.toLocaleTimeString("en-US");
+const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
+  experiments,
+}) => {
   const navigate = useNavigate();
-  const handleEditClick = (event: any) => {
+
+  // Función para formatear la fecha
+  const formatDate = (dateString: string): string => {
+    if (!dateString) return '';
+
+    const date = new Date(dateString);
+    // Verificar si la fecha es válida
+    if (isNaN(date.getTime())) {
+      return '';
+    }
+
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    };
+    return date.toLocaleDateString('es-ES', options);
+  };
+
+  const handleEditClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     navigate(`/experiments/edit/${experiments.id}`);
   };
 
-  const handleDeleteClick = (event: any) => {
+  const handleDeleteClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     navigate(`/experiments/delete/${experiments.id}`);
   };
 
+  const formattedStartDate = formatDate(experiments.startDate);
+  const formattedFinishDate = formatDate(experiments.finishDate || '');
+
   return (
     <div
       onClick={() => navigate(`/participants/by-experiment/${experiments.id}`)}
-      className="border-2 border-gray-500 rounded-lg px-4 py-2 m-4 relative hover:shadow-xl no-underline cursor-pointer"
+      className="border-2 border-gray-500 rounded-lg px-6 py-4 m-4 relative hover:shadow-2xl transition-shadow duration-300 ease-in-out cursor-pointer bg-white"
     >
-      <div key={experiments.id} className="my-2">
-        <span className="text-gray-600"></span>
-        <div className="flex justify-start items-center gap-x-2">
-          <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500"> ID: {experiments.id}</h4>
+      <div key={experiments.id} className="my-2 space-y-4">
+        {/* ID */}
+        <div className="flex items-center gap-x-3">
+          <FaIdCard className="text-red-400 text-xl" />
+          <h4 className="text-gray-700 font-medium">ID: {experiments.id}</h4>
         </div>
-        <div className="flex justify-start items-center gap-x-2">
-          <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500"> name: {experiments.name}</h4>
-        </div>
-        {/* <div className="flex justify-start items-center gap-x-2">
-              <FaIdCard className="text-red-300 text-2xl" />
-              <h4 className="my-2 text-gray-500">
-                {" "}
-                Professional Id: {experiments.professionalId.id}
-              </h4>
-            </div>  uN PRO DEBE TENER VARTIOS DE ESTOS */}
-        <div className="flex justify-start items-center gap-x-2">
-          <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500">
-            {' '}
-            description: {experiments.description}
-          </h4>
-        </div>
-        <div className="flex justify-start items-center gap-x-2">
-          <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500">
-            {' '}
-            Start date: {experiments.startDate}
-          </h4>
-        </div>
-        <div className="flex justify-start items-center gap-x-2">
-          <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500">
-            {' '}
-            Finish Date: {experiments.finishDate}
-          </h4>
-        </div>
-        <div className="flex justify-start items-center gap-x-2">
-          <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500"> Notes: {experiments.notes}</h4>
-        </div>
-        <div className="flex justify-start items-center gap-x-2">
-          <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500">
-            {' '}
-            Num of Participants: {experiments.numberOfParticipants}
+
+        {/* Nombre */}
+        <div className="flex items-center gap-x-3">
+          <FaUser className="text-blue-400 text-xl" />
+          <h4 className="text-gray-700 font-medium">
+            Nombre: {experiments.name}
           </h4>
         </div>
 
-        {/* <div className="flex justify-start items-center gap-x-2">
-          <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500">
-            {" "}
-            ID: {experiments.syncronized_wearables_id}
+        {/* Descripción */}
+        <div className="flex items-center gap-x-3">
+          <FaInfoCircle className="text-green-400 text-xl" />
+          <h4 className="text-gray-700 font-medium">
+            Descripción: {experiments.description}
           </h4>
-        </div>  No es necesario, pq ya esta en la pagina anterior, queda redundante.*/}
-        {/* 
-          <div className="flex justify-start items-center gap-x-2">
-            <FaCalendarDay className="text-red-300 text-2xl" />
-            <h4 className="my-2 text-gray-500"> Date: {dateString}</h4>
-          </div> */}
-        {/* <div className="flex justify-start items-center gap-x-2 flex-wrap">
-            {experiments.wearableData.map((item: any, index: any) => (
-              <div key={index} className="flex items-center gap-x-2">
-                <FaIdCard className="text-red-300 text-2xl" />
-                <h4 className="my-2 text-gray-500">Wearable Id: {item}</h4>
-                <br />
-              </div>
-            ))}
-          </div> */}
+        </div>
+
+        {/* Fecha de Inicio */}
+        <div className="flex items-center gap-x-3">
+          <FaCalendarCheck className="text-purple-400 text-xl" />
+          <h4 className="text-gray-700 font-medium">
+            Fecha de Inicio: {formattedStartDate || '—'}
+          </h4>
+        </div>
+
+        {/* Fecha de Finalización */}
+        <div className="flex items-center gap-x-3">
+          <FaCalendarTimes className="text-orange-400 text-xl" />
+          <h4 className="text-gray-700 font-medium">
+            Fecha de Finalización: {formattedFinishDate || '—'}
+          </h4>
+        </div>
+
+        {/* Notas */}
+        <div className="flex items-center gap-x-3">
+          <FaStickyNote className="text-teal-400 text-xl" />
+          <h4 className="text-gray-700 font-medium">
+            Notas: {experiments.notes || '—'}
+          </h4>
+        </div>
+
+        {/* Número de Participantes */}
+        <div className="flex items-center gap-x-3">
+          <FaUsers className="text-indigo-400 text-xl" />
+          <h4 className="text-gray-700 font-medium">
+            Número de Participantes: {experiments.numberOfParticipants}
+          </h4>
+        </div>
       </div>
-      {/*
-        <div className="flex justify-between items-center gap-x-2 mt-4 p-4">
-          <BiShow
-            className="text-3xl text-blue-800 hover:text-black cursor-pointer"
-            onClick={() => setShowModal(true)}
-          />
-        <Link to={`/books/details/${User._id}`}>
-          <BsInfoCircle className="text-2xl text-green-800 hover:text-black" />
-        </Link>
-       
-      </div> */}
-      <div className="flex justify-between items-center gap-x-2 mt-4 p-4">
+
+      {/* Botones de Editar y Eliminar */}
+      <div className="flex justify-end items-center gap-x-4 mt-6">
+        {/* Botón de Editar */}
         <button
           onClick={handleEditClick}
-          className="bg-transparent border-none cursor-pointer"
+          className="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600 transition-colors duration-200"
+          aria-label="Editar experimento"
         >
-          <AiOutlineEdit className="text-2xl text-yellow-600 hover:text-black" />
+          <AiOutlineEdit className="text-lg" />
         </button>
+
+        {/* Botón de Eliminar */}
         <button
           onClick={handleDeleteClick}
-          className="bg-transparent border-none cursor-pointer"
+          className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition-colors duration-200"
+          aria-label="Eliminar experimento"
         >
-          <MdOutlineDelete className="text-2xl text-red-600 hover:text-black" />
+          <MdOutlineDelete className="text-lg" />
         </button>
       </div>
     </div>
   );
 };
 
-export default ExperimentSingleCard;
+export default React.memo(ExperimentSingleCard);

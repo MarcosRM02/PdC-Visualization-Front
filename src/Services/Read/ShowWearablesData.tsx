@@ -19,6 +19,7 @@ const ShowWearables = () => {
       .join('&');
   }, [wearableIds]);
   const apiUrl = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
     if (!accessToken) return; // Si no hay token, no ejecutar la llamada.
@@ -42,32 +43,42 @@ const ShowWearables = () => {
         console.log(error);
         setLoading(false);
       });
-  }, [experimentId, participantId, swId, trialId, wearableQuery]);
+  }, [experimentId, participantId, swId, trialId, wearableQuery, apiUrl]);
 
   return (
-    <div className="p-4">
-      <BackButton />
-      <LogoutButton />
+    <div className="p-6 bg-gray-50 min-h-screen">
+      {/* Cabecera con Botones de Navegación */}
+      <div className="flex justify-between items-center mb-6">
+        <BackButton />
+        <LogoutButton />
+      </div>
+
+      {/* Título Principal */}
+      <h1 className="text-3xl font-bold text-gray-800 mb-6">Wearables Data</h1>
+
+      {/* Contenido Principal */}
       {loading ? (
-        <Spinner />
+        <div className="flex justify-center items-center mt-20">
+          <Spinner />
+        </div>
       ) : wearables.length > 0 ? (
-        <div>
-          <h1 className="text-3xl my-4 font-bold">Wearables Data</h1>
-          <div>
-            <WearablesData
-              wearables={wearables}
-              experimentId={parseInt(experimentId || '0')}
-              trialId={parseInt(trialId || '0')}
-              participantId={parseInt(participantId || '0')}
-              swId={parseInt(swId || '0')}
-            />
-          </div>
+        <div className="bg-white shadow rounded-lg p-6">
+          <WearablesData
+            wearables={wearables}
+            experimentId={parseInt(experimentId || '0')}
+            trialId={parseInt(trialId || '0')}
+            participantId={parseInt(participantId || '0')}
+            swId={parseInt(swId || '0')}
+          />
         </div>
       ) : (
-        <div>
-          <h1 className="text-3xl my-4 font-bold">
+        <div className="flex flex-col items-center justify-center mt-20">
+          <h2 className="text-2xl font-semibold text-gray-700">
             No Wearables Data Available
-          </h1>
+          </h2>
+          <p className="text-gray-500 mt-2">
+            Please check after using the device.
+          </p>
         </div>
       )}
     </div>

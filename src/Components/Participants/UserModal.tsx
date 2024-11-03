@@ -1,73 +1,109 @@
 import { AiOutlineClose, AiOutlineEdit } from 'react-icons/ai';
-import { PiBookOpenTextLight } from 'react-icons/pi';
+import { FaBirthdayCake, FaRulerVertical, FaWeight } from 'react-icons/fa';
 import { BiUserCircle } from 'react-icons/bi';
+import { GiFootprint } from 'react-icons/gi'; // Nuevo icono
 import { useNavigate } from 'react-router-dom';
 
-// Tenggo que pasarle el id, y que haga la petcion de los datos personales (GET)
 const UserModal = ({ user, onClose }: { user: any; onClose: any }) => {
   const navigate = useNavigate();
 
   if (!user) {
-    // retun null, // asi sale vacio
-    return <div>No personal data available.</div>;
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center">
+        <div className="bg-white rounded-lg p-6 shadow-lg">
+          <p className="text-gray-700">No personal data available.</p>
+          <button
+            onClick={onClose}
+            className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+    );
   }
 
-  // LOS HAGO, PQ NO PUEDE HABER NESTED LINKS, DA ERRORES EN EL DOM
   const handleEditClick = (event: any) => {
     event.stopPropagation();
     navigate(`/personalData/edit/${user.id}`);
   };
 
-  // const handleDeleteClick = (event) => {
-  //   event.stopPropagation();
-  //   navigate(`/personalData/delete/${user.id}`);
-  // };
-
   return (
     <div
-      className="fixed bg-black bg-opacity-60 top-0 left-0 right-0 bottom-0 z-50 flex justify-center items-center"
+      className="fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center"
       onClick={onClose}
+      aria-modal="true"
+      role="dialog"
+      aria-labelledby="modal-title"
     >
       <div
         onClick={(event) => event.stopPropagation()}
-        className="w-[600px] max-w-full h-[400px] bg-white rounded-xl p-4 flex flex-col relative"
+        className="w-full max-w-lg bg-white rounded-xl p-6 relative shadow-lg"
       >
+        {/* Botón de Cerrar */}
         <AiOutlineClose
-          className="absolute right-6 top-6 text-3xl text-red-600 cursor-pointer"
+          className="absolute top-4 right-4 text-2xl text-red-600 cursor-pointer hover:text-red-700"
           onClick={onClose}
+          aria-label="Cerrar modal"
         />
-        <h4 className="my-2 text-gray-500">Participant Personal Data</h4>
-        <h2 className="my-1">Name: {user.name}</h2>
-        <div className="flex justify-start items-center gap-x-2">
-          <PiBookOpenTextLight className="text-red-300 text-2xl" />
-          <h2 className="my-1">Age: {user.age}</h2>
+
+        {/* Título del Modal */}
+        <h2
+          id="modal-title"
+          className="text-2xl font-semibold mb-4 text-gray-700"
+        >
+          Datos Personales del Participante
+        </h2>
+
+        {/* Contenido del Modal */}
+        <div className="space-y-4">
+          {/* Nombre */}
+          <div className="flex items-center">
+            <BiUserCircle className="text-blue-500 text-xl mr-3" />
+            <span className="text-gray-700 font-medium">Nombre:</span>
+            <span className="ml-2 text-gray-600">{user.name}</span>
+          </div>
+
+          {/* Edad */}
+          <div className="flex items-center">
+            <FaBirthdayCake className="text-pink-500 text-xl mr-3" />
+            <span className="text-gray-700 font-medium">Edad:</span>
+            <span className="ml-2 text-gray-600">{user.age} años</span>
+          </div>
+
+          {/* Altura */}
+          <div className="flex items-center">
+            <FaRulerVertical className="text-green-500 text-xl mr-3" />
+            <span className="text-gray-700 font-medium">Altura:</span>
+            <span className="ml-2 text-gray-600">{user.height} m</span>
+          </div>
+
+          {/* Peso */}
+          <div className="flex items-center">
+            <FaWeight className="text-yellow-500 text-xl mr-3" />
+            <span className="text-gray-700 font-medium">Peso:</span>
+            <span className="ml-2 text-gray-600">{user.weight} kg</span>
+          </div>
+
+          {/* Longitud de Pie */}
+          <div className="flex items-center">
+            <GiFootprint className="text-indigo-500 text-xl mr-3" />{' '}
+            {/* Usando GiFoot */}
+            <span className="text-gray-700 font-medium">Longitud de Pie:</span>
+            <span className="ml-2 text-gray-600">{user.footLength} cm</span>
+          </div>
         </div>
-        <div className="flex justify-start items-center gap-x-2">
-          <BiUserCircle className="text-red-300 text-2xl" />
-          <h2 className="my-1">Height: {user.height} m</h2>
-        </div>
-        <div className="flex justify-start items-center gap-x-2">
-          <BiUserCircle className="text-red-300 text-2xl" />
-          <h2 className="my-1">Weight: {user.weight} kg</h2>
-        </div>
-        <div className="flex justify-start items-center gap-x-2">
-          <BiUserCircle className="text-red-300 text-2xl" />
-          <h2 className="my-1">Foot Length: {user.footLength} cm</h2>
-        </div>
-        <div className="flex justify-between items-center gap-x-2 mt-4 p-4">
+
+        {/* Botón de Editar */}
+        <div className="mt-6 flex justify-end">
           <button
             onClick={handleEditClick}
-            className="bg-transparent border-none cursor-pointer"
+            className="flex items-center px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors"
+            aria-label="Editar datos personales"
           >
-            <AiOutlineEdit className="text-2xl text-yellow-600 hover:text-black" />
+            <AiOutlineEdit className="mr-2" />
+            Editar
           </button>
-
-          {/* <button
-            onClick={handleDeleteClick}
-            className="bg-transparent border-none cursor-pointer"
-          >
-            <MdOutlineDelete className="text-2xl text-red-600 hover:text-black" />
-          </button> */}
         </div>
       </div>
     </div>

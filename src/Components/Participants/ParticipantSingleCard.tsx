@@ -1,9 +1,9 @@
 import { AiOutlineEdit } from 'react-icons/ai';
-import { FaIdCard } from 'react-icons/fa';
+import { FaIdCard, FaBarcode } from 'react-icons/fa';
 import { MdOutlineDelete } from 'react-icons/md';
+import { BiShow } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 import UserModal from './UserModal';
-import { BiShow } from 'react-icons/bi';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
@@ -11,7 +11,11 @@ const ParticipantSingleCard = ({ participants }: { participants: any }) => {
   const navigate = useNavigate();
 
   const [showModal, setShowModal] = useState(false);
-  useEffect(() => {}, [showModal]);
+  const [modalData, setModalData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const accessToken = localStorage.getItem('accessToken');
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleEditClick = (event: any) => {
     event.stopPropagation();
@@ -23,14 +27,8 @@ const ParticipantSingleCard = ({ participants }: { participants: any }) => {
     navigate(`/participants/delete/${participants.id}`);
   };
 
-  const [modalData, setModalData] = useState(null);
-  const [, setLoading] = useState(false);
-  const [, setError] = useState('');
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
-
   useEffect(() => {
-    if (showModal && participants.personalData.id) {
+    if (showModal && participants.personalData?.id) {
       const config = {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -49,61 +47,80 @@ const ParticipantSingleCard = ({ participants }: { participants: any }) => {
           setLoading(false);
         });
     }
-  }, [showModal, participants.personalData.id]);
+  }, [showModal, participants.personalData?.id, accessToken, apiUrl]);
 
   return (
     <div
       onClick={() => navigate(`/trials/by-participant/${participants.id}`)}
-      className="border-2 border-gray-500 rounded-lg px-4 py-2 m-4 relative hover:shadow-xl no-underline cursor-pointer"
+      className="border-2 border-gray-500 rounded-lg px-6 py-4 m-4 relative hover:shadow-2xl transition-shadow duration-300 ease-in-out cursor-pointer bg-white"
     >
-      <div key={participants.id} className="my-2">
-        <span className="text-gray-600"></span>
-        <div className="flex justify-start items-center gap-x-2">
-          <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500"> ID: {participants.id}</h4>
+      <div key={participants.id} className="my-2 space-y-4">
+        {/* ID */}
+        <div className="flex items-center gap-x-3">
+          <FaIdCard className="text-red-400 text-xl" />
+          <h4 className="text-gray-700 font-medium">ID: {participants.id}</h4>
         </div>
-        <div className="flex justify-start items-center gap-x-2">
-          <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500"> code: {participants.code}</h4>
+
+        {/* Código */}
+        <div className="flex items-center gap-x-3">
+          <FaBarcode className="text-green-400 text-xl" />
+          <h4 className="text-gray-700 font-medium">
+            Code: {participants.code}
+          </h4>
         </div>
       </div>
-      <div className="flex justify-between items-center gap-x-2 mt-4 p-4">
-        <div
-          onClick={() =>
-            navigate(`/trials/by-participant/${participants.personalData.id}`)
-          }
-          className="border-2 border-gray-500 rounded-lg px-4 py-2 m-4 relative hover:shadow-xl no-underline cursor-pointer"
+
+      {/* Botones de Acción */}
+      <div className="flex justify-end items-center gap-x-4 mt-6">
+        {/* Botón para Mostrar Detalles */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowModal(true);
+          }}
+          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors duration-200"
+          aria-label="Mostrar detalles"
         >
-          {/* Card Content */}
-          <BiShow
-            className="text-3xl text-blue-800 hover:text-black cursor-pointer"
-            onClick={(e) => {
-              console.log('Attempting to open modal');
-              e.stopPropagation();
-              setShowModal(true);
-              console.log(showModal);
-            }}
-          />
-          {showModal && (
-            <UserModal user={modalData} onClose={() => setShowModal(false)} />
-          )}
-        </div>
+          <BiShow className="text-lg" />
+        </button>
+
+        {/* Botón de Editar */}
         <button
           onClick={handleEditClick}
-          className="bg-transparent border-none cursor-pointer"
+          className="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600 transition-colors duration-200"
+          aria-label="Editar participante"
         >
-          <AiOutlineEdit className="text-2xl text-yellow-600 hover:text-black" />
+          <AiOutlineEdit className="text-lg" />
         </button>
+
+        {/* Botón de Eliminar */}
         <button
           onClick={handleDeleteClick}
-          className="bg-transparent border-none cursor-pointer"
+          className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition-colors duration-200"
+          aria-label="Eliminar participante"
         >
-          <MdOutlineDelete className="text-2xl text-red-600 hover:text-black" />
+          <MdOutlineDelete className="text-lg" />
         </button>
       </div>
-      {/* {showModal && (
+
+      {/* Modal para Mostrar Detalles */}
+      {showModal && (
         <UserModal user={modalData} onClose={() => setShowModal(false)} />
-      )} */}
+      )}
+
+      {/* Mostrar Estado de Carga */}
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 rounded-lg">
+          <div className="text-white text-lg">Cargando...</div>
+        </div>
+      )}
+
+      {/* Mostrar Errores */}
+      {error && (
+        <div className="absolute inset-0 flex items-center justify-center bg-red-800 bg-opacity-50 rounded-lg">
+          <div className="text-white text-lg">{error}</div>
+        </div>
+      )}
     </div>
   );
 };
