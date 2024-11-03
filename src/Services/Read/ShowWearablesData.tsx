@@ -77,7 +77,7 @@ const ShowWearables = () => {
             No Wearables Data Available
           </h2>
           <p className="text-gray-500 mt-2">
-            Please check after using the device.
+            Please check again after using the device.
           </p>
         </div>
       )}

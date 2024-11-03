@@ -8,6 +8,7 @@ import Plotly from 'plotly.js-dist-min';
 import axios from 'axios';
 import ImagePlotCanvas from './canvas';
 import ColorLegend from './ColorLegend';
+import { VideoCameraIcon } from '@heroicons/react/24/solid';
 
 const WearablesData = ({
   wearables,
@@ -118,6 +119,8 @@ const WearablesData = ({
 
   const [videoSrc, setVideoSrc] = useState('');
 
+  const [videoError, setVideoError] = useState<boolean>(false);
+
   useEffect(() => {
     const fetchVideo = async () => {
       try {
@@ -136,6 +139,7 @@ const WearablesData = ({
         setVideoSrc(videoUrl);
       } catch (error) {
         console.error('Error fetching the video:', error);
+        setVideoError(true); // Actualizar estado de error
       }
     };
 
@@ -238,6 +242,19 @@ const WearablesData = ({
     }
   });
 
+  const rate0 = 1 / leftWearables[0].frequency; // Calcula la velocidad
+  const formattedRate0 = rate0.toFixed(2); // Formatea a dos decimales, por ejemplo, '0.15'
+
+  // Definir las velocidades de reproducción
+  const playbackRates = [
+    { label: `${formattedRate0}x`, rate: rate0 },
+    { label: '0.25x', rate: 0.25 },
+    { label: '1x', rate: 1 },
+    { label: '2x', rate: 2 },
+  ];
+
+  const videoAvailable = videoSrc && !videoError;
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-9xl mx-auto bg-white shadow-lg rounded-lg p-8">
@@ -247,53 +264,47 @@ const WearablesData = ({
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sección Izquierda: Reproductor de Video y Controles */}
           <div className="flex flex-col lg:w-2/3 w-full bg-gray-50 p-6 rounded-lg shadow-inner">
-            <div className="relative aspect-w-16 aspect-h-9">
-              <ReactPlayer
-                ref={playerRef}
-                url={videoSrc}
-                onProgress={handleProgress}
-                width="100%"
-                height="100%"
-                controls={true}
-                className="rounded-lg"
-                config={{
-                  file: {
-                    attributes: {
-                      controlsList: 'nodownload',
-                      disablePictureInPicture: true,
+            <div className="relative aspect-video">
+              {videoSrc && !videoError ? (
+                <ReactPlayer
+                  ref={playerRef}
+                  url={videoSrc}
+                  onProgress={handleProgress}
+                  width="100%"
+                  height="100%"
+                  controls={true}
+                  className="rounded-lg"
+                  playbackRate={playbackRate} // Pasar playbackRate directamente
+                  onError={() => setVideoError(true)} // Manejar errores de reproducción
+                  config={{
+                    file: {
+                      attributes: {
+                        controlsList: 'nodownload',
+                        disablePictureInPicture: true,
+                      },
                     },
-                  },
-                }}
-              />
-
-              {!videoSrc && (
-                <div className="absolute inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center text-white text-2xl font-bold rounded-lg">
-                  No hay ningún video disponible
+                  }}
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center w-full h-full bg-gray-800 text-white text-xl font-semibold rounded-lg">
+                  <VideoCameraIcon className="h-12 w-12 mb-3" />{' '}
+                  {/* Icono de tamaño ajustado */}
+                  <span>No hay ningún video disponible</span>
                 </div>
               )}
             </div>
 
             {/* Controles de Velocidad de Reproducción */}
             <div className="mt-6 flex justify-center space-x-4">
-              <PlaybackButton
-                label="0.15x"
-                onClick={() =>
-                  changePlaybackRate(1 / leftWearables[0].frequency)
-                }
-              />
-              <PlaybackButton
-                label="0.25x"
-                onClick={() => changePlaybackRate(0.25)}
-              />
-              <PlaybackButton
-                label="1x"
-                onClick={() => changePlaybackRate(1)}
-                active={playbackRate === 1}
-              />
-              <PlaybackButton
-                label="2x"
-                onClick={() => changePlaybackRate(2)}
-              />
+              {playbackRates.map(({ label, rate }) => (
+                <PlaybackButton
+                  key={rate}
+                  label={label}
+                  onClick={() => changePlaybackRate(rate)}
+                  active={Math.abs(playbackRate - rate) < 0.001} // Usar tolerancia para precisión
+                  disabled={!videoAvailable} // Pasar la propiedad disabled
+                />
+              ))}
             </div>
           </div>
 
@@ -427,17 +438,22 @@ const PlaybackButton = ({
   label,
   onClick,
   active = false,
+  disabled = false, // Nueva prop
 }: {
   label: string;
   onClick: () => void;
   active?: boolean;
+  disabled?: boolean; // Nueva prop
 }) => (
   <button
     onClick={onClick}
+    disabled={disabled} // Aplicar la prop
     className={`px-5 py-3 rounded ${
       active
         ? 'bg-green-500 text-white'
         : 'bg-blue-500 hover:bg-blue-700 text-white'
+    } ${
+      disabled ? 'bg-gray-400 cursor-not-allowed opacity-50' : ''
     } transition duration-200 text-lg`}
   >
     {label}
