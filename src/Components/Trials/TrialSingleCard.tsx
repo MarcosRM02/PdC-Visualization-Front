@@ -1,44 +1,26 @@
 import { AiOutlineEdit } from 'react-icons/ai';
-import { FaIdCard } from 'react-icons/fa';
+import {
+  FaIdCard,
+  FaCalendarAlt,
+  FaBarcode,
+  FaAlignLeft,
+  FaStickyNote,
+  FaMicrochip,
+} from 'react-icons/fa';
 import { MdOutlineDelete } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { getIDFromAPI } from '../../Services/Read/CreateWearablesURL';
 import { useEffect, useState } from 'react';
 
 const TrialSingleCard = ({ trials }: { trials: any }) => {
-  // const timestampLong = new Long(
-  //   trials.timestamp.low,
-  //   trials.timestamp.high,
-  //   trials.timestamp.unsigned
-  // );
-
-  // console.log("timestampLong", timestampLong);
-
-  // const readableTimestamp = timestampLong.toString(); // El timestamp en formato string
-  // console.log("readableTimestamp", readableTimestamp);
-
-  // const timestampNumber = timestampLong.toNumber();
-
-  // // Create a Date object
-  // const date = new Date(timestampNumber);
-
-  // const dateString =
-  //   date.toLocaleDateString("en-US", {
-  //     weekday: "long",
-  //     year: "numeric",
-  //     month: "long",
-  //     day: "numeric",
-  //   }) +
-  //   " " +
-  //   date.toLocaleTimeString("en-US");
-
   const [data, setData] = useState({
     experimentId: null,
     wearablesIds: [],
   });
-  const [_error, setError] = useState('');
+  const [error, setError] = useState('');
   const participantId = trials.participant.id;
   const swId = trials.sw.id;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -57,6 +39,7 @@ const TrialSingleCard = ({ trials }: { trials: any }) => {
   }, [participantId, swId]);
 
   const navigate = useNavigate();
+
   const handleEditClick = (event: any) => {
     event.stopPropagation();
     navigate(`/trials/edit/${trials.id}`);
@@ -66,65 +49,112 @@ const TrialSingleCard = ({ trials }: { trials: any }) => {
     event.stopPropagation();
     navigate(`/trials/delete/${trials.id}`);
   };
+
   // Construcción de la URL para el Link
   const detailsBasePath = `/swData/getData/${data.experimentId}/${participantId}/${swId}/${trials.id}`;
   const wearableQuery = data.wearablesIds
     .map((id) => `wearableIds=${id}`)
     .join('&');
   const detailsUrl = `${detailsBasePath}?${wearableQuery}`;
+
+  // Función para formatear la fecha y validar su validez
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '';
+
+    const date = new Date(dateString);
+    // Verificar si la fecha es válida
+    if (isNaN(date.getTime())) {
+      return '';
+    }
+
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    };
+    return date.toLocaleDateString('es-ES', options);
+  };
+
+  const formattedDate = formatDate(trials.date);
+
   return (
     <div
       onClick={() => navigate(detailsUrl)}
-      className="border-2 border-gray-500 rounded-lg px-4 py-2 m-4 relative hover:shadow-xl no-underline cursor-pointer"
+      className="border-2 border-gray-500 rounded-lg px-6 py-4 m-4 relative hover:shadow-xl transition-shadow duration-300 ease-in-out cursor-pointer bg-white"
     >
-      {' '}
-      <div key={trials.id} className="my-2">
-        <span className="text-gray-600"></span>
-        <div className="flex justify-start items-center gap-x-2">
-          <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500"> ID: {trials.id}</h4>
+      <div key={trials.id} className="my-2 space-y-3">
+        {/* ID */}
+        <div className="flex items-center gap-x-3">
+          <FaIdCard className="text-red-400 text-xl" />
+          <h4 className="text-gray-700 font-medium">ID: {trials.id}</h4>
         </div>
-        <div className="flex justify-start items-center gap-x-2">
-          <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500"> date: {trials.date}</h4>
-        </div>
-        <div className="flex justify-start items-center gap-x-2">
-          <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500"> code: {trials.code}</h4>
-        </div>
-        <div className="flex justify-start items-center gap-x-2">
-          <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500">
-            {' '}
-            description: {trials.description}
+
+        {/* Fecha */}
+        <div className="flex items-center gap-x-3">
+          <FaCalendarAlt className="text-blue-400 text-xl" />
+          <h4 className="text-gray-700 font-medium">
+            Fecha: {formattedDate || '—'}
           </h4>
         </div>
-        <div className="flex justify-start items-center gap-x-2">
-          <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500">
-            {' '}
-            Annotation: {trials.annotation}
+
+        {/* Código */}
+        <div className="flex items-center gap-x-3">
+          <FaBarcode className="text-green-400 text-xl" />
+          <h4 className="text-gray-700 font-medium">
+            Código: {trials.code || '—'}
           </h4>
         </div>
-        <div className="flex justify-start items-center gap-x-2">
-          <FaIdCard className="text-red-300 text-2xl" />
-          <h4 className="my-2 text-gray-500"> swId: {trials.sw.id}</h4>
+
+        {/* Descripción */}
+        <div className="flex items-center gap-x-3">
+          <FaAlignLeft className="text-purple-400 text-xl" />
+          <h4 className="text-gray-700 font-medium">
+            Descripción: {trials.description || '—'}
+          </h4>
+        </div>
+
+        {/* Anotación */}
+        <div className="flex items-center gap-x-3">
+          <FaStickyNote className="text-yellow-400 text-xl" />
+          <h4 className="text-gray-700 font-medium">
+            Anotación: {trials.annotation || '—'}
+          </h4>
+        </div>
+
+        {/* swId */}
+        <div className="flex items-center gap-x-3">
+          <FaMicrochip className="text-indigo-400 text-xl" />
+          <h4 className="text-gray-700 font-medium">swId: {trials.sw.id}</h4>
         </div>
       </div>
-      <div className="flex justify-between items-center gap-x-2 mt-4 p-4">
+
+      {/* Botones de Acción */}
+      <div className="flex justify-end items-center gap-x-4 mt-6">
+        {/* Botón de Editar */}
         <button
           onClick={handleEditClick}
-          className="bg-transparent border-none cursor-pointer"
+          className="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600 transition-colors duration-200"
+          aria-label="Editar prueba"
         >
-          <AiOutlineEdit className="text-2xl text-yellow-600 hover:text-black" />
+          <AiOutlineEdit className="text-lg" />
         </button>
+
+        {/* Botón de Eliminar */}
         <button
           onClick={handleDeleteClick}
-          className="bg-transparent border-none cursor-pointer"
+          className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition-colors duration-200"
+          aria-label="Eliminar prueba"
         >
-          <MdOutlineDelete className="text-2xl text-red-600 hover:text-black" />
+          <MdOutlineDelete className="text-lg" />
         </button>
       </div>
+
+      {/* Manejo de Errores */}
+      {error && (
+        <div className="absolute top-2 right-2 bg-red-100 text-red-700 px-3 py-1 rounded">
+          {error}
+        </div>
+      )}
     </div>
   );
 };
