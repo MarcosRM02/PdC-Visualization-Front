@@ -1,58 +1,83 @@
+// src/Pages/Participants/ShowParticipant.tsx
+
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import { Link, useParams } from 'react-router-dom';
-import BackButton from '../../Components/BackButton';
 import Spinner from '../../Components/Spinner';
-import ParticipantCard from '../../Components/Participants/ParticipantCard';
 import { MdOutlineAddBox } from 'react-icons/md';
 import { FaSearch, FaUndo } from 'react-icons/fa';
-import 'react-datepicker/dist/react-datepicker.css';
 import LogoutButton from '../../Components/LogoutButton';
+import BackButton from '../../Components/BackButton';
+import ParticipantCard from '../../Components/Participants/ParticipantCard';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
+import 'react-datepicker/dist/react-datepicker.css';
+import CreateParticipantModal from '../../Services/Create/CreateParticipant'; // Importa el modal de creación
+
+interface Participant {
+  id: number;
+  code: string;
+  personalData?: {
+    id: number;
+    // Otros campos relevantes
+  };
+  // Otros campos relevantes
+}
 
 const ShowParticipant = () => {
-  interface Participant {
-    code: string;
-    id: number;
-  }
-
-  const [sWDatas, setSWDatas] = useState<Participant[]>([]);
-  const [filteredSWDatas, setFilteredSWDatas] = useState<Participant[]>([]);
+  const [participants, setParticipants] = useState<Participant[]>([]);
+  const [filteredParticipants, setFilteredParticipants] = useState<
+    Participant[]
+  >([]);
   const [loading, setLoading] = useState(false);
   const [searchCode, setSearchCode] = useState('');
   const [error, setError] = useState('');
-  const { id } = useParams<{ id: string }>();
+
+  const { id } = useParams<{ id: string }>(); // ID del experimento
   const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  useEffect(() => {
-    const fetchParticipants = async () => {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `${apiUrl}/participants/by-experiment/${id}`,
-          config,
-        );
-        setSWDatas(response.data);
-        setFilteredSWDatas(response.data);
-      } catch (error) {
-        console.error(error);
-        setError('Error al cargar los participantes.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
+  // Estados para el modal de creación
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  // Función para obtener los participantes
+  const fetchParticipants = useCallback(async () => {
+    if (!id) return;
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${apiUrl}/participants/by-experiment/${id}`,
+        config,
+      );
+      setParticipants(response.data);
+      setFilteredParticipants(response.data);
+      setError('');
+    } catch (error: any) {
+      console.error(error);
+      setError('Error al cargar los participantes.');
+      enqueueSnackbar('Error al cargar los participantes.', {
+        variant: 'error',
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [id, accessToken, apiUrl, enqueueSnackbar]);
+
+  // Obtener los participantes al montar el componente
+  useEffect(() => {
     fetchParticipants();
-  }, [id, accessToken, apiUrl]);
+  }, [fetchParticipants]);
 
   // Lógica de filtrado
   useEffect(() => {
-    let filtered = [...sWDatas];
+    let filtered = [...participants];
 
     // Filtrar por código
     if (searchCode.trim() !== '') {
@@ -61,13 +86,26 @@ const ShowParticipant = () => {
       );
     }
 
-    setFilteredSWDatas(filtered);
-  }, [searchCode, sWDatas]);
+    setFilteredParticipants(filtered);
+  }, [searchCode, participants]);
 
   // Función para resetear filtros, memorizada con useCallback
   const resetFilters = useCallback(() => {
     setSearchCode('');
   }, []);
+
+  // Funciones para manejar la eliminación y edición
+  const handleParticipantDeleted = useCallback(() => {
+    fetchParticipants(); // Volver a obtener la lista actualizada
+  }, [fetchParticipants]);
+
+  const handleParticipantEdited = useCallback(() => {
+    fetchParticipants(); // Volver a obtener la lista actualizada
+  }, [fetchParticipants]);
+
+  // Funciones para abrir y cerrar el modal de creación
+  const openCreateModal = () => setIsCreateModalOpen(true);
+  const closeCreateModal = () => setIsCreateModalOpen(false);
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -106,15 +144,15 @@ const ShowParticipant = () => {
         </button>
       </div>
 
-      {/* Botón para Añadir Participantes */}
+      {/* Botón para Abrir el Modal de Creación */}
       <div className="flex justify-end mb-6">
-        <Link
-          to={`/participants/create/${id}`}
+        <button
+          onClick={openCreateModal}
           className="flex items-center text-sky-800 hover:text-sky-900 transition-colors duration-200"
         >
           <MdOutlineAddBox className="text-4xl mr-2" />
           <span className="text-xl font-semibold">Añadir Participante</span>
-        </Link>
+        </button>
       </div>
 
       {/* Mostrar Errores */}
@@ -127,8 +165,12 @@ const ShowParticipant = () => {
       {/* Contenido Principal */}
       {loading ? (
         <Spinner />
-      ) : filteredSWDatas.length > 0 ? (
-        <ParticipantCard participants={filteredSWDatas} />
+      ) : filteredParticipants.length > 0 ? (
+        <ParticipantCard
+          participants={filteredParticipants}
+          onParticipantDeleted={handleParticipantDeleted} // Pasar el callback
+          onParticipantEdited={handleParticipantEdited} // Pasar el nuevo callback
+        />
       ) : (
         <div className="flex flex-col items-center justify-center mt-20">
           <h2 className="text-2xl font-semibold text-gray-700">
@@ -139,6 +181,13 @@ const ShowParticipant = () => {
           </p>
         </div>
       )}
+
+      {/* Modal de Crear Participante */}
+      <CreateParticipantModal
+        isOpen={isCreateModalOpen}
+        onClose={closeCreateModal}
+        onParticipantCreated={handleParticipantEdited} // Pasar el callback
+      />
     </div>
   );
 };

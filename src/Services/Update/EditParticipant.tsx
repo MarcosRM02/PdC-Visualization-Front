@@ -1,88 +1,171 @@
-import { useState, useEffect } from 'react';
-import BackButton from '../../Components/BackButton';
+// src/Components/Participants/EditParticipantModal.tsx
+
+import React, { useState, useEffect } from 'react';
 import Spinner from '../../Components/Spinner';
 import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { FaTimes } from 'react-icons/fa';
 
-const EditParticipant = () => {
+interface EditParticipantModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  participantId: number;
+  onParticipantEdited: () => void; // Callback para notificar al padre
+}
+
+const EditParticipantModal: React.FC<EditParticipantModalProps> = ({
+  isOpen,
+  onClose,
+  participantId,
+  onParticipantEdited,
+}) => {
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const { id } = useParams();
+  const [error, setError] = useState('');
+
   const { enqueueSnackbar } = useSnackbar();
 
   const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
-    setLoading(true);
-    axios
-      .get(`${apiUrl}/participants/${id}`, config)
-      .then((response) => {
+    if (!isOpen) return;
+
+    const fetchParticipant = async () => {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      };
+      setLoading(true);
+      try {
+        const response = await axios.get(
+          `${apiUrl}/participants/${participantId}`,
+          config,
+        );
         setCode(response.data.code);
         setLoading(false);
-      })
-      .catch((error) => {
+      } catch (err) {
         setLoading(false);
-        alert('An error happened. Please Chack console');
-        console.log(error);
-      });
-  }, []);
-
-  const handleEditExperiment = () => {
-    const data = {
-      code,
+        setError('Ocurrió un error al cargar los datos del participante.');
+        enqueueSnackbar('Error al cargar los datos del participante.', {
+          variant: 'error',
+        });
+        console.error(err);
+      }
     };
+
+    fetchParticipant();
+  }, [isOpen, participantId, accessToken, apiUrl, enqueueSnackbar]);
+
+  const handleEditParticipant = async () => {
+    if (!code.trim()) {
+      enqueueSnackbar('El campo "Code" es obligatorio.', {
+        variant: 'warning',
+      });
+      return;
+    }
+
+    const data = { code };
+
     const config = {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     };
+
     setLoading(true);
-    axios
-      .put(`${apiUrl}/participants/edit/${id}`, data, config)
-      .then(() => {
-        setLoading(false);
-        enqueueSnackbar('Participant Edited successfully', {
-          variant: 'success',
-        });
-        navigate(-1);
-      })
-      .catch((error) => {
-        setLoading(false);
-        // alert('An error happened. Please Chack console');
-        enqueueSnackbar('Error', { variant: 'error' });
-        console.log(error);
+    try {
+      await axios.put(
+        `${apiUrl}/participants/edit/${participantId}`,
+        data,
+        config,
+      );
+      setLoading(false);
+      enqueueSnackbar('Participante editado exitosamente.', {
+        variant: 'success',
       });
+      onClose();
+      onParticipantEdited(); // Notificar al componente padre
+    } catch (err) {
+      setLoading(false);
+      enqueueSnackbar('Error al editar el participante.', { variant: 'error' });
+      console.error(err);
+    }
   };
 
+  useEffect(() => {
+    if (!isOpen) {
+      // Limpiar campos al cerrar el modal
+      setCode('');
+      setError('');
+    }
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
   return (
-    <div className="p-4">
-      <BackButton />
-      <h1 className="text-3xl my-4">Edit Participant</h1>
-      {loading ? <Spinner /> : ''}
-      <div className="flex flex-col border-2 border-sky-400 rounded-xl w-[600px] p-4 mx-auto">
-        <div className="my-4">
-          <label className="text-xl mr-4 text-gray-500">Name</label>
-          <input
-            type="text"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            className="border-2 border-gray-500 px-4 py-2 w-full"
-          />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
+        {/* Cabecera del Modal */}
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-semibold text-gray-800">
+            Editar Participante
+          </h2>
+          <button
+            onClick={onClose}
+            aria-label="Cerrar modal"
+            className="focus:outline-none"
+          >
+            <FaTimes className="text-red-600 hover:text-gray-800 transition-colors" />
+          </button>
         </div>
-        <button className="p-2 bg-sky-300 m-8" onClick={handleEditExperiment}>
-          Save
-        </button>
+
+        {/* Contenido del Modal */}
+        {loading ? (
+          <div className="flex justify-center my-8">
+            <Spinner />
+          </div>
+        ) : (
+          <div className="flex flex-col space-y-4">
+            {/* Campo de Code (Requerido) */}
+            <div>
+              <label
+                className="block text-gray-700 text-lg mb-2"
+                htmlFor="code"
+              >
+                Code <span className="text-red-500">*</span>
+              </label>
+              <input
+                id="code"
+                type="text"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
+                placeholder="Ingrese el código del participante"
+                required
+              />
+            </div>
+
+            {/* Mostrar Errores */}
+            {error && (
+              <div className="flex items-center justify-center bg-red-200 text-red-700 px-4 py-2 rounded-lg">
+                {error}
+              </div>
+            )}
+
+            {/* Botón de Guardar */}
+            <button
+              onClick={handleEditParticipant}
+              className="mt-4 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors duration-200"
+            >
+              Guardar
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-export default EditParticipant;
+export default EditParticipantModal;

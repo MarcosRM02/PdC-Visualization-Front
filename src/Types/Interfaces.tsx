@@ -66,6 +66,8 @@ export interface IExperimentProp {
 
 export interface IParticipantProp {
   participants: IParticipant[];
+  onParticipantDeleted: () => void;
+  onParticipantEdited: () => void; // Añadir esta línea
 }
 
 export interface IParticipant {
