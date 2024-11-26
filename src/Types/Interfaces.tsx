@@ -46,19 +46,22 @@ export interface WearableDataProps {
   swId: number;
 }
 
-export interface IExperimentProp {
-  experiments: IExperiment[];
-}
+// src/Types/Interfaces.ts
 
 export interface IExperiment {
   id: number;
   name: string;
   description: string;
-  startDate: string;
-  finishDate?: string; // Optional Attribute
-  notes?: string; // Optional Attribute
   numberOfParticipants: number;
-  // professionalId: User; // UN EXPERIMENTO TIENE QUE TENER VARIOS, ESTO HAY QUE CAMBIARLO
+  startDate: string;
+  finishDate?: string;
+  notes?: string;
+}
+
+export interface IExperimentProp {
+  experiments: IExperiment[];
+  onExperimentDeleted: () => void;
+  onExperimentEdited: () => void; // Añadir esta línea
 }
 
 export interface IParticipantProp {

@@ -44,6 +44,7 @@
   "devDependencies": {
     "@types/d3": "^7.4.3",
     "@types/file-saver": "^2.0.7",
+    "@types/lodash": "^4.17.13",
     "@types/plotly.js": "^2.29.5",
     "@types/plotly.js-basic-dist": "^1.54.4",
     "@types/plotly.js-dist-min": "^2.3.4",
