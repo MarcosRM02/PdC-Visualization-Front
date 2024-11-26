@@ -9,6 +9,7 @@ import axios from 'axios';
 import ImagePlotCanvas from './canvas';
 import ColorLegend from './ColorLegend';
 import { VideoCameraIcon } from '@heroicons/react/24/solid';
+import { throttle } from 'lodash'; // Importa throttle
 
 const WearablesData = ({
   wearables,
@@ -49,9 +50,12 @@ const WearablesData = ({
 
   const [playTime, setPlayTime] = useState<number>(0);
   const playerRef = useRef<ReactPlayer | null>(null);
-  const handleProgress = (state: { playedSeconds: number }) => {
+  const previousTimeRef = useRef(0); // Referencia para el tiempo anterior
+
+  // Implementa throttling para manejar la frecuencia de actualización
+  const handleProgress = throttle((state: { playedSeconds: number }) => {
     setPlayTime(state.playedSeconds);
-  };
+  }, 200); // Actualiza cada 200ms
 
   const handlePointClick = (data: any) => {
     if (data.points && data.points.length > 0) {
@@ -88,15 +92,19 @@ const WearablesData = ({
   }, [playTime]);
 
   const updateCurrentTimeLine = (currentTime: any) => {
-    Object.values(refs).forEach((ref) => {
-      if (ref.current) {
-        Plotly.relayout(ref.current, {
-          // @ts-ignore
-          'shapes[0].x0': currentTime,
-          'shapes[0].x1': currentTime,
-        });
-      }
-    });
+    // Solo actualiza si el cambio es mayor a 0.1 segundos
+    if (Math.abs(currentTime - previousTimeRef.current) > 0.1) {
+      Object.values(refs).forEach((ref) => {
+        if (ref.current) {
+          Plotly.relayout(ref.current, {
+            // @ts-ignore
+            'shapes[0].x0': currentTime,
+            'shapes[0].x1': currentTime,
+          });
+        }
+      });
+      previousTimeRef.current = currentTime;
+    }
   };
 
   const resetGraphs = () => {
@@ -276,6 +284,7 @@ const WearablesData = ({
                   className="rounded-lg"
                   playbackRate={playbackRate} // Pasar playbackRate directamente
                   onError={() => setVideoError(true)} // Manejar errores de reproducción
+                  progressInterval={(1 / rightWearables[0].frequency) * 1000} // Ajusta la tasa de refrresco de la linea de las gráficas
                   config={{
                     file: {
                       attributes: {
@@ -386,7 +395,7 @@ const WearablesData = ({
                   className="mb-6"
                 ></div>
                 <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                  Giroscopio Derecho
+                  Giroscopio Izquierdo
                 </h2>
                 <div
                   ref={refs.leftGyroscope}
@@ -417,7 +426,7 @@ const WearablesData = ({
                   className="mb-6"
                 ></div>
                 <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                  Giroscopio Izquierdo
+                  Giroscopio Derecho
                 </h2>
                 <div
                   ref={refs.rightGyroscope}

@@ -41,11 +41,13 @@ const UserModal = ({ user, onClose }: { user: any; onClose: any }) => {
         className="w-full max-w-lg bg-white rounded-xl p-6 relative shadow-lg"
       >
         {/* Botón de Cerrar */}
-        <AiOutlineClose
-          className="absolute top-4 right-4 text-2xl text-red-600 cursor-pointer hover:text-red-700"
+        <button
           onClick={onClose}
           aria-label="Cerrar modal"
-        />
+          className="absolute top-4 right-4 focus:outline-none group"
+        >
+          <AiOutlineClose className="text-2xl text-red-600 cursor-pointer group-hover:text-gray-800 transition-colors" />
+        </button>
 
         {/* Título del Modal */}
         <h2
@@ -61,28 +63,28 @@ const UserModal = ({ user, onClose }: { user: any; onClose: any }) => {
           <div className="flex items-center">
             <BiUserCircle className="text-blue-500 text-xl mr-3" />
             <span className="text-gray-700 font-medium">Nombre:</span>
-            <span className="ml-2 text-gray-600">{user.name}</span>
+            <span className="ml-2 text-gray-600">{user.name || '—'}</span>
           </div>
 
           {/* Edad */}
           <div className="flex items-center">
             <FaBirthdayCake className="text-pink-500 text-xl mr-3" />
             <span className="text-gray-700 font-medium">Edad:</span>
-            <span className="ml-2 text-gray-600">{user.age} años</span>
+            <span className="ml-2 text-gray-600">{user.age || '—'} años</span>
           </div>
 
           {/* Altura */}
           <div className="flex items-center">
             <FaRulerVertical className="text-green-500 text-xl mr-3" />
             <span className="text-gray-700 font-medium">Altura:</span>
-            <span className="ml-2 text-gray-600">{user.height} m</span>
+            <span className="ml-2 text-gray-600">{user.height || '—'} m</span>
           </div>
 
           {/* Peso */}
           <div className="flex items-center">
             <FaWeight className="text-yellow-500 text-xl mr-3" />
             <span className="text-gray-700 font-medium">Peso:</span>
-            <span className="ml-2 text-gray-600">{user.weight} kg</span>
+            <span className="ml-2 text-gray-600">{user.weight || '—'} kg</span>
           </div>
 
           {/* Longitud de Pie */}
@@ -90,7 +92,9 @@ const UserModal = ({ user, onClose }: { user: any; onClose: any }) => {
             <GiFootprint className="text-indigo-500 text-xl mr-3" />{' '}
             {/* Usando GiFoot */}
             <span className="text-gray-700 font-medium">Longitud de Pie:</span>
-            <span className="ml-2 text-gray-600">{user.footLength} cm</span>
+            <span className="ml-2 text-gray-600">
+              {user.footLength || '—'} cm
+            </span>
           </div>
         </div>
 

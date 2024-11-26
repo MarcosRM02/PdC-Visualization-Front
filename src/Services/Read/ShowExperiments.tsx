@@ -1,13 +1,18 @@
+// src/Pages/Experiments/ShowExperiment.tsx
+
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import { Link, useParams } from 'react-router-dom';
 import Spinner from '../../Components/Spinner';
-import ExperimentCard from '../../Components/Experiments/ExperimentCard';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import { MdOutlineAddBox } from 'react-icons/md';
 import { FaSearch, FaCalendarAlt, FaUndo } from 'react-icons/fa';
 import LogoutButton from '../../Components/LogoutButton';
+import CreateExperimentModal from '../Create/CreateExperiment'; // Asegúrate de importar correctamente
+import EditExperimentModal from '../Update/EditExperiment'; // Importar el modal de edición
+import { useParams } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
+import ExperimentCard from '../../Components/Experiments/ExperimentCard';
 
 interface Experiment {
   id: number;
@@ -35,31 +40,47 @@ const ShowExperiment = () => {
   const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  useEffect(() => {
-    const fetchExperiments = async () => {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
-      setLoading(true);
-      try {
-        const response = await axios.get(
-          `${apiUrl}/experiments/by-professional/${id}`,
-          config,
-        );
-        setExperiments(response.data);
-        setFilteredExperiments(response.data);
-      } catch (error) {
-        console.error(error);
-        setError('Error al cargar los experimentos.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Estados para los modales
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedExperimentId, setSelectedExperimentId] = useState<
+    number | null
+  >(null);
 
+  const { enqueueSnackbar } = useSnackbar();
+
+  // Función para obtener los experimentos
+  const fetchExperiments = useCallback(async () => {
+    if (!id) return;
+    const config = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    };
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${apiUrl}/experiments/by-professional/${id}`,
+        config,
+      );
+      setExperiments(response.data);
+      setFilteredExperiments(response.data);
+      setError('');
+    } catch (error) {
+      console.error(error);
+      setError('Error al cargar los experimentos.');
+      enqueueSnackbar('Error al cargar los experimentos.', {
+        variant: 'error',
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [id, accessToken, apiUrl, enqueueSnackbar]);
+
+  // Obtener los experimentos al montar el componente
+  useEffect(() => {
     fetchExperiments();
-  }, [id, accessToken, apiUrl]);
+  }, [fetchExperiments]);
 
   // Función para normalizar la fecha (eliminar la parte de tiempo)
   const normalizeDate = (date: Date) => {
@@ -76,7 +97,7 @@ const ShowExperiment = () => {
         experiment.name.toLowerCase().includes(searchName.toLowerCase()),
       );
     }
-    // Filtrar por fecha
+    // Filtrar por fecha de inicio
     if (filterStartDate) {
       const selectedDate = normalizeDate(filterStartDate);
       filtered = filtered.filter((trial) => {
@@ -90,7 +111,7 @@ const ShowExperiment = () => {
         return normalizedTrialDate.getTime() === selectedDate.getTime();
       });
     }
-    // Filtrar por fecha
+    // Filtrar por fecha de finalización
     if (filterEndDate) {
       const selectedDate = normalizeDate(filterEndDate);
       filtered = filtered.filter((trial) => {
@@ -114,6 +135,25 @@ const ShowExperiment = () => {
     setFilterStartDate(null);
     setFilterEndDate(null);
   }, []);
+
+  // Funciones para abrir y cerrar los modales
+  const openCreateModal = () => setIsCreateModalOpen(true);
+  const closeCreateModal = () => setIsCreateModalOpen(false);
+
+  const openEditModal = (id: number) => {
+    setSelectedExperimentId(id);
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedExperimentId(null);
+  };
+
+  // Función de callback para cuando se crea, edita o elimina un experimento
+  const handleExperimentChanged = useCallback(() => {
+    fetchExperiments(); // Volver a obtener la lista actualizada
+  }, [fetchExperiments]);
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -177,15 +217,15 @@ const ShowExperiment = () => {
         </button>
       </div>
 
-      {/* Botón para Añadir Experimentos */}
+      {/* Botón para Abrir el Modal de Añadir Experimentos */}
       <div className="flex justify-end mb-6">
-        <Link
-          to={`/experiments/create/${id}`}
+        <button
+          onClick={openCreateModal}
           className="flex items-center text-sky-800 hover:text-sky-900 transition-colors duration-200"
         >
           <MdOutlineAddBox className="text-4xl mr-2" />
           <span className="text-xl font-semibold">Añadir Experimento</span>
-        </Link>
+        </button>
       </div>
 
       {/* Mostrar Errores */}
@@ -199,7 +239,11 @@ const ShowExperiment = () => {
       {loading ? (
         <Spinner />
       ) : filteredExperiments.length > 0 ? (
-        <ExperimentCard experiments={filteredExperiments} />
+        <ExperimentCard
+          experiments={filteredExperiments}
+          onExperimentDeleted={handleExperimentChanged} // Pasar el callback
+          onExperimentEdited={handleExperimentChanged} // Pasar el callback para editar
+        />
       ) : (
         <div className="flex flex-col items-center justify-center mt-20">
           <h2 className="text-2xl font-semibold text-gray-700">
@@ -209,6 +253,23 @@ const ShowExperiment = () => {
             Intenta ajustar los filtros de búsqueda.
           </p>
         </div>
+      )}
+
+      {/* Modal de Crear Experimento */}
+      <CreateExperimentModal
+        isOpen={isCreateModalOpen}
+        onClose={closeCreateModal}
+        onExperimentCreated={handleExperimentChanged} // Pasar el callback
+      />
+
+      {/* Modal de Editar Experimento */}
+      {selectedExperimentId !== null && (
+        <EditExperimentModal
+          isOpen={isEditModalOpen}
+          onClose={closeEditModal}
+          experimentId={selectedExperimentId}
+          onExperimentEdited={handleExperimentChanged}
+        />
       )}
     </div>
   );
