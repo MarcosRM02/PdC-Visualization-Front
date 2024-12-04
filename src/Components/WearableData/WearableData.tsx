@@ -682,7 +682,7 @@ function plotData(
       'hoverClosestCartesian',
       'hoverCompareCartesian',
       'zoomIn2d',
-      'zoomOut2d',
+      //'zoomOut2d',
       'toggleSpikelines',
       'resetViews',
       'toggleHover',
