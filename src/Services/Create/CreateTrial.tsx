@@ -1,146 +1,219 @@
-import { useEffect, useState } from 'react';
-import BackButton from '../../Components/BackButton';
+// src/Components/Trials/CreateTrialModal.tsx
+
+import React, { useEffect, useState } from 'react';
 import Spinner from '../../Components/Spinner';
 import axios from 'axios';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
+import { FaTimes } from 'react-icons/fa';
 
-const CreateTrial = () => {
+interface CreateTrialModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onTrialCreated: () => void; // Callback para notificar al padre
+}
+
+const CreateTrialModal: React.FC<CreateTrialModalProps> = ({
+  isOpen,
+  onClose,
+  onTrialCreated,
+}) => {
   const [description, setDescription] = useState('');
   const [annotation, setAnnotation] = useState('');
   const [code, setCode] = useState('');
   const [swId, setSWId] = useState('');
+  const [swIds, setSWIds] = useState<{ id: number; description: string }[]>([]);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
-  console.log(accessToken);
-
-  const [swIds, setSWIds] = useState([]);
 
   useEffect(() => {
-    // Hacer la llamada a la API para obtener los SW Ids cuando el componente se monta
-    const fetchSWIds = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/sw`, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        setSWIds(response.data); // Suponiendo que la API devuelve un array de SW Ids
-      } catch (error) {
-        console.error('Error fetching SW Ids:', error);
-      }
-    };
+    if (isOpen) {
+      const fetchSWIds = async () => {
+        try {
+          const response = await axios.get(`${apiUrl}/sw`, {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          });
+          setSWIds(response.data);
+        } catch (error) {
+          enqueueSnackbar('Error al obtener los SW IDs', { variant: 'error' });
+          console.error('Error fetching SW IDs:', error);
+        }
+      };
 
-    fetchSWIds();
-  }, [apiUrl, accessToken]);
+      fetchSWIds();
+    }
+  }, [apiUrl, accessToken, enqueueSnackbar, isOpen]);
 
-  const handleSequentialPost = () => {
+  const handleSaveTrial = async () => {
     if (!swId) {
-      enqueueSnackbar('Please select a valid SW ID before proceeding', {
-        variant: 'warning',
-      });
+      enqueueSnackbar(
+        'Por favor, selecciona un SW ID válido antes de continuar.',
+        {
+          variant: 'warning',
+        },
+      );
       return;
     }
-    const dataToSend = {
+
+    const dataToSend: { [key: string]: string | number } = {
       swId: Number(swId),
       participantId: Number(id),
-      ...(description && { description: String(description) }),
-      ...(code && { code: String(code) }),
-      ...(annotation && { annotation: String(annotation) }),
+      ...(description && { description }),
+      ...(code && { code }),
+      ...(annotation && { annotation }),
     };
+
     const config = {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     };
-    console.log(config);
+
     setLoading(true);
-    // First POST request
-    axios
-      .post(`${apiUrl}/trials/create`, dataToSend, config)
-      .then(() => {
-        setLoading(false);
-        enqueueSnackbar('Trial Created successfully', {
-          variant: 'success',
-        });
-        navigate(-1);
-      })
-      .catch((error) => {
-        setLoading(false);
-        // alert('An error happened. Please Chack console');
-        enqueueSnackbar('Error', { variant: 'error' });
-        console.log(error);
-      });
+
+    try {
+      await axios.post(`${apiUrl}/trials/create`, dataToSend, config);
+      setLoading(false);
+      enqueueSnackbar('Prueba creada exitosamente', { variant: 'success' });
+      onClose();
+      onTrialCreated(); // Notificar al componente padre
+      // Limpiar campos
+      setDescription('');
+      setAnnotation('');
+      setCode('');
+      setSWId('');
+    } catch (error) {
+      setLoading(false);
+      enqueueSnackbar('Error al crear la prueba', { variant: 'error' });
+      console.error('Error:', error);
+    }
   };
 
+  useEffect(() => {
+    if (!isOpen) {
+      // Limpiar campos al cerrar el modal
+      setDescription('');
+      setAnnotation('');
+      setCode('');
+      setSWId('');
+    }
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
   return (
-    <div className="p-4">
-      <BackButton />
-      <h1 className="text-3xl my-4">Create Trial</h1>
-      {loading ? <Spinner /> : ''}
-      <div className="flex flex-col border-2 border-sky-400 rounded-xl w-[600px] p-4 mx-auto">
-        <div className="my-4">
-          <label className="text-xl mr-4 text-gray-500">
-            SW (ID - Description)
-          </label>
-          <select
-            value={swId}
-            onChange={(e) => setSWId(e.target.value)}
-            className="border-2 border-gray-500 px-4 py-2 w-full"
-          >
-            <option value="">Select SW</option>
-            {swIds.map((sw) => (
-              // @ts-ignore
-              <option key={sw.id} value={sw.id}>
-                {/* @ts-ignore */}
-                {sw.id} - {sw.description}
-              </option>
-            ))}
-          </select>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+        {/* Cabecera del Modal */}
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-semibold text-gray-800">Crear Prueba</h2>
+          <button onClick={onClose} aria-label="Cerrar modal">
+            <FaTimes className="text-red-600 hover:text-gray-800" />
+          </button>
         </div>
 
-        <div className="my-4">
-          <label className="text-xl mr-4 text-gray-500">
-            Description (optional)
-          </label>
-          <input
-            type="text"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="border-2 border-gray-500 px-4 py-2 w-full"
-          />
-        </div>
-        <div className="my-4">
-          <label className="text-xl mr-4 text-gray-500">Code (optional)</label>
-          <input
-            type="text"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            className="border-2 border-gray-500 px-4 py-2 w-full"
-          />
-        </div>
-        <div className="my-4">
-          <label className="text-xl mr-4 text-gray-500">
-            Annotations (optional){' '}
-          </label>
-          <input
-            type="text"
-            value={annotation}
-            onChange={(e) => setAnnotation(e.target.value)}
-            className="border-2 border-gray-500 px-4 py-2 w-full"
-          />
-        </div>
+        {/* Contenido del Modal */}
+        {loading ? (
+          <div className="flex justify-center my-8">
+            <Spinner />
+          </div>
+        ) : (
+          <div className="flex flex-col space-y-4">
+            {/* Selección de SW */}
+            <div>
+              <label
+                className="block text-gray-700 text-lg mb-2"
+                htmlFor="swId"
+              >
+                SW (ID - Descripción) <span className="text-red-500">*</span>
+              </label>
+              <select
+                id="swId"
+                value={swId}
+                onChange={(e) => setSWId(e.target.value)}
+                className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
+                required
+              >
+                <option value="">Seleccionar SW</option>
+                {swIds.map((sw) => (
+                  <option key={sw.id} value={sw.id}>
+                    {sw.id} - {sw.description}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        <button className="p-2 bg-sky-300 m-8" onClick={handleSequentialPost}>
-          Save
-        </button>
+            {/* Campo de Descripción (Opcional) */}
+            <div>
+              <label
+                className="block text-gray-700 text-lg mb-2"
+                htmlFor="description"
+              >
+                Descripción <span className="text-gray-500">(opcional)</span>
+              </label>
+              <input
+                id="description"
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
+                placeholder="Ingrese la descripción"
+              />
+            </div>
+
+            {/* Campo de Código (Opcional) */}
+            <div>
+              <label
+                className="block text-gray-700 text-lg mb-2"
+                htmlFor="code"
+              >
+                Código <span className="text-gray-500">(opcional)</span>
+              </label>
+              <input
+                id="code"
+                type="text"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
+                placeholder="Ingrese el código"
+              />
+            </div>
+
+            {/* Campo de Anotaciones (Opcional) */}
+            <div>
+              <label
+                className="block text-gray-700 text-lg mb-2"
+                htmlFor="annotation"
+              >
+                Anotaciones <span className="text-gray-500">(opcional)</span>
+              </label>
+              <input
+                id="annotation"
+                type="text"
+                value={annotation}
+                onChange={(e) => setAnnotation(e.target.value)}
+                className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
+                placeholder="Ingrese las anotaciones"
+              />
+            </div>
+
+            {/* Botón de Guardar */}
+            <button
+              onClick={handleSaveTrial}
+              className="mt-4 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors duration-200"
+            >
+              Guardar
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-export default CreateTrial;
+export default CreateTrialModal;

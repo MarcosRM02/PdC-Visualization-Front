@@ -5,7 +5,6 @@ import { AiOutlineClose, AiOutlineEdit } from 'react-icons/ai';
 import { FaBirthdayCake, FaRulerVertical, FaWeight } from 'react-icons/fa';
 import { BiUserCircle } from 'react-icons/bi';
 import { GiFootprint } from 'react-icons/gi'; // Nuevo icono
-import { useNavigate } from 'react-router-dom';
 import EditPersonalDataModal from '../../Services/Update/EditPersonalData'; // Ruta correcta
 
 interface UserModalProps {
@@ -16,8 +15,6 @@ interface UserModalProps {
 const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(user); // Estado local para el usuario
-
-  const navigate = useNavigate();
 
   // Función para abrir el modal de edición
   const openEditModal = (event: React.MouseEvent<HTMLButtonElement>) => {

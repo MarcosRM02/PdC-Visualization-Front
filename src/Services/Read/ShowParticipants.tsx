@@ -8,7 +8,7 @@ import { FaSearch, FaUndo } from 'react-icons/fa';
 import LogoutButton from '../../Components/LogoutButton';
 import BackButton from '../../Components/BackButton';
 import ParticipantCard from '../../Components/Participants/ParticipantCard';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import 'react-datepicker/dist/react-datepicker.css';
 import CreateParticipantModal from '../../Services/Create/CreateParticipant'; // Importa el modal de creación
@@ -37,7 +37,6 @@ const ShowParticipant = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
 
   // Estados para el modal de creación
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);

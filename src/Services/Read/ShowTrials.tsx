@@ -1,6 +1,8 @@
+// src/Pages/Trials/ShowTrials.tsx
+
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import BackButton from '../../Components/BackButton';
 import Spinner from '../../Components/Spinner';
 import TrialCard from '../../Components/Trials/TrialCard';
@@ -9,17 +11,43 @@ import { FaSearch, FaUndo, FaCalendarAlt } from 'react-icons/fa';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import LogoutButton from '../../Components/LogoutButton';
+import { useSnackbar } from 'notistack';
+import CreateTrialModal from '../../Services/Create/CreateTrial'; // Importar el modal
 
 const ShowTrials = () => {
   const [sWDatas, setSWDatas] = useState<any[]>([]);
   const [filteredSWDatas, setFilteredSWDatas] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchCode, setSearchCode] = useState('');
-  const [filterDate, setFilterDate] = useState<Date | null>(null); // Cambio aquí
+  const [filterDate, setFilterDate] = useState<Date | null>(null);
   const [error, setError] = useState('');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false); // Estado para el modal de creación
+
+  // Nuevo estado para controlar el refresco de datos
+  const [refreshTrigger, setRefreshTrigger] = useState(false);
+
   const { id } = useParams<{ id: string }>();
   const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
+  const { enqueueSnackbar } = useSnackbar();
+
+  // Callback para manejar la edición de una prueba
+  const handleTrialEdited = useCallback(() => {
+    setRefreshTrigger((prev) => !prev);
+    enqueueSnackbar('Prueba actualizada exitosamente', { variant: 'success' });
+  }, [enqueueSnackbar]);
+
+  // Callback para manejar la eliminación de una prueba
+  const handleTrialDeleted = useCallback(() => {
+    setRefreshTrigger((prev) => !prev);
+    enqueueSnackbar('Prueba eliminada exitosamente', { variant: 'success' });
+  }, [enqueueSnackbar]);
+
+  // Callback para manejar la creación de una prueba
+  const handleTrialCreated = useCallback(() => {
+    setRefreshTrigger((prev) => !prev);
+    enqueueSnackbar('Prueba creada exitosamente', { variant: 'success' });
+  }, [enqueueSnackbar]);
 
   useEffect(() => {
     const fetchTrials = async () => {
@@ -45,7 +73,7 @@ const ShowTrials = () => {
     };
 
     fetchTrials();
-  }, [id, accessToken, apiUrl]);
+  }, [id, accessToken, apiUrl, refreshTrigger]); // Añadido refreshTrigger
 
   // Función para normalizar la fecha (eliminar la parte de tiempo)
   const normalizeDate = (date: Date) => {
@@ -138,15 +166,15 @@ const ShowTrials = () => {
         </button>
       </div>
 
-      {/* Botón para Añadir Trials */}
+      {/* Botón para Abrir el Modal de Crear Trial */}
       <div className="flex justify-end mb-6">
-        <Link
-          to={`/trials/create/${id}`}
+        <button
+          onClick={() => setIsCreateModalOpen(true)}
           className="flex items-center text-sky-800 hover:text-sky-900 transition-colors duration-200"
         >
           <MdOutlineAddBox className="text-4xl mr-2" />
           <span className="text-xl font-semibold">Añadir Trial</span>
-        </Link>
+        </button>
       </div>
 
       {/* Mostrar Errores */}
@@ -160,7 +188,12 @@ const ShowTrials = () => {
       {loading ? (
         <Spinner />
       ) : filteredSWDatas.length > 0 ? (
-        <TrialCard trials={filteredSWDatas} />
+        // Pasar ambos manejadores de edición y eliminación a TrialCard
+        <TrialCard
+          trials={filteredSWDatas}
+          onTrialEdited={handleTrialEdited}
+          onTrialDeleted={handleTrialDeleted}
+        />
       ) : (
         <div className="flex flex-col items-center justify-center mt-20">
           <h2 className="text-2xl font-semibold text-gray-700">
@@ -170,6 +203,15 @@ const ShowTrials = () => {
             Intenta ajustar los filtros de búsqueda.
           </p>
         </div>
+      )}
+
+      {/* Modal de Creación */}
+      {isCreateModalOpen && (
+        <CreateTrialModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onTrialCreated={handleTrialCreated}
+        />
       )}
     </div>
   );

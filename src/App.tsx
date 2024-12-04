@@ -22,9 +22,50 @@ const App = () => {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/" element={<PrivateRoute />}>
-        <Route path="/experiments/create/:id" element={<CreateExperiment />} />
-        <Route path="/experiments/edit/:id" element={<EditExperiment />} />
-        <Route path="/experiments/delete/:id" element={<DeleteExperiment />} />
+        <Route
+          path="/experiments/create/:id"
+          element={
+            <CreateExperiment
+              isOpen={false}
+              onClose={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              onExperimentCreated={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+            />
+          }
+        />
+        <Route
+          path="/experiments/edit/:id"
+          element={
+            <EditExperiment
+              isOpen={false}
+              onClose={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              experimentId={0}
+              onExperimentEdited={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+            />
+          }
+        />
+        <Route
+          path="/experiments/delete/:id"
+          element={
+            <DeleteExperiment
+              isOpen={false}
+              onClose={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              onExperimentDeleted={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              experimentId={0}
+            />
+          }
+        />
         <Route
           path="experiments/by-professional/:id"
           element={<ShowExperiments />}
@@ -36,15 +77,64 @@ const App = () => {
 
         <Route
           path="/participants/create/:id"
-          element={<CreateParticipant />}
+          element={
+            <CreateParticipant
+              isOpen={false}
+              onClose={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              onParticipantCreated={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+            />
+          }
         />
-        <Route path="/participants/edit/:id" element={<EditParticipant />} />
+        <Route
+          path="/participants/edit/:id"
+          element={
+            <EditParticipant
+              isOpen={false}
+              onClose={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              participantId={0}
+              onParticipantEdited={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+            />
+          }
+        />
         <Route
           path="/participants/delete/:id"
-          element={<DeleteParticipant />}
+          element={
+            <DeleteParticipant
+              isOpen={false}
+              onClose={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              onParticipantDeleted={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              participantId={0}
+            />
+          }
         />
 
-        <Route path="/personalData/edit/:id" element={<EditPersonalData />} />
+        <Route
+          path="/personalData/edit/:id"
+          element={
+            <EditPersonalData
+              isOpen={false}
+              onClose={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              personalDataId={''}
+              onPersonalDataEdited={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+            />
+          }
+        />
         <Route
           path="/personalData/delete/:id"
           element={<DeletePersonalData />}
@@ -54,9 +144,50 @@ const App = () => {
           element={<ShowParticipants />}
         />
 
-        <Route path="/trials/create/:id" element={<CreateTrial />} />
-        <Route path="/trials/edit/:id" element={<EditTrial />} />
-        <Route path="/trials/delete/:id" element={<DeleteTrial />} />
+        <Route
+          path="/trials/create/:id"
+          element={
+            <CreateTrial
+              isOpen={false}
+              onClose={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              onTrialCreated={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+            />
+          }
+        />
+        <Route
+          path="/trials/edit/:id"
+          element={
+            <EditTrial
+              isOpen={false}
+              onClose={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              trialId={0}
+              onTrialEdited={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+            />
+          }
+        />
+        <Route
+          path="/trials/delete/:id"
+          element={
+            <DeleteTrial
+              isOpen={false}
+              onClose={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              onTrialDeleted={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              trialId={0}
+            />
+          }
+        />
         <Route path="/trials/by-participant/:id" element={<ShowTrials />} />
 
         <Route

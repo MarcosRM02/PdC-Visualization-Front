@@ -2,7 +2,7 @@
 
 import React from 'react';
 import ExperimentSingleCard from './ExperimentSingleCard';
-import { IExperimentProp, IExperiment } from '../../Types/Interfaces';
+import { IExperimentProp } from '../../Types/Interfaces';
 
 const ExperimentCard: React.FC<IExperimentProp> = ({
   experiments = [],

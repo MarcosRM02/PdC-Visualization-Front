@@ -140,10 +140,10 @@ const ShowExperiment = () => {
   const openCreateModal = () => setIsCreateModalOpen(true);
   const closeCreateModal = () => setIsCreateModalOpen(false);
 
-  const openEditModal = (id: number) => {
-    setSelectedExperimentId(id);
-    setIsEditModalOpen(true);
-  };
+  // const openEditModal = (id: number) => {
+  //   setSelectedExperimentId(id);
+  //   setIsEditModalOpen(true);
+  // };
 
   const closeEditModal = () => {
     setIsEditModalOpen(false);

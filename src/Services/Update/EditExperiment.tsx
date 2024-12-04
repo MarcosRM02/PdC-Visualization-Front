@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Spinner from '../../Components/Spinner';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
 
@@ -30,8 +29,6 @@ const EditExperimentModal: React.FC<EditExperimentModalProps> = ({
 
   const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!isOpen) return;

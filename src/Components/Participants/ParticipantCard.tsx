@@ -2,7 +2,7 @@
 
 import React from 'react';
 import ParticipantSingleCard from './ParticipantSingleCard';
-import { IParticipantProp, IParticipant } from '../../Types/Interfaces';
+import { IParticipantProp } from '../../Types/Interfaces';
 
 const ParticipantCard: React.FC<IParticipantProp> = ({
   participants = [],
