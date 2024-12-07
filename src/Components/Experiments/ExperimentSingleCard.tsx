@@ -13,8 +13,8 @@ import {
 } from 'react-icons/fa';
 import { MdOutlineDelete } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
-import DeleteExperimentModal from '../../Services/Delete/DeleteExperiment'; // Asegúrate de que la ruta es correcta
-import EditExperimentModal from '../../Services/Update/EditExperiment'; // Importa el modal de edición
+import DeleteExperimentModal from '../../Services/Delete/DeleteExperiment';
+import EditExperimentModal from '../../Services/Update/EditExperiment';
 
 // Definir una interfaz para los props
 interface Experiment {
@@ -22,19 +22,19 @@ interface Experiment {
   name: string;
   description: string;
   startDate: string;
-  finishDate?: string; // Optional Attribute
-  notes?: string; // Optional Attribute
+  finishDate?: string;
+  notes?: string;
   numberOfParticipants: number;
 }
 
 interface ExperimentSingleCardProps {
-  experiments: Experiment;
-  onExperimentDeleted: () => void; // Callback requerido para notificar al padre
-  onExperimentEdited: () => void; // Nuevo Callback para editar
+  experiment: Experiment;
+  onExperimentDeleted: () => void;
+  onExperimentEdited: () => void;
 }
 
 const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
-  experiments,
+  experiment,
   onExperimentDeleted,
   onExperimentEdited,
 }) => {
@@ -47,7 +47,6 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
     if (!dateString) return '';
 
     const date = new Date(dateString);
-    // Verificar si la fecha es válida
     if (isNaN(date.getTime())) {
       return '';
     }
@@ -70,103 +69,93 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
     setDeleteModalOpen(true);
   };
 
-  const handleModalClose = () => {
-    setDeleteModalOpen(false);
-  };
-
   const handleExperimentDeleted = () => {
     console.log(
-      `Experiment with ID: ${experiments.id} deleted. Notifying parent.`,
+      `Experiment with ID: ${experiment.id} deleted. Notifying parent.`,
     );
     setDeleteModalOpen(false);
-    onExperimentDeleted(); // Llamar al callback del padre
-  };
-
-  const handleEditModalClose = () => {
-    setEditModalOpen(false);
+    onExperimentDeleted();
   };
 
   const handleExperimentEdited = () => {
     console.log(
-      `Experiment with ID: ${experiments.id} edited. Notifying parent.`,
+      `Experiment with ID: ${experiment.id} edited. Notifying parent.`,
     );
     setEditModalOpen(false);
-    onExperimentEdited(); // Llamar al callback del padre
+    onExperimentEdited();
   };
 
-  const formattedStartDate = formatDate(experiments.startDate);
-  const formattedFinishDate = formatDate(experiments.finishDate || '');
+  const formattedStartDate = formatDate(experiment.startDate);
+  const formattedFinishDate = formatDate(experiment.finishDate || '');
 
   return (
     <>
       <div
-        onClick={() =>
-          navigate(`/participants/by-experiment/${experiments.id}`)
-        }
-        className="border-2 border-gray-500 rounded-lg px-6 py-4 m-4 relative hover:shadow-2xl transition-shadow duration-300 ease-in-out cursor-pointer bg-white"
+        onClick={() => navigate(`/participants/by-experiment/${experiment.id}`)}
+        className="border border-gray-300 bg-white rounded-lg px-6 py-4 m-4 relative hover:shadow-lg transition-shadow duration-300 ease-in-out cursor-pointer"
       >
-        <div className="my-2 space-y-4">
+        <div className="space-y-4">
           {/* ID */}
           <div className="flex items-center gap-x-3">
-            <FaIdCard className="text-red-400 text-xl" />
-            <h4 className="text-gray-700 font-medium">ID: {experiments.id}</h4>
+            <FaIdCard className="text-blue-700 text-2xl" />
+            <h4 className="text-gray-800 font-medium">ID: {experiment.id}</h4>
           </div>
 
           {/* Nombre */}
           <div className="flex items-center gap-x-3">
-            <FaUser className="text-blue-400 text-xl" />
-            <h4 className="text-gray-700 font-medium">
-              Nombre: {experiments.name}
+            <FaUser className="text-blue-500 text-2xl" />
+            <h4 className="text-gray-800 font-medium">
+              Nombre: {experiment.name}
             </h4>
           </div>
 
           {/* Descripción */}
           <div className="flex items-center gap-x-3">
-            <FaInfoCircle className="text-green-400 text-xl" />
-            <h4 className="text-gray-700 font-medium">
-              Descripción: {experiments.description || '—'}
+            <FaInfoCircle className="text-blue-500 text-2xl" />
+            <h4 className="text-gray-800 font-medium">
+              Descripción: {experiment.description || '—'}
             </h4>
           </div>
 
           {/* Fecha de Inicio */}
           <div className="flex items-center gap-x-3">
-            <FaCalendarCheck className="text-purple-400 text-xl" />
-            <h4 className="text-gray-700 font-medium">
+            <FaCalendarCheck className="text-blue-300 text-2xl" />
+            <h4 className="text-gray-800 font-medium">
               Fecha de Inicio: {formattedStartDate || '—'}
             </h4>
           </div>
 
           {/* Fecha de Finalización */}
           <div className="flex items-center gap-x-3">
-            <FaCalendarTimes className="text-orange-400 text-xl" />
-            <h4 className="text-gray-700 font-medium">
+            <FaCalendarTimes className="text-blue-200 text-2xl" />
+            <h4 className="text-gray-800 font-medium">
               Fecha de Finalización: {formattedFinishDate || '—'}
             </h4>
           </div>
 
           {/* Notas */}
           <div className="flex items-center gap-x-3">
-            <FaStickyNote className="text-teal-400 text-xl" />
-            <h4 className="text-gray-700 font-medium">
-              Notas: {experiments.notes || '—'}
+            <FaStickyNote className="text-blue-200 text-2xl" />
+            <h4 className="text-gray-800 font-medium">
+              Notas: {experiment.notes || '—'}
             </h4>
           </div>
 
           {/* Número de Participantes */}
           <div className="flex items-center gap-x-3">
-            <FaUsers className="text-indigo-400 text-xl" />
-            <h4 className="text-gray-700 font-medium">
-              Número de Participantes: {experiments.numberOfParticipants}
+            <FaUsers className="text-blue-500 text-2xl" />
+            <h4 className="text-gray-800 font-medium">
+              Número de Participantes: {experiment.numberOfParticipants}
             </h4>
           </div>
         </div>
 
-        {/* Botones de Editar y Eliminar */}
+        {/* Botones de Acción */}
         <div className="flex justify-end items-center gap-x-4 mt-6">
           {/* Botón de Editar */}
           <button
             onClick={handleEditClick}
-            className="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600 transition-colors duration-200"
+            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors duration-200"
             aria-label="Editar experimento"
           >
             <AiOutlineEdit className="text-lg" />
@@ -186,16 +175,16 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
       {/* Modal para Eliminar Experimento */}
       <DeleteExperimentModal
         isOpen={isDeleteModalOpen}
-        onClose={handleModalClose}
+        onClose={() => setDeleteModalOpen(false)}
         onExperimentDeleted={handleExperimentDeleted}
-        experimentId={experiments.id}
+        experimentId={experiment.id}
       />
 
       {/* Modal para Editar Experimento */}
       <EditExperimentModal
         isOpen={isEditModalOpen}
-        onClose={handleEditModalClose}
-        experimentId={experiments.id}
+        onClose={() => setEditModalOpen(false)}
+        experimentId={experiment.id}
         onExperimentEdited={handleExperimentEdited}
       />
     </>

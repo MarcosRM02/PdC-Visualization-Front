@@ -62,8 +62,13 @@ const ShowTrials = () => {
           `${apiUrl}/trials/by-participant/${id}`,
           config,
         );
-        setSWDatas(response.data);
-        setFilteredSWDatas(response.data);
+        let trialsData = response.data;
+
+        // Ordenar los trials por ID de manera ascendente
+        trialsData.sort((a: any, b: any) => a.id - b.id);
+
+        setSWDatas(trialsData);
+        setFilteredSWDatas(trialsData);
       } catch (error) {
         console.error(error);
         setError('Error al cargar los trials.');

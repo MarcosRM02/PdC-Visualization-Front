@@ -2,25 +2,31 @@
 
 import React from 'react';
 import ExperimentSingleCard from './ExperimentSingleCard';
-import { IExperimentProp } from '../../Types/Interfaces';
+import { IExperiment } from '../../Types/Interfaces';
 
-const ExperimentCard: React.FC<IExperimentProp> = ({
-  experiments = [],
+interface ExperimentCardProps {
+  experiments: IExperiment[];
+  onExperimentDeleted: () => void;
+  onExperimentEdited: () => void;
+}
+
+const ExperimentCard: React.FC<ExperimentCardProps> = ({
+  experiments,
   onExperimentDeleted,
-  onExperimentEdited, // Añadir esta línea
+  onExperimentEdited,
 }) => {
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {experiments.map((item) => (
+      {experiments.map((experiment) => (
         <ExperimentSingleCard
-          key={item.id}
-          experiments={item}
-          onExperimentDeleted={onExperimentDeleted} // Pasar el callback
-          onExperimentEdited={onExperimentEdited} // Pasar el nuevo callback
+          key={experiment.id}
+          experiment={experiment}
+          onExperimentDeleted={onExperimentDeleted}
+          onExperimentEdited={onExperimentEdited}
         />
       ))}
     </div>
   );
 };
 
-export default ExperimentCard;
+export default React.memo(ExperimentCard);
