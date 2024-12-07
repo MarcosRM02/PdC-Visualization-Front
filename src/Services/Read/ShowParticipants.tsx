@@ -18,11 +18,8 @@ interface Participant {
   code: string;
   personalData?: {
     id: number;
-    // Otros campos relevantes
   };
-  // Otros campos relevantes
 }
-
 const ShowParticipant = () => {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [filteredParticipants, setFilteredParticipants] = useState<
@@ -55,8 +52,13 @@ const ShowParticipant = () => {
         `${apiUrl}/participants/by-experiment/${id}`,
         config,
       );
-      setParticipants(response.data);
-      setFilteredParticipants(response.data);
+      let participantsData: Participant[] = response.data;
+
+      // Ordenar los participantes por ID de manera ascendente
+      participantsData.sort((a, b) => a.id - b.id);
+
+      setParticipants(participantsData);
+      setFilteredParticipants(participantsData);
       setError('');
     } catch (error: any) {
       console.error(error);

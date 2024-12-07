@@ -25,7 +25,7 @@ interface TrialSingleCardProps {
 const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
   trials,
   onTrialEdited,
-  onTrialDeleted, // Recibir el nuevo callback
+  onTrialDeleted,
 }) => {
   const [data, setData] = useState({
     experimentId: null,
@@ -114,51 +114,51 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
     <>
       <div
         onClick={() => navigate(detailsUrl)}
-        className="border-2 border-gray-500 rounded-lg px-6 py-4 m-4 relative hover:shadow-xl transition-shadow duration-300 ease-in-out cursor-pointer bg-white"
+        className="border border-gray-300 bg-white rounded-lg px-6 py-4 m-4 relative hover:shadow-lg transition-shadow duration-300 ease-in-out cursor-pointer"
       >
-        <div key={trials.id} className="my-2 space-y-3">
+        <div key={trials.id} className="my-2 space-y-4">
           {/* ID */}
           <div className="flex items-center gap-x-3">
-            <FaIdCard className="text-red-400 text-xl" />
-            <h4 className="text-gray-700 font-medium">ID: {trials.id}</h4>
+            <FaIdCard className="text-blue-700 text-2xl" />
+            <h4 className="text-gray-800 font-medium">ID: {trials.id}</h4>
           </div>
 
           {/* Fecha */}
           <div className="flex items-center gap-x-3">
-            <FaCalendarAlt className="text-blue-400 text-xl" />
-            <h4 className="text-gray-700 font-medium">
+            <FaCalendarAlt className="text-blue-500 text-2xl" />
+            <h4 className="text-gray-800 font-medium">
               Fecha: {formattedDate || '—'}
             </h4>
           </div>
 
           {/* Código */}
           <div className="flex items-center gap-x-3">
-            <FaBarcode className="text-green-400 text-xl" />
-            <h4 className="text-gray-700 font-medium">
+            <FaBarcode className="text-blue-500 text-2xl" />
+            <h4 className="text-gray-800 font-medium">
               Código: {trials.code || '—'}
             </h4>
           </div>
 
           {/* Descripción */}
           <div className="flex items-center gap-x-3">
-            <FaAlignLeft className="text-purple-400 text-xl" />
-            <h4 className="text-gray-700 font-medium">
+            <FaAlignLeft className="text-blue-300 text-2xl" />
+            <h4 className="text-gray-800 font-medium">
               Descripción: {trials.description || '—'}
             </h4>
           </div>
 
           {/* Anotación */}
           <div className="flex items-center gap-x-3">
-            <FaStickyNote className="text-yellow-400 text-xl" />
-            <h4 className="text-gray-700 font-medium">
+            <FaStickyNote className="text-blue-200 text-2xl" />
+            <h4 className="text-gray-800 font-medium">
               Anotación: {trials.annotation || '—'}
             </h4>
           </div>
 
           {/* swId */}
           <div className="flex items-center gap-x-3">
-            <FaMicrochip className="text-indigo-400 text-xl" />
-            <h4 className="text-gray-700 font-medium">swId: {trials.sw.id}</h4>
+            <FaMicrochip className="text-blue-500 text-2xl" />
+            <h4 className="text-gray-800 font-medium">swId: {trials.sw.id}</h4>
           </div>
         </div>
 
@@ -167,7 +167,7 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
           {/* Botón de Editar */}
           <button
             onClick={handleEditClick}
-            className="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600 transition-colors duration-200"
+            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors duration-200"
             aria-label="Editar prueba"
           >
             <AiOutlineEdit className="text-lg" />
@@ -185,7 +185,7 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
 
         {/* Manejo de Errores */}
         {error && (
-          <div className="absolute top-2 right-2 bg-red-100 text-red-700 px-3 py-1 rounded">
+          <div className="absolute top-2 right-2 bg-red-200 text-red-700 px-3 py-1 rounded">
             {error}
           </div>
         )}

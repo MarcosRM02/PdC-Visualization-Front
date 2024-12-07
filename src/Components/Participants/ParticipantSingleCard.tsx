@@ -93,19 +93,21 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
     <>
       <div
         onClick={() => navigate(`/trials/by-participant/${participants.id}`)}
-        className="border-2 border-gray-500 rounded-lg px-6 py-4 m-4 relative hover:shadow-2xl transition-shadow duration-300 ease-in-out cursor-pointer bg-white"
+        className="border border-gray-300 bg-white rounded-lg px-6 py-4 m-4 relative hover:shadow-lg transition-shadow duration-300 ease-in-out cursor-pointer"
       >
         <div key={participants.id} className="my-2 space-y-4">
           {/* ID */}
           <div className="flex items-center gap-x-3">
-            <FaIdCard className="text-red-400 text-xl" />
-            <h4 className="text-gray-700 font-medium">ID: {participants.id}</h4>
+            <FaIdCard className="text-blue-700 text-2xl" />
+            <h4 className="text-gray-800 font-medium">ID: {participants.id}</h4>
           </div>
 
           {/* Código */}
           <div className="flex items-center gap-x-3">
-            <FaBarcode className="text-green-400 text-xl" />
-            <h4 className="text-gray-700 font-medium">Code: {formattedCode}</h4>
+            <FaBarcode className="text-blue-500 text-2xl" />
+            <h4 className="text-gray-800 font-medium">
+              Código: {formattedCode}
+            </h4>
           </div>
         </div>
 
@@ -117,7 +119,7 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
               e.stopPropagation();
               setShowModal(true);
             }}
-            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors duration-200"
+            className="bg-green-500 text-white p-2 rounded hover:bg-green-600 transition-colors duration-200"
             aria-label="Mostrar detalles"
           >
             <BiShow className="text-lg" />
@@ -126,7 +128,7 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
           {/* Botón de Editar */}
           <button
             onClick={handleEditClick}
-            className="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600 transition-colors duration-200"
+            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors duration-200"
             aria-label="Editar participante"
           >
             <AiOutlineEdit className="text-lg" />
