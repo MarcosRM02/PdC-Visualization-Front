@@ -1,11 +1,15 @@
 // src/Components/Participants/UserModal.tsx
 
 import React, { useState, useEffect } from 'react';
-import { AiOutlineClose, AiOutlineEdit } from 'react-icons/ai';
-import { FaBirthdayCake, FaRulerVertical, FaWeight } from 'react-icons/fa';
-import { BiUserCircle } from 'react-icons/bi';
-import { GiFootprint } from 'react-icons/gi'; // Nuevo icono
-import EditPersonalDataModal from '../../Services/Update/EditPersonalData'; // Ruta correcta
+import {
+  HiOutlineXCircle,
+  HiOutlinePencil,
+  HiOutlineCake,
+  HiOutlineUser,
+} from 'react-icons/hi';
+import { GiFootprint, GiWeightScale } from 'react-icons/gi'; // Importa GiFootprint
+import EditPersonalDataModal from '../../Services/Update/EditPersonalData';
+import { FaRulerVertical } from 'react-icons/fa';
 
 interface UserModalProps {
   user: any;
@@ -14,25 +18,21 @@ interface UserModalProps {
 
 const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [currentUser, setCurrentUser] = useState(user); // Estado local para el usuario
+  const [currentUser, setCurrentUser] = useState(user);
 
-  // Función para abrir el modal de edición
   const openEditModal = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     setIsEditModalOpen(true);
   };
 
-  // Función para cerrar el modal de edición
   const closeEditModal = () => {
     setIsEditModalOpen(false);
   };
 
-  // Función para manejar la actualización de datos personales
   const handlePersonalDataEdited = (updatedUser: any) => {
-    setCurrentUser(updatedUser); // Actualiza el estado local con los datos editados
+    setCurrentUser(updatedUser);
   };
 
-  // Efecto para actualizar el estado local si el prop `user` cambia
   useEffect(() => {
     setCurrentUser(user);
   }, [user]);
@@ -41,10 +41,10 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center">
         <div className="bg-white rounded-lg p-6 shadow-lg">
-          <p className="text-gray-700">No personal data available.</p>
+          <p className="text-slate-700">No personal data available.</p>
           <button
             onClick={onClose}
-            className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            className="mt-4 px-4 py-2 bg-rose-500 text-white rounded hover:bg-rose-600 transition-colors"
           >
             Cerrar
           </button>
@@ -64,95 +64,107 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
       >
         <div
           onClick={(event) => event.stopPropagation()}
-          className="w-full max-w-lg bg-white rounded-xl p-6 relative shadow-lg"
+          className="w-full max-w-lg bg-white rounded-lg px-6 py-5 relative shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out"
         >
-          {/* Botón de Cerrar */}
+          {/* Close Button */}
           <button
             onClick={onClose}
             aria-label="Cerrar modal"
             className="absolute top-4 right-4 focus:outline-none group"
           >
-            <AiOutlineClose className="text-2xl text-red-600 cursor-pointer group-hover:text-gray-800 transition-colors" />
+            <HiOutlineXCircle className="text-2xl text-rose-500 cursor-pointer group-hover:text-rose-600 transition-colors" />
           </button>
 
-          {/* Título del Modal */}
+          {/* Modal Title */}
           <h2
             id="modal-title"
-            className="text-2xl font-semibold mb-4 text-gray-700"
+            className="text-2xl font-semibold mb-4 text-slate-800"
           >
             Datos Personales del Participante
           </h2>
 
-          {/* Contenido del Modal */}
+          {/* Modal Content */}
           <div className="space-y-4">
             {/* Nombre */}
-            <div className="flex items-center">
-              <BiUserCircle className="text-blue-500 text-xl mr-3" />
-              <span className="text-gray-700 font-medium">Nombre:</span>
-              <span className="ml-2 text-gray-600">
-                {currentUser.name || '—'}
-              </span>
+            <div className="flex items-center gap-x-3">
+              <HiOutlineUser className="text-emerald-600 text-2xl" />
+              <div>
+                <span className="text-slate-700 font-medium">Nombre:</span>
+                <span className="ml-2 text-slate-800">
+                  {currentUser.name || '—'}
+                </span>
+              </div>
             </div>
 
             {/* Edad */}
-            <div className="flex items-center">
-              <FaBirthdayCake className="text-pink-500 text-xl mr-3" />
-              <span className="text-gray-700 font-medium">Edad:</span>
-              <span className="ml-2 text-gray-600">
-                {currentUser.age || '—'} años
-              </span>
+            <div className="flex items-center gap-x-3">
+              <HiOutlineCake className="text-indigo-600 text-2xl" />
+              <div>
+                <span className="text-slate-700 font-medium">Edad:</span>
+                <span className="ml-2 text-slate-800">
+                  {currentUser.age || '—'} años
+                </span>
+              </div>
             </div>
 
             {/* Altura */}
-            <div className="flex items-center">
-              <FaRulerVertical className="text-green-500 text-xl mr-3" />
-              <span className="text-gray-700 font-medium">Altura:</span>
-              <span className="ml-2 text-gray-600">
-                {currentUser.height || '—'} m
-              </span>
+            <div className="flex items-center gap-x-3">
+              <FaRulerVertical className="text-teal-600 text-2xl" />{' '}
+              {/* Icono actualizado */}
+              <div>
+                <span className="text-slate-700 font-medium">Altura:</span>
+                <span className="ml-2 text-slate-800">
+                  {currentUser.height
+                    ? `${currentUser.height.toFixed(2)} m`
+                    : '—'}
+                </span>
+              </div>
             </div>
 
             {/* Peso */}
-            <div className="flex items-center">
-              <FaWeight className="text-yellow-500 text-xl mr-3" />
-              <span className="text-gray-700 font-medium">Peso:</span>
-              <span className="ml-2 text-gray-600">
-                {currentUser.weight || '—'} kg
-              </span>
+            <div className="flex items-center gap-x-3">
+              <GiWeightScale className="text-cyan-600 text-2xl" />
+              <div>
+                <span className="text-slate-700 font-medium">Peso:</span>
+                <span className="ml-2 text-slate-800">
+                  {currentUser.weight || '—'} kg
+                </span>
+              </div>
             </div>
 
             {/* Longitud de Pie */}
-            <div className="flex items-center">
-              <GiFootprint className="text-indigo-500 text-xl mr-3" />{' '}
-              {/* Usando GiFoot */}
-              <span className="text-gray-700 font-medium">
-                Longitud de Pie:
-              </span>
-              <span className="ml-2 text-gray-600">
-                {currentUser.footLength || '—'} cm
-              </span>
+            <div className="flex items-center gap-x-3">
+              <GiFootprint className="text-violet-600 text-2xl" />{' '}
+              {/* Icono actualizado */}
+              <div>
+                <span className="text-slate-700 font-medium">
+                  Longitud de Pie:
+                </span>
+                <span className="ml-2 text-slate-800">
+                  {currentUser.footLength || '—'} cm
+                </span>
+              </div>
             </div>
           </div>
 
-          {/* Botón de Editar */}
-          <div className="mt-6 flex justify-end">
+          {/* Edit Button */}
+          <div className="flex justify-end items-center gap-x-4 mt-6">
             <button
               onClick={openEditModal}
-              className="flex items-center px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors"
+              className="bg-emerald-500 text-white p-2 rounded-md hover:bg-emerald-600 transition-colors duration-200 group"
               aria-label="Editar datos personales"
             >
-              <AiOutlineEdit className="mr-2" />
-              Editar
+              <HiOutlinePencil className="text-lg group-hover:scale-110 transition-transform" />
             </button>
           </div>
         </div>
       </div>
 
-      {/* Modal de Editar Datos Personales */}
+      {/* Edit Personal Data Modal */}
       <EditPersonalDataModal
         isOpen={isEditModalOpen}
         onClose={closeEditModal}
-        personalDataId={currentUser.id} // Asegúrate de que `currentUser.id` corresponde al ID de personalData
+        personalDataId={currentUser.id}
         onPersonalDataEdited={handlePersonalDataEdited}
       />
     </>
