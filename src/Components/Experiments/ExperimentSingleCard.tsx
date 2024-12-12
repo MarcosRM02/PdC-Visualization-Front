@@ -1,22 +1,18 @@
-// src/Components/Experiments/ExperimentSingleCard.tsx
-
 import React, { useState } from 'react';
-import { AiOutlineEdit } from 'react-icons/ai';
 import {
-  FaIdCard,
-  FaUser,
-  FaInfoCircle,
-  FaCalendarCheck,
-  FaCalendarTimes,
-  FaStickyNote,
-  FaUsers,
-} from 'react-icons/fa';
-import { MdOutlineDelete } from 'react-icons/md';
+  HiOutlineUser,
+  HiOutlineInformationCircle,
+  HiOutlineCalendar,
+  HiOutlineDocumentText,
+  HiOutlineUserGroup,
+  HiOutlinePencil,
+  HiOutlineTrash,
+} from 'react-icons/hi';
 import { useNavigate } from 'react-router-dom';
 import DeleteExperimentModal from '../../Services/Delete/DeleteExperiment';
 import EditExperimentModal from '../../Services/Update/EditExperiment';
 
-// Definir una interfaz para los props
+// Interface for Experiment
 interface Experiment {
   id: number;
   name: string;
@@ -42,7 +38,7 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
 
-  // Función para formatear la fecha
+  // Date formatting function
   const formatDate = (dateString: string): string => {
     if (!dateString) return '';
 
@@ -92,87 +88,81 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
     <>
       <div
         onClick={() => navigate(`/participants/by-experiment/${experiment.id}`)}
-        className="border border-gray-300 bg-white rounded-lg px-6 py-4 m-4 relative hover:shadow-lg transition-shadow duration-300 ease-in-out cursor-pointer"
+        className="border border-slate-200 bg-white rounded-lg px-6 py-5 m-4 relative shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out cursor-pointer"
       >
         <div className="space-y-4">
-          {/* ID */}
+          {/* Name */}
           <div className="flex items-center gap-x-3">
-            <FaIdCard className="text-blue-700 text-2xl" />
-            <h4 className="text-gray-800 font-medium">ID: {experiment.id}</h4>
-          </div>
-
-          {/* Nombre */}
-          <div className="flex items-center gap-x-3">
-            <FaUser className="text-blue-500 text-2xl" />
-            <h4 className="text-gray-800 font-medium">
+            <HiOutlineUser className="text-emerald-600 text-2xl" />
+            <h4 className="text-slate-800 font-semibold">
               Nombre: {experiment.name}
             </h4>
           </div>
 
-          {/* Descripción */}
+          {/* Description */}
           <div className="flex items-center gap-x-3">
-            <FaInfoCircle className="text-blue-500 text-2xl" />
-            <h4 className="text-gray-800 font-medium">
+            <HiOutlineInformationCircle className="text-indigo-600 text-2xl" />
+            <h4 className="text-slate-800 font-medium">
               Descripción: {experiment.description || '—'}
             </h4>
           </div>
 
-          {/* Fecha de Inicio */}
+          {/* Start Date */}
           <div className="flex items-center gap-x-3">
-            <FaCalendarCheck className="text-blue-300 text-2xl" />
-            <h4 className="text-gray-800 font-medium">
+            <HiOutlineCalendar className="text-teal-600 text-2xl" />
+            <h4 className="text-slate-800 font-medium">
               Fecha de Inicio: {formattedStartDate || '—'}
             </h4>
           </div>
 
-          {/* Fecha de Finalización */}
+          {/* Finish Date */}
           <div className="flex items-center gap-x-3">
-            <FaCalendarTimes className="text-blue-200 text-2xl" />
-            <h4 className="text-gray-800 font-medium">
+            <HiOutlineCalendar className="text-cyan-600 text-2xl" />
+            <h4 className="text-slate-800 font-medium">
               Fecha de Finalización: {formattedFinishDate || '—'}
             </h4>
           </div>
 
-          {/* Notas */}
+          {/* Notes */}
           <div className="flex items-center gap-x-3">
-            <FaStickyNote className="text-blue-200 text-2xl" />
-            <h4 className="text-gray-800 font-medium">
+            <HiOutlineDocumentText className="text-violet-600 text-2xl" />
+            <h4 className="text-slate-800 font-medium">
               Notas: {experiment.notes || '—'}
             </h4>
           </div>
 
-          {/* Número de Participantes */}
+          {/* Number of Participants */}
           <div className="flex items-center gap-x-3">
-            <FaUsers className="text-blue-500 text-2xl" />
-            <h4 className="text-gray-800 font-medium">
+            <HiOutlineUserGroup className="text-sky-600 text-2xl" />
+            <h4 className="text-slate-800 font-semibold">
               Número de Participantes: {experiment.numberOfParticipants}
             </h4>
           </div>
         </div>
 
-        {/* Botones de Acción */}
+        {/* Action Buttons */}
         <div className="flex justify-end items-center gap-x-4 mt-6">
-          {/* Botón de Editar */}
+          {/* Edit Button */}
           <button
             onClick={handleEditClick}
-            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors duration-200"
+            className="bg-emerald-500 text-white p-2 rounded-md hover:bg-emerald-600 transition-colors duration-200 group"
             aria-label="Editar experimento"
           >
-            <AiOutlineEdit className="text-lg" />
+            <HiOutlinePencil className="text-lg group-hover:scale-110 transition-transform" />
           </button>
 
-          {/* Botón de Eliminar */}
+          {/* Delete Button */}
           <button
             onClick={handleDeleteClick}
-            className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition-colors duration-200"
+            className="bg-rose-500 text-white p-2 rounded-md hover:bg-rose-600 transition-colors duration-200 group"
             aria-label="Eliminar experimento"
           >
-            <MdOutlineDelete className="text-lg" />
+            <HiOutlineTrash className="text-lg group-hover:scale-110 transition-transform" />
           </button>
         </div>
       </div>
 
-      {/* Modal para Eliminar Experimento */}
+      {/* Delete Experiment Modal */}
       <DeleteExperimentModal
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
@@ -180,7 +170,7 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
         experimentId={experiment.id}
       />
 
-      {/* Modal para Editar Experimento */}
+      {/* Edit Experiment Modal */}
       <EditExperimentModal
         isOpen={isEditModalOpen}
         onClose={() => setEditModalOpen(false)}

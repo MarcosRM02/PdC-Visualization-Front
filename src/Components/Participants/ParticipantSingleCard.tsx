@@ -1,14 +1,14 @@
-// src/Components/Participants/ParticipantSingleCard.tsx
-
 import React, { useState, useEffect } from 'react';
-import { AiOutlineEdit } from 'react-icons/ai';
-import { FaIdCard, FaBarcode } from 'react-icons/fa';
-import { MdOutlineDelete } from 'react-icons/md';
-import { BiShow } from 'react-icons/bi';
+import {
+  HiOutlineQrcode,
+  HiOutlineEye,
+  HiOutlinePencil,
+  HiOutlineTrash,
+} from 'react-icons/hi';
 import { useNavigate } from 'react-router-dom';
 import UserModal from './UserModal';
-import EditParticipantModal from '../../Services/Update/EditParticipant'; // Importa el modal de edición
-import DeleteParticipantModal from '../../Services/Delete/DeleteParticipant'; // Importa el modal de eliminación
+import EditParticipantModal from '../../Services/Update/EditParticipant';
+import DeleteParticipantModal from '../../Services/Delete/DeleteParticipant';
 import axios from 'axios';
 
 interface Participant {
@@ -16,15 +16,15 @@ interface Participant {
   code: string;
   personalData?: {
     id: number;
-    // Otros campos relevantes
+    // Other relevant fields
   };
-  // Otros campos relevantes
+  // Other relevant fields
 }
 
 interface ParticipantSingleCardProps {
   participants: Participant;
-  onParticipantDeleted: () => void; // Callback para notificar al padre
-  onParticipantEdited: () => void; // Callback para notificar al padre
+  onParticipantDeleted: () => void;
+  onParticipantEdited: () => void;
 }
 
 const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
@@ -57,12 +57,12 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
 
   const handleParticipantEdited = () => {
     setEditModalOpen(false);
-    onParticipantEdited(); // Notificar al padre para actualizar la lista
+    onParticipantEdited();
   };
 
   const handleParticipantDeleted = () => {
     setDeleteModalOpen(false);
-    onParticipantDeleted(); // Notificar al padre para actualizar la lista
+    onParticipantDeleted();
   };
 
   useEffect(() => {
@@ -93,64 +93,58 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
     <>
       <div
         onClick={() => navigate(`/trials/by-participant/${participants.id}`)}
-        className="border border-gray-300 bg-white rounded-lg px-6 py-4 m-4 relative hover:shadow-lg transition-shadow duration-300 ease-in-out cursor-pointer"
+        className="border border-slate-200 bg-white rounded-lg px-6 py-5 m-4 relative shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out cursor-pointer"
       >
         <div key={participants.id} className="my-2 space-y-4">
-          {/* ID */}
+          {/* Code */}
           <div className="flex items-center gap-x-3">
-            <FaIdCard className="text-blue-700 text-2xl" />
-            <h4 className="text-gray-800 font-medium">ID: {participants.id}</h4>
-          </div>
-
-          {/* Código */}
-          <div className="flex items-center gap-x-3">
-            <FaBarcode className="text-blue-500 text-2xl" />
-            <h4 className="text-gray-800 font-medium">
+            <HiOutlineQrcode className="text-emerald-600 text-2xl" />
+            <h4 className="text-slate-800 font-medium">
               Código: {formattedCode}
             </h4>
           </div>
         </div>
 
-        {/* Botones de Acción */}
+        {/* Action Buttons */}
         <div className="flex justify-end items-center gap-x-4 mt-6">
-          {/* Botón para Mostrar Detalles */}
+          {/* Show Details Button */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               setShowModal(true);
             }}
-            className="bg-green-500 text-white p-2 rounded hover:bg-green-600 transition-colors duration-200"
+            className="bg-teal-500 text-white p-2 rounded-md hover:bg-teal-600 transition-colors duration-200 group"
             aria-label="Mostrar detalles"
           >
-            <BiShow className="text-lg" />
+            <HiOutlineEye className="text-lg group-hover:scale-110 transition-transform" />
           </button>
 
-          {/* Botón de Editar */}
+          {/* Edit Button */}
           <button
             onClick={handleEditClick}
-            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors duration-200"
+            className="bg-emerald-500 text-white p-2 rounded-md hover:bg-emerald-600 transition-colors duration-200 group"
             aria-label="Editar participante"
           >
-            <AiOutlineEdit className="text-lg" />
+            <HiOutlinePencil className="text-lg group-hover:scale-110 transition-transform" />
           </button>
 
-          {/* Botón de Eliminar */}
+          {/* Delete Button */}
           <button
             onClick={handleDeleteClick}
-            className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition-colors duration-200"
+            className="bg-rose-500 text-white p-2 rounded-md hover:bg-rose-600 transition-colors duration-200 group"
             aria-label="Eliminar participante"
           >
-            <MdOutlineDelete className="text-lg" />
+            <HiOutlineTrash className="text-lg group-hover:scale-110 transition-transform" />
           </button>
         </div>
       </div>
 
-      {/* Modal para Mostrar Detalles */}
+      {/* User Details Modal */}
       {showModal && (
         <UserModal user={modalData} onClose={() => setShowModal(false)} />
       )}
 
-      {/* Modal para Editar Participante */}
+      {/* Edit Participant Modal */}
       <EditParticipantModal
         isOpen={isEditModalOpen}
         onClose={() => setEditModalOpen(false)}
@@ -158,7 +152,7 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
         onParticipantEdited={handleParticipantEdited}
       />
 
-      {/* Modal para Eliminar Participante */}
+      {/* Delete Participant Modal */}
       <DeleteParticipantModal
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
@@ -166,16 +160,16 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
         onParticipantDeleted={handleParticipantDeleted}
       />
 
-      {/* Mostrar Estado de Carga */}
+      {/* Loading State */}
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 rounded-lg">
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-800 bg-opacity-50 rounded-lg">
           <div className="text-white text-lg">Cargando...</div>
         </div>
       )}
 
-      {/* Mostrar Errores */}
+      {/* Error State */}
       {error && (
-        <div className="absolute inset-0 flex items-center justify-center bg-red-800 bg-opacity-50 rounded-lg">
+        <div className="absolute inset-0 flex items-center justify-center bg-rose-800 bg-opacity-50 rounded-lg">
           <div className="text-white text-lg">{error}</div>
         </div>
       )}

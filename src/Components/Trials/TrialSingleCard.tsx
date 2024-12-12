@@ -1,25 +1,23 @@
 // src/Components/Trials/TrialSingleCard.tsx
 
 import React, { useState, useEffect } from 'react';
-import { AiOutlineEdit } from 'react-icons/ai';
 import {
-  FaIdCard,
-  FaCalendarAlt,
-  FaBarcode,
-  FaAlignLeft,
-  FaStickyNote,
-  FaMicrochip,
-} from 'react-icons/fa';
-import { MdOutlineDelete } from 'react-icons/md';
+  HiOutlineQrcode,
+  HiOutlinePencil,
+  HiOutlineTrash,
+  HiOutlineCalendar,
+  HiOutlineClipboardList,
+  HiOutlineAnnotation,
+} from 'react-icons/hi';
 import { useNavigate } from 'react-router-dom';
 import { getIDFromAPI } from '../../Services/Read/CreateWearablesURL';
-import EditTrialModal from '../../Services/Update/EditTrial'; // Asegúrate de que la ruta es correcta
-import DeleteTrialModal from '../../Services/Delete/DeleteTrial'; // Importar el modal de eliminar
+import EditTrialModal from '../../Services/Update/EditTrial';
+import DeleteTrialModal from '../../Services/Delete/DeleteTrial';
 
 interface TrialSingleCardProps {
   trials: any;
-  onTrialEdited: () => void; // Callback para edición
-  onTrialDeleted: () => void; // Nuevo callback para eliminación
+  onTrialEdited: () => void;
+  onTrialDeleted: () => void;
 }
 
 const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
@@ -35,9 +33,11 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
   const participantId = trials.participant.id;
   const swId = trials.sw.id;
 
+  const [loading, _] = useState(false);
+
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Estado para el modal de eliminar
-  const [refresh, setRefresh] = useState(false); // Para refrescar datos después de editar
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const navigate = useNavigate();
 
@@ -70,7 +70,6 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
     if (!dateString) return '';
 
     const date = new Date(dateString);
-    // Verificar si la fecha es válida
     if (isNaN(date.getTime())) {
       return '';
     }
@@ -85,131 +84,118 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
 
   const formattedDate = formatDate(trials.date);
 
-  // Función para abrir el modal de edición
   const handleEditClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     setIsEditModalOpen(true);
   };
 
-  // Función para manejar la edición exitosa
-  const handleTrialEdited = () => {
-    onTrialEdited(); // Notificar al componente padre
-    setIsEditModalOpen(false);
-    setRefresh(!refresh); // Cambia el estado para refrescar los datos
-  };
-
-  // Función para abrir el modal de eliminar
   const handleDeleteClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     setIsDeleteModalOpen(true);
   };
 
-  // Función para manejar la eliminación exitosa
+  const handleTrialEdited = () => {
+    onTrialEdited();
+    setIsEditModalOpen(false);
+    setRefresh(!refresh);
+  };
+
   const handleTrialDeleted = () => {
-    onTrialDeleted(); // Notificar al componente padre
-    setRefresh(!refresh); // Refrescar los datos si es necesario
+    onTrialDeleted();
+    setRefresh(!refresh);
   };
 
   return (
     <>
       <div
         onClick={() => navigate(detailsUrl)}
-        className="border border-gray-300 bg-white rounded-lg px-6 py-4 m-4 relative hover:shadow-lg transition-shadow duration-300 ease-in-out cursor-pointer"
+        className="border border-slate-200 bg-white rounded-lg px-6 py-5 m-4 relative shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out cursor-pointer"
       >
         <div key={trials.id} className="my-2 space-y-4">
-          {/* ID */}
-          <div className="flex items-center gap-x-3">
-            <FaIdCard className="text-blue-700 text-2xl" />
-            <h4 className="text-gray-800 font-medium">ID: {trials.id}</h4>
-          </div>
-
           {/* Fecha */}
           <div className="flex items-center gap-x-3">
-            <FaCalendarAlt className="text-blue-500 text-2xl" />
-            <h4 className="text-gray-800 font-medium">
+            <HiOutlineCalendar className="text-emerald-600 text-2xl" />
+            <h4 className="text-slate-800 font-medium">
               Fecha: {formattedDate || '—'}
             </h4>
           </div>
 
           {/* Código */}
           <div className="flex items-center gap-x-3">
-            <FaBarcode className="text-blue-500 text-2xl" />
-            <h4 className="text-gray-800 font-medium">
+            <HiOutlineQrcode className="text-emerald-600 text-2xl" />
+            <h4 className="text-slate-800 font-medium">
               Código: {trials.code || '—'}
             </h4>
           </div>
 
           {/* Descripción */}
           <div className="flex items-center gap-x-3">
-            <FaAlignLeft className="text-blue-300 text-2xl" />
-            <h4 className="text-gray-800 font-medium">
+            <HiOutlineClipboardList className="text-slate-600 text-2xl" />
+            <h4 className="text-slate-800 font-medium">
               Descripción: {trials.description || '—'}
             </h4>
           </div>
 
           {/* Anotación */}
           <div className="flex items-center gap-x-3">
-            <FaStickyNote className="text-blue-200 text-2xl" />
-            <h4 className="text-gray-800 font-medium">
+            <HiOutlineAnnotation className="text-slate-600 text-2xl" />
+            <h4 className="text-slate-800 font-medium">
               Anotación: {trials.annotation || '—'}
             </h4>
           </div>
-
-          {/* swId */}
-          <div className="flex items-center gap-x-3">
-            <FaMicrochip className="text-blue-500 text-2xl" />
-            <h4 className="text-gray-800 font-medium">swId: {trials.sw.id}</h4>
-          </div>
         </div>
 
-        {/* Botones de Acción */}
+        {/* Action Buttons */}
         <div className="flex justify-end items-center gap-x-4 mt-6">
-          {/* Botón de Editar */}
+          {/* Edit Button */}
           <button
             onClick={handleEditClick}
-            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors duration-200"
+            className="bg-emerald-500 text-white p-2 rounded-md hover:bg-emerald-600 transition-colors duration-200 group"
             aria-label="Editar prueba"
           >
-            <AiOutlineEdit className="text-lg" />
+            <HiOutlinePencil className="text-lg group-hover:scale-110 transition-transform" />
           </button>
 
-          {/* Botón de Eliminar */}
+          {/* Delete Button */}
           <button
             onClick={handleDeleteClick}
-            className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition-colors duration-200"
+            className="bg-rose-500 text-white p-2 rounded-md hover:bg-rose-600 transition-colors duration-200 group"
             aria-label="Eliminar prueba"
           >
-            <MdOutlineDelete className="text-lg" />
+            <HiOutlineTrash className="text-lg group-hover:scale-110 transition-transform" />
           </button>
         </div>
 
-        {/* Manejo de Errores */}
+        {/* Loading State */}
+        {loading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-slate-800 bg-opacity-50 rounded-lg">
+            <div className="text-white text-lg">Cargando...</div>
+          </div>
+        )}
+
+        {/* Error State */}
         {error && (
-          <div className="absolute top-2 right-2 bg-red-200 text-red-700 px-3 py-1 rounded">
-            {error}
+          <div className="absolute inset-0 flex items-center justify-center bg-rose-800 bg-opacity-50 rounded-lg">
+            <div className="text-white text-lg">{error}</div>
           </div>
         )}
       </div>
 
-      {/* Modal de Edición */}
-      {isEditModalOpen && (
-        <EditTrialModal
-          isOpen={isEditModalOpen}
-          onClose={() => setIsEditModalOpen(false)}
-          trialId={trials.id}
-          onTrialEdited={handleTrialEdited} // Pasar el manejador de edición
-        />
-      )}
+      {/* Edit Trial Modal */}
+      <EditTrialModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        trialId={trials.id}
+        onTrialEdited={handleTrialEdited}
+      />
 
-      {/* Modal de Eliminación */}
-      {isDeleteModalOpen && (
-        <DeleteTrialModal
-          isOpen={isDeleteModalOpen}
-          onClose={() => setIsDeleteModalOpen(false)}
-          onTrialDeleted={handleTrialDeleted} // Pasar el manejador de eliminación
-          trialId={trials.id}
-        />
-      )}
+      {/* Delete Trial Modal */}
+      <DeleteTrialModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onTrialDeleted={handleTrialDeleted}
+        trialId={trials.id}
+      />
     </>
   );
 };
