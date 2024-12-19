@@ -16,14 +16,14 @@ interface ImagePlotCanvasProps {
   width?: number;
   height?: number;
   points: Point[];
-  interval?: number; // Intervalo de tiempo en ms.
+  initialUpdateHz?: number; // Tasa de actualización en Hz.
 }
 
 const ImagePlotCanvas: React.FC<ImagePlotCanvasProps> = ({
   width = 350,
   height = 1040,
   points,
-  interval = 20, // 1/50 * 1000 = 20 ms
+  initialUpdateHz = 50, // Por defecto 50 Hz
 }) => {
   // Referencia al elemento canvas
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -37,15 +37,27 @@ const ImagePlotCanvas: React.FC<ImagePlotCanvasProps> = ({
   const frameCountRef = useRef(0);
   const fpsIntervalRef = useRef<number | null>(null);
 
-  // Referencia para el frame actual y la animación
+  // Referencias para el frame actual y la animación
   const currentFrameRef = useRef<number>(0);
   const animationRef = useRef<number | null>(null);
   const lastFrameTimeRef = useRef<number>(0); // Tiempo del último frame
+
+  // Estado y referencia para la tasa de actualización (updateHz)
+  const [updateHz, setUpdateHz] = useState(initialUpdateHz);
+  const updateHzRef = useRef(updateHz);
+
+  // Acumulador para determinar cuándo actualizar el frame
+  const updateAccumulator = useRef(0);
 
   // Sincronizar isPlaying con isPlayingRef
   useEffect(() => {
     isPlayingRef.current = isPlaying;
   }, [isPlaying]);
+
+  // Sincronizar updateHz con updateHzRef
+  useEffect(() => {
+    updateHzRef.current = updateHz;
+  }, [updateHz]);
 
   // Definir la cuadrícula de baja resolución
   const gridWidth = 15; // Resolución horizontal de la cuadrícula
@@ -53,7 +65,7 @@ const ImagePlotCanvas: React.FC<ImagePlotCanvasProps> = ({
 
   // Memoizar las posiciones de la cuadrícula para evitar recalculaciones
   const { xi, yi } = useMemo(() => {
-    const xi = Array.from({ length: gridHeight }, (_) =>
+    const xi = Array.from({ length: gridHeight }, () =>
       Array.from({ length: gridWidth }, (_, x) => (x / gridWidth) * width),
     );
     const yi = Array.from({ length: gridHeight }, (_, y) =>
@@ -162,7 +174,7 @@ const ImagePlotCanvas: React.FC<ImagePlotCanvasProps> = ({
         }
       }
 
-      // Clampear los valores entre 0 y 4095
+      // Restringir los valores entre 0 y 4095
       for (let y = 0; y < gridHeight; y++) {
         for (let x = 0; x < gridWidth; x++) {
           if (z[y][x] > 4095) z[y][x] = 4095;
@@ -256,18 +268,36 @@ const ImagePlotCanvas: React.FC<ImagePlotCanvasProps> = ({
         lastFrameTimeRef.current = timestamp;
       }
 
-      const elapsed = timestamp - lastFrameTimeRef.current;
+      const deltaTime = timestamp - lastFrameTimeRef.current;
+      lastFrameTimeRef.current = timestamp;
 
-      if (elapsed >= interval) {
-        currentFrameRef.current += 1;
-        if (currentFrameRef.current >= points[0].values.length) {
+      // Obtener el tiempo por actualización
+      const updateInterval = 1000 / updateHzRef.current;
+
+      // Acumular el deltaTime
+      updateAccumulator.current += deltaTime;
+
+      let updated = false;
+
+      // Actualizar frames según el acumulador
+      while (updateAccumulator.current >= updateInterval) {
+        if (currentFrameRef.current < points[0].values.length - 1) {
+          currentFrameRef.current += 1;
+        } else {
+          // Si alcanzamos el final, detener la animación
           setIsPlaying(false);
-          cancelAnimationFrame(animationRef.current!);
-          animationRef.current = null;
-          return;
+          if (animationRef.current) {
+            cancelAnimationFrame(animationRef.current);
+            animationRef.current = null;
+          }
+          break;
         }
-        lastFrameTimeRef.current = timestamp - (elapsed % interval);
-        draw(); // Dibujar inmediatamente después de actualizar el frame
+        updateAccumulator.current -= updateInterval;
+        updated = true;
+      }
+
+      if (updated) {
+        draw(); // Dibujar después de actualizar el frame
       }
 
       // Incrementar el contador de frames para FPS
@@ -277,7 +307,7 @@ const ImagePlotCanvas: React.FC<ImagePlotCanvasProps> = ({
         animationRef.current = requestAnimationFrame(animate);
       }
     },
-    [interval, points, draw],
+    [draw, points],
   );
 
   // Función para iniciar la animación
@@ -304,6 +334,7 @@ const ImagePlotCanvas: React.FC<ImagePlotCanvasProps> = ({
     stopAnimation();
     setFps(0); // Resetear el estado de FPS a 0
     frameCountRef.current = 0; // Resetear el contador de frames a 0
+    updateAccumulator.current = 0; // Resetear el acumulador
     draw(); // Dibujar el frame inicial
   }, [stopAnimation, draw]);
 
@@ -386,6 +417,23 @@ const ImagePlotCanvas: React.FC<ImagePlotCanvasProps> = ({
       </div>
       <div className="mt-2 text-lg">
         <span>FPS: {fps}</span>
+      </div>
+      {/* Opcional: Control para ajustar la tasa de actualización */}
+      <div className="mt-4 flex items-center space-x-2">
+        <label htmlFor="updateHz" className="text-lg font-medium">
+          Update Rate (Hz):
+        </label>
+        <input
+          id="updateHz"
+          type="number"
+          min="1"
+          max="1000"
+          value={updateHz}
+          onChange={(e) =>
+            setUpdateHz(Math.max(1, parseInt(e.target.value) || 1))
+          }
+          className="border p-1 w-20"
+        />
       </div>
     </div>
   );
