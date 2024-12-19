@@ -2,12 +2,12 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import Spinner from '../../Components/Spinner';
+import Spinner from '../../Components/CommonComponents/Spinner';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import { MdOutlineAddBox } from 'react-icons/md';
 import { FaSearch, FaCalendarAlt, FaUndo } from 'react-icons/fa';
-import LogoutButton from '../../Components/LogoutButton';
+import LogoutButton from '../../Components/CommonComponents/LogoutButton';
 import CreateExperimentModal from '../Create/CreateExperiment'; // Asegúrate de importar correctamente
 import EditExperimentModal from '../Update/EditExperiment'; // Importar el modal de edición
 import { useParams } from 'react-router-dom';
@@ -224,7 +224,6 @@ const ShowExperiment = () => {
           className="flex items-center text-sky-800 hover:text-sky-900 transition-colors duration-200"
         >
           <MdOutlineAddBox className="text-4xl mr-2" />
-          <span className="text-xl font-semibold">Añadir Experimento</span>
         </button>
       </div>
 
