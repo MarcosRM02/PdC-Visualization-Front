@@ -3,14 +3,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import BackButton from '../../Components/BackButton';
-import Spinner from '../../Components/Spinner';
+import BackButton from '../../Components/CommonComponents/BackButton';
+import Spinner from '../../Components/CommonComponents/Spinner';
 import TrialCard from '../../Components/Trials/TrialCard';
 import { MdOutlineAddBox } from 'react-icons/md';
 import { FaSearch, FaUndo, FaCalendarAlt } from 'react-icons/fa';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import LogoutButton from '../../Components/LogoutButton';
+import LogoutButton from '../../Components/CommonComponents/LogoutButton';
 import { useSnackbar } from 'notistack';
 import CreateTrialModal from '../../Services/Create/CreateTrial'; // Importar el modal
 
@@ -178,7 +178,6 @@ const ShowTrials = () => {
           className="flex items-center text-sky-800 hover:text-sky-900 transition-colors duration-200"
         >
           <MdOutlineAddBox className="text-4xl mr-2" />
-          <span className="text-xl font-semibold">Añadir Trial</span>
         </button>
       </div>
 

@@ -2,11 +2,11 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
-import Spinner from '../../Components/Spinner';
+import Spinner from '../../Components/CommonComponents/Spinner';
 import { MdOutlineAddBox } from 'react-icons/md';
 import { FaSearch, FaUndo } from 'react-icons/fa';
-import LogoutButton from '../../Components/LogoutButton';
-import BackButton from '../../Components/BackButton';
+import LogoutButton from '../../Components/CommonComponents/LogoutButton';
+import BackButton from '../../Components/CommonComponents/BackButton';
 import ParticipantCard from '../../Components/Participants/ParticipantCard';
 import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
@@ -152,7 +152,6 @@ const ShowParticipant = () => {
           className="flex items-center text-sky-800 hover:text-sky-900 transition-colors duration-200"
         >
           <MdOutlineAddBox className="text-4xl mr-2" />
-          <span className="text-xl font-semibold">Añadir Participante</span>
         </button>
       </div>
 
