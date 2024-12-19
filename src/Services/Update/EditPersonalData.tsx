@@ -1,7 +1,7 @@
 // src/Components/Participants/EditPersonalDataModal.tsx
 
 import React, { useEffect, useState } from 'react';
-import Spinner from '../../Components/Spinner';
+import Spinner from '../../Components/CommonComponents/Spinner';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';

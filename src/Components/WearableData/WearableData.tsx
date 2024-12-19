@@ -1,15 +1,18 @@
+import { useRef, useEffect, useState, Fragment, useCallback } from 'react';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
-import { Fragment, useEffect, useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { WearableDataProps } from '../../Types/Interfaces';
 import { DataFrame, concat, toCSV } from 'danfojs';
 import Plotly from 'plotly.js-dist-min';
 import axios from 'axios';
-import ImagePlotCanvas from './canvas';
+import HeatMap from './Heatmap'; // Asegúrate de que la ruta sea correcta
 import ColorLegend from './ColorLegend';
 import { VideoCameraIcon } from '@heroicons/react/24/solid';
 import { throttle } from 'lodash'; // Importa throttle
+import leftPointsData from './data/leftPoints.json';
+import rightPointsData from './data/rightPoints.json';
+import HeatmapControlPanel from './heatmapControl';
 
 const WearablesData = ({
   wearables,
@@ -25,9 +28,24 @@ const WearablesData = ({
     rightPressureSensor: useRef(null),
     rightAccelerometer: useRef(null),
     rightGyroscope: useRef(null),
-    leftHeatmap: useRef(null),
-    rightHeatmap: useRef(null),
   };
+
+  const [playTime, setPlayTime] = useState<number>(0);
+  const playerRef = useRef<ReactPlayer | null>(null);
+  const previousTimeRef = useRef(0); // Referencia para el tiempo anterior
+  // Nuevos estados para manejar el botón de Play y la finalización de animaciones
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [animationsFinished, setAnimationsFinished] = useState({
+    left: false,
+    right: false,
+  });
+  // Crear refs para ambos ImagePlotCanvas
+  const leftHeatmapRef = useRef<any>(null);
+  const rightHeatmapRef = useRef<any>(null);
+  const [videoSrc, setVideoSrc] = useState('');
+
+  const [videoError, setVideoError] = useState<boolean>(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   const leftWearables = wearables.filter(
     (wearable) => wearable.wearableType === 'L',
@@ -48,10 +66,6 @@ const WearablesData = ({
     ...rightFrames.map((frame) => frame.shape[0]),
   );
 
-  const [playTime, setPlayTime] = useState<number>(0);
-  const playerRef = useRef<ReactPlayer | null>(null);
-  const previousTimeRef = useRef(0); // Referencia para el tiempo anterior
-
   // Implementa throttling para manejar la frecuencia de actualización
   const handleProgress = throttle((state: { playedSeconds: number }) => {
     setPlayTime(state.playedSeconds);
@@ -67,12 +81,21 @@ const WearablesData = ({
     }
   };
 
+  // Efecto para detectar cuando ambas animaciones han terminado
+  useEffect(() => {
+    if (isPlaying && animationsFinished.left && animationsFinished.right) {
+      setIsPlaying(false);
+    }
+  }, [isPlaying, animationsFinished]);
+
   useEffect(() => {
     plotWearablesData(leftWearables, rightWearables, refs, playTime, minLength);
 
     Object.values(refs).forEach((ref) => {
-      if (ref.current) {
-        (ref.current as any).on('plotly_relayout', (eventData: any) =>
+      // @ts-ignore
+      if (ref.current && typeof ref.current.on === 'function') {
+        // @ts-ignore
+        ref.current.on('plotly_relayout', (eventData: any) =>
           handleRelayout(eventData, ref.current, refs),
         );
       }
@@ -81,8 +104,10 @@ const WearablesData = ({
 
   useEffect(() => {
     Object.values(refs).forEach((ref) => {
-      if (ref.current) {
-        (ref.current as any).on('plotly_click', handlePointClick);
+      // @ts-ignore
+      if (ref.current && typeof ref.current.on === 'function') {
+        // @ts-ignore
+        ref.current.on('plotly_click', handlePointClick);
       }
     });
   }, []);
@@ -124,10 +149,6 @@ const WearablesData = ({
 
   const apiUrl = import.meta.env.VITE_API_URL;
   const accessToken = localStorage.getItem('accessToken');
-
-  const [videoSrc, setVideoSrc] = useState('');
-
-  const [videoError, setVideoError] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchVideo = async () => {
@@ -195,56 +216,37 @@ const WearablesData = ({
     y: datos2[column].values,
   }));
 
-  const points = [
-    { x: 105, y: 20, values: [] },
-    { x: 47.5, y: 72.5, values: [] },
-    { x: 77.5, y: 92.5, values: [] },
-    { x: 70, y: 37.5, values: [] },
-    { x: 69, y: 131.5, values: [] },
-    { x: 60, y: 170, values: [] },
-    { x: 100.5, y: 176, values: [] },
-    { x: 33, y: 114, values: [] },
-    { x: 20, y: 197.5, values: [] },
-    { x: 22, y: 155, values: [] },
-    { x: 75, y: 205, values: [] },
-    { x: 36.5, y: 237.5, values: [] },
-    { x: 46.5, y: 362.5, values: [] },
-    { x: 49, y: 405.5, values: [] },
-    { x: 44, y: 276, values: [] },
-    { x: 42.5, y: 318, values: [] },
-    { x: 137.5, y: 40.5, values: [] },
-    { x: 148.5, y: 79.5, values: [] },
-    { x: 115.5, y: 98.5, values: [] },
-    { x: 101.5, y: 57, values: [] },
-    { x: 111.5, y: 140, values: [] },
-    { x: 145, y: 166, values: [] },
-    { x: 135, y: 205, values: [] },
-    { x: 152.5, y: 125, values: [] },
-    { x: 114, y: 491, values: [] },
-    { x: 122.5, y: 447.5, values: [] },
-    { x: 117.5, y: 404, values: [] },
-    { x: 86, y: 461.5, values: [] },
-    { x: 86, y: 381.5, values: [] },
-    { x: 86, y: 423.5, values: [] },
-    { x: 60, y: 491, values: [] },
-    { x: 50, y: 450, values: [] },
-  ];
+  const [leftPoints, setLeftPoints] = useState<
+    { x: number; y: number; values: number[] }[]
+  >([]);
 
-  const maxWidth = 175; // Aumentado para mayor ancho
+  useEffect(() => {
+    const loadedPoints = leftPointsData.map((point) => ({
+      ...point,
+      values: [],
+    }));
+    setLeftPoints(loadedPoints);
+  }, []);
 
-  const mirroredPoints = points.map((point) => ({
-    x: maxWidth - point.x,
-    y: point.y,
-    values: [...point.values],
-  }));
+  const [rightPoints, setRightPoints] = useState<
+    { x: number; y: number; values: number[] }[]
+  >([]);
 
-  points.forEach((point, index) => {
+  useEffect(() => {
+    const loadedPoints = rightPointsData.map((point) => ({
+      ...point,
+      values: [],
+    }));
+    setRightPoints(loadedPoints);
+  }, []);
+
+  leftPoints.forEach((point, index) => {
     if (traces[index]) {
       point.values = traces[index].y;
     }
   });
 
-  mirroredPoints.forEach((point, index) => {
+  rightPoints.forEach((point, index) => {
     if (traces2[index]) {
       point.values = traces2[index].y;
     }
@@ -263,12 +265,135 @@ const WearablesData = ({
 
   const videoAvailable = videoSrc && !videoError;
 
+  // Efecto para detectar cuando ambas animaciones han terminado
+  useEffect(() => {
+    if (isPlaying && animationsFinished.left && animationsFinished.right) {
+      setIsPlaying(false);
+    }
+  }, [isPlaying, animationsFinished]);
+
+
+  const [_, setFps] = useState(0); // FPS compartido
+  const [updateHz, setUpdateHz] = useState(50); // Hz compartido (valor actual por defecto)
+
+  const handleUpdateHzChange = (newHz: number) => {
+    setUpdateHz(newHz);
+
+    // Sincronizar con ambos heatmaps
+    if (leftHeatmapRef.current) {
+      leftHeatmapRef.current.setUpdateHz(newHz);
+    }
+    if (rightHeatmapRef.current) {
+      rightHeatmapRef.current.setUpdateHz(newHz);
+    }
+  };
+
+  // Obtener el FPS de ambos heatmaps (promediar si necesario)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const leftFps = leftHeatmapRef.current?.fps || 0;
+      const rightFps = rightHeatmapRef.current?.fps || 0;
+      setFps((leftFps + rightFps) / 2); // Promedio del FPS
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Función para obtener los FPS actuales de ambos heatmaps
+  const getRenderFps = useCallback(() => {
+    const leftFps = leftHeatmapRef.current?.fps || 0;
+    const rightFps = rightHeatmapRef.current?.fps || 0;
+    return { leftFps, rightFps };
+  }, []);
+
+  const handlePlay = () => {
+    // Si las animaciones han terminado, reiniciar todo
+    if (animationsFinished.left && animationsFinished.right) {
+      setAnimationsFinished({ left: false, right: false });
+      setIsPlaying(true);
+      setIsPaused(false);
+
+      if (leftHeatmapRef.current) {
+        leftHeatmapRef.current.resetFrame();
+        leftHeatmapRef.current.startAnimation();
+      }
+      if (rightHeatmapRef.current) {
+        rightHeatmapRef.current.resetFrame();
+        rightHeatmapRef.current.startAnimation();
+      }
+      return;
+    }
+
+    if (!isPlaying && !isPaused) {
+      // Iniciar la animación desde el principio
+      setIsPlaying(true);
+      setIsPaused(false);
+
+      if (leftHeatmapRef.current) {
+        leftHeatmapRef.current.resetFrame();
+        leftHeatmapRef.current.startAnimation();
+      }
+      if (rightHeatmapRef.current) {
+        rightHeatmapRef.current.resetFrame();
+        rightHeatmapRef.current.startAnimation();
+      }
+    } else if (isPlaying) {
+      // Pausar la animación
+      setIsPlaying(false);
+      setIsPaused(true);
+
+      if (leftHeatmapRef.current) {
+        leftHeatmapRef.current.stopAnimation();
+      }
+      if (rightHeatmapRef.current) {
+        rightHeatmapRef.current.stopAnimation();
+      }
+    } else if (isPaused) {
+      // Reanudar la animación desde el estado pausado
+      setIsPlaying(true);
+      setIsPaused(false);
+
+      if (leftHeatmapRef.current) {
+        leftHeatmapRef.current.startAnimation();
+      }
+      if (rightHeatmapRef.current) {
+        rightHeatmapRef.current.startAnimation();
+      }
+    }
+  };
+
+  const handleReset = () => {
+    setIsPlaying(false);
+    setIsPaused(false);
+    setAnimationsFinished({ left: false, right: false });
+
+    if (leftHeatmapRef.current) {
+      leftHeatmapRef.current.resetFrame();
+    }
+    if (rightHeatmapRef.current) {
+      rightHeatmapRef.current.resetFrame();
+    }
+  };
+
+  const handleLeftAnimationEnd = () => {
+    setAnimationsFinished((prev) => ({ ...prev, left: true }));
+  };
+
+  const handleRightAnimationEnd = () => {
+    setAnimationsFinished((prev) => ({ ...prev, right: true }));
+  };
+
+  // Efecto para manejar el final de ambas animaciones
+  useEffect(() => {
+    if (isPlaying && animationsFinished.left && animationsFinished.right) {
+      setIsPlaying(false);
+      setIsPaused(false);
+    }
+  }, [isPlaying, animationsFinished]);
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-9xl mx-auto bg-white shadow-lg rounded-lg p-8">
-        <h1 className="text-4xl font-bold text-center mb-8">
-          Dashboard de Wearables
-        </h1>
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Sección Izquierda: Reproductor de Video y Controles */}
           <div className="flex flex-col lg:w-2/3 w-full bg-gray-50 p-6 rounded-lg shadow-inner">
@@ -319,35 +444,62 @@ const WearablesData = ({
 
           {/* Sección Derecha: Mapas de Calor y Leyenda */}
           <div className="lg:w-1/3 w-full bg-gray-50 p-6 rounded-lg shadow-inner flex justify-center">
-            <div className="flex flex-col items-center relative">
-              {/* Contenedor de los Mapas de Calor */}
-              <div className="flex flex-row space-x-4">
-                {/* Mapa de Calor Izquierdo */}
-                <ImagePlotCanvas
-                  width={175}
-                  height={530}
-                  points={points}
-                  interval={(1 / leftWearables[0].frequency) * 1000}
-                />
-
-                {/* Mapa de Calor Derecho */}
-                <ImagePlotCanvas
-                  width={175}
-                  height={530}
-                  points={mirroredPoints}
-                  interval={(1 / rightWearables[0].frequency) * 1000}
+            {/* Sección Derecha: Mapas de Calor y Leyenda */}
+            <div className="lg:w-1/3 w-full bg-gray-50 p-6 rounded-lg shadow-inner flex flex-col items-center">
+              {/* Heatmap Control Panel Arriba */}
+              <div className="w-full mb-6">
+                <HeatmapControlPanel
+                  updateHz={updateHz}
+                  onUpdateHzChange={handleUpdateHzChange}
+                  getRenderFps={getRenderFps}
                 />
               </div>
 
-              {/* Leyenda de Colores Integrada */}
-              <div className="absolute top-0 right-0 mt-4 mr-[-60px]">
-                <ColorLegend />
+              {/* Contenedor de los Mapas de Calor */}
+              <div className="flex flex-row justify-center space-x-6 relative w-full">
+                {/* Mapa de Calor Izquierdo */}
+                <div className="flex-shrink-0">
+                  <HeatMap
+                    ref={leftHeatmapRef}
+                    width={175}
+                    height={530}
+                    points={leftPoints}
+                    initialUpdateHz={leftWearables[0].frequency}
+                    onAnimationEnd={handleLeftAnimationEnd}
+                  />
+                </div>
+
+                {/* Mapa de Calor Derecho */}
+                <div className="flex-shrink-0">
+                  <HeatMap
+                    ref={rightHeatmapRef}
+                    width={175}
+                    height={530}
+                    points={rightPoints}
+                    initialUpdateHz={rightWearables[0].frequency}
+                    onAnimationEnd={handleRightAnimationEnd}
+                  />
+                </div>
+
+                {/* Leyenda de Colores a la Derecha */}
+                <div className="absolute top-0 right-[-160px]">
+                  <ColorLegend />
+                </div>
+              </div>
+
+              {/* Botones de Control de Animación Abajo */}
+              <div className="flex justify-center mt-6 space-x-6 w-full">
+                <ActionButton
+                  onClick={handlePlay}
+                  label={isPlaying ? 'Playing' : isPaused ? 'Paused' : 'Play'}
+                  color={isPlaying ? 'orange' : isPaused ? 'blue' : 'green'}
+                />
+                <ActionButton onClick={handleReset} label="Reset" color="red" />
               </div>
             </div>
           </div>
         </div>
-
-        {/* Botones de Acción */}
+        {/* Botones de Acción Unificados */}
         <div className="flex justify-center mt-12 space-x-6">
           <ActionButton
             onClick={resetGraphs}
@@ -470,6 +622,33 @@ const PlaybackButton = ({
 );
 
 // Componente para los botones de acción
+// const ActionButton = ({
+//   onClick,
+//   label,
+//   color = 'blue',
+// }: {
+//   onClick: () => void;
+//   label: string;
+//   color?: 'blue' | 'red' | 'green';
+//   disabled?: boolean; // Add disabled prop
+// }) => {
+//   const colorClasses =
+//     color === 'red'
+//       ? 'bg-red-500 hover:bg-red-700'
+//       : color === 'green'
+//       ? 'bg-green-500 hover:bg-green-700'
+//       : 'bg-blue-500 hover:bg-blue-700';
+
+//   return (
+//     <button
+//       onClick={onClick}
+//       className={`${colorClasses} text-white font-bold py-3 px-8 rounded shadow-lg hover:shadow-xl transition duration-200 text-xl`}
+//     >
+//       {label}
+//     </button>
+//   );
+// };
+
 const ActionButton = ({
   onClick,
   label,
@@ -477,11 +656,15 @@ const ActionButton = ({
 }: {
   onClick: () => void;
   label: string;
-  color?: 'blue' | 'red';
+  color?: 'blue' | 'red' | 'green' | 'orange';
 }) => {
   const colorClasses =
     color === 'red'
       ? 'bg-red-500 hover:bg-red-700'
+      : color === 'green'
+      ? 'bg-green-500 hover:bg-green-700'
+      : color === 'orange'
+      ? 'bg-orange-500 hover:bg-orange-700'
       : 'bg-blue-500 hover:bg-blue-700';
 
   return (
