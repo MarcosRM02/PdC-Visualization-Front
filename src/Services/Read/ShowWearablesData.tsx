@@ -1,11 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { useParams, useSearchParams } from 'react-router-dom';
-import BackButton from '../../Components/BackButton';
-import Spinner from '../../Components/Spinner';
+import BackButton from '../../Components/CommonComponents/BackButton';
+import Spinner from '../../Components/CommonComponents/Spinner';
 import { WearableData } from '../../Types/Interfaces';
 import WearablesData from '../../Components/WearableData/WearableData';
-import LogoutButton from '../../Components/LogoutButton';
+import LogoutButton from '../../Components/CommonComponents/LogoutButton';
 
 const ShowWearables = () => {
   const [wearables, setWearables] = useState<WearableData[]>([]);

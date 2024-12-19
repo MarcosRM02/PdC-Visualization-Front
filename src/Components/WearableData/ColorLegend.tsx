@@ -1,4 +1,4 @@
-import React from 'react';
+import colors from './data/colors.json';
 
 interface ColorStop {
   value: number;
@@ -71,17 +71,6 @@ const ColorLegend = ({
 };
 
 // Define los color stops ajustados para que coincidan con los colores y rangos de la imagen
-const colorStops = [
-  { value: 0, color: '#0000FF' }, // Azul
-  { value: 500, color: '#0000FF' }, // Azul profundo
-  { value: 1000, color: '#00FFFF' }, // Cian
-  { value: 1500, color: '#00FF00' }, // Verde
-  { value: 2000, color: '#FFFF00' }, // Amarillo
-  { value: 2500, color: '#FFA500' }, // Naranja
-  { value: 3000, color: '#FF4500' }, // Rojo Naranja
-  { value: 3500, color: '#FF0000' }, // Rojo
-  { value: 4000, color: '#8B0000' }, // Rojo Oscuro
-  { value: 4095, color: '#8B0000' }, // Rojo oscuro para el valor máximo
-];
+const colorStops = colors;
 
 export default () => <ColorLegend colorStops={colorStops} />;

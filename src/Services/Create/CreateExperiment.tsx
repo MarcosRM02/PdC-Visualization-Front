@@ -1,7 +1,7 @@
 // src/Components/Experiments/CreateExperimentModal.tsx
 
 import React, { useEffect, useState } from 'react';
-import Spinner from '../../Components/Spinner';
+import Spinner from '../../Components/CommonComponents/Spinner';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
