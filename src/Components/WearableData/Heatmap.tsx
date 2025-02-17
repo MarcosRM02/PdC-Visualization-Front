@@ -74,8 +74,8 @@ const HeatMap = forwardRef(
     }, [updateHz]);
 
     // Definir la cuadrícula de baja resolución
-    const gridWidth = 40; // Resolución horizontal de la cuadrícula
-    const gridHeight = 137; // Resolución vertical de la cuadrícula
+    const gridWidth = 20; // 40; // Resolución horizontal de la cuadrícula
+    const gridHeight = 69; //137; // Resolución vertical de la cuadrícula
 
     // Memoizar las posiciones de la cuadrícula para evitar recalculaciones
     const { xi, yi } = useMemo(() => {
@@ -380,8 +380,6 @@ const HeatMap = forwardRef(
       setUpdateHz: (newHz: number) => setUpdateHz(newHz),
       fps, // Exponer el FPS calculado
     }));
-
-    
 
     return (
       <div className="flex flex-col items-center">
