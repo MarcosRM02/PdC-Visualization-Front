@@ -62,7 +62,6 @@ const ShowWearables = () => {
           <Spinner />
         </div>
       ) : wearables.length > 0 ? (
-        <div className="bg-white shadow rounded-lg p-6">
           <WearablesData
             wearables={wearables}
             experimentId={parseInt(experimentId || '0')}
@@ -70,7 +69,6 @@ const ShowWearables = () => {
             participantId={parseInt(participantId || '0')}
             swId={parseInt(swId || '0')}
           />
-        </div>
       ) : (
         <div className="flex flex-col items-center justify-center mt-20">
           <h2 className="text-2xl font-semibold text-gray-700">

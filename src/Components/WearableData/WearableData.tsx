@@ -272,7 +272,6 @@ const WearablesData = ({
     }
   }, [isPlaying, animationsFinished]);
 
-
   const [_, setFps] = useState(0); // FPS compartido
   const [updateHz, setUpdateHz] = useState(50); // Hz compartido (valor actual por defecto)
 
@@ -306,41 +305,71 @@ const WearablesData = ({
     return { leftFps, rightFps };
   }, []);
 
+  // const handlePlay = () => {
+  //   // Si las animaciones han terminado, reiniciar todo
+  //   if (animationsFinished.left && animationsFinished.right) {
+  //     setAnimationsFinished({ left: false, right: false });
+  //     setIsPlaying(true);
+  //     setIsPaused(false);
+
+  //     if (leftHeatmapRef.current) {
+  //       leftHeatmapRef.current.resetFrame();
+  //       leftHeatmapRef.current.startAnimation();
+  //     }
+  //     if (rightHeatmapRef.current) {
+  //       rightHeatmapRef.current.resetFrame();
+  //       rightHeatmapRef.current.startAnimation();
+  //     }
+  //     return;
+  //   }
+
+  //   if (!isPlaying && !isPaused) {
+  //     // Iniciar la animación desde el principio
+  //     setIsPlaying(true);
+  //     setIsPaused(false);
+
+  //     if (leftHeatmapRef.current) {
+  //       leftHeatmapRef.current.resetFrame();
+  //       leftHeatmapRef.current.startAnimation();
+  //     }
+  //     if (rightHeatmapRef.current) {
+  //       rightHeatmapRef.current.resetFrame();
+  //       rightHeatmapRef.current.startAnimation();
+  //     }
+  //   } else if (isPlaying) {
+  //     // Pausar la animación
+  //     setIsPlaying(false);
+  //     setIsPaused(true);
+
+  //     if (leftHeatmapRef.current) {
+  //       leftHeatmapRef.current.stopAnimation();
+  //     }
+  //     if (rightHeatmapRef.current) {
+  //       rightHeatmapRef.current.stopAnimation();
+  //     }
+  //   } else if (isPaused) {
+  //     // Reanudar la animación desde el estado pausado
+  //     setIsPlaying(true);
+  //     setIsPaused(false);
+
+  //     if (leftHeatmapRef.current) {
+  //       leftHeatmapRef.current.startAnimation();
+  //     }
+  //     if (rightHeatmapRef.current) {
+  //       rightHeatmapRef.current.startAnimation();
+  //     }
+  //   }
+  // };
+
   const handlePlay = () => {
-    // Si las animaciones han terminado, reiniciar todo
-    if (animationsFinished.left && animationsFinished.right) {
-      setAnimationsFinished({ left: false, right: false });
-      setIsPlaying(true);
-      setIsPaused(false);
-
-      if (leftHeatmapRef.current) {
-        leftHeatmapRef.current.resetFrame();
-        leftHeatmapRef.current.startAnimation();
-      }
-      if (rightHeatmapRef.current) {
-        rightHeatmapRef.current.resetFrame();
-        rightHeatmapRef.current.startAnimation();
-      }
-      return;
-    }
-
-    if (!isPlaying && !isPaused) {
-      // Iniciar la animación desde el principio
-      setIsPlaying(true);
-      setIsPaused(false);
-
-      if (leftHeatmapRef.current) {
-        leftHeatmapRef.current.resetFrame();
-        leftHeatmapRef.current.startAnimation();
-      }
-      if (rightHeatmapRef.current) {
-        rightHeatmapRef.current.resetFrame();
-        rightHeatmapRef.current.startAnimation();
-      }
-    } else if (isPlaying) {
-      // Pausar la animación
+    if (isPlaying) {
+      // Pausar tanto el video como las animaciones
       setIsPlaying(false);
       setIsPaused(true);
+
+      if (playerRef.current) {
+        playerRef.current.getInternalPlayer().pause();
+      }
 
       if (leftHeatmapRef.current) {
         leftHeatmapRef.current.stopAnimation();
@@ -349,9 +378,13 @@ const WearablesData = ({
         rightHeatmapRef.current.stopAnimation();
       }
     } else if (isPaused) {
-      // Reanudar la animación desde el estado pausado
+      // Reanudar tanto el video como las animaciones
       setIsPlaying(true);
       setIsPaused(false);
+
+      if (playerRef.current) {
+        playerRef.current.getInternalPlayer().play();
+      }
 
       if (leftHeatmapRef.current) {
         leftHeatmapRef.current.startAnimation();
@@ -359,13 +392,48 @@ const WearablesData = ({
       if (rightHeatmapRef.current) {
         rightHeatmapRef.current.startAnimation();
       }
+    } else {
+      // Iniciar desde el principio
+      setIsPlaying(true);
+      setIsPaused(false);
+
+      if (playerRef.current) {
+        playerRef.current.seekTo(0);
+        playerRef.current.getInternalPlayer().play();
+      }
+
+      if (leftHeatmapRef.current) {
+        leftHeatmapRef.current.resetFrame();
+        leftHeatmapRef.current.startAnimation();
+      }
+      if (rightHeatmapRef.current) {
+        rightHeatmapRef.current.resetFrame();
+        rightHeatmapRef.current.startAnimation();
+      }
     }
   };
 
+  // const handleReset = () => {
+  //   setIsPlaying(false);
+  //   setIsPaused(false);
+  //   setAnimationsFinished({ left: false, right: false });
+
+  //   if (leftHeatmapRef.current) {
+  //     leftHeatmapRef.current.resetFrame();
+  //   }
+  //   if (rightHeatmapRef.current) {
+  //     rightHeatmapRef.current.resetFrame();
+  //   }
+  // };
   const handleReset = () => {
     setIsPlaying(false);
     setIsPaused(false);
     setAnimationsFinished({ left: false, right: false });
+
+    if (playerRef.current) {
+      playerRef.current.seekTo(0);
+      playerRef.current.getInternalPlayer().pause();
+    }
 
     if (leftHeatmapRef.current) {
       leftHeatmapRef.current.resetFrame();
@@ -391,203 +459,219 @@ const WearablesData = ({
     }
   }, [isPlaying, animationsFinished]);
 
+  // ---------------------------------------------------------------------------
+  useEffect(() => {
+    if (isPlaying && animationsFinished.left && animationsFinished.right) {
+      setIsPlaying(false);
+      setIsPaused(false);
+
+      if (playerRef.current) {
+        playerRef.current.getInternalPlayer().pause();
+      }
+    }
+  }, [isPlaying, animationsFinished]);
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-9xl mx-auto bg-white shadow-lg rounded-lg p-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sección Izquierda: Reproductor de Video y Controles */}
-          <div className="flex flex-col lg:w-2/3 w-full bg-gray-50 p-6 rounded-lg shadow-inner">
-            <div className="relative aspect-video">
-              {videoSrc && !videoError ? (
-                <ReactPlayer
-                  ref={playerRef}
-                  url={videoSrc}
-                  onProgress={handleProgress}
-                  width="100%"
-                  height="100%"
-                  controls={true}
-                  className="rounded-lg"
-                  playbackRate={playbackRate} // Pasar playbackRate directamente
-                  onError={() => setVideoError(true)} // Manejar errores de reproducción
-                  progressInterval={(1 / rightWearables[0].frequency) * 1000} // Ajusta la tasa de refrresco de la linea de las gráficas
-                  config={{
-                    file: {
-                      attributes: {
-                        controlsList: 'nodownload',
-                        disablePictureInPicture: true,
-                      },
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Sección Izquierda: Reproductor de Video y Controles */}
+        <div className="flex flex-col lg:w-2/3 w-full bg-gray-50 p-6 rounded-lg shadow-inner">
+          <div className="relative aspect-video">
+            {videoSrc && !videoError ? (
+              <ReactPlayer
+                ref={playerRef}
+                url={videoSrc}
+                onProgress={handleProgress}
+                width="100%"
+                height="100%"
+                controls={true}
+                className="rounded-lg"
+                playbackRate={playbackRate} // Pasar playbackRate directamente
+                onError={() => setVideoError(true)} // Manejar errores de reproducción
+                progressInterval={(1 / rightWearables[0].frequency) * 1000} // Ajusta la tasa de refrresco de la linea de las gráficas
+                config={{
+                  file: {
+                    attributes: {
+                      controlsList: 'nodownload',
+                      disablePictureInPicture: true,
                     },
-                  }}
-                />
-              ) : (
-                <div className="flex flex-col items-center justify-center w-full h-full bg-gray-800 text-white text-xl font-semibold rounded-lg">
-                  <VideoCameraIcon className="h-12 w-12 mb-3" />{' '}
-                  {/* Icono de tamaño ajustado */}
-                  <span>No hay ningún video disponible</span>
-                </div>
-              )}
-            </div>
-
-            {/* Controles de Velocidad de Reproducción */}
-            <div className="mt-6 flex justify-center space-x-4">
-              {playbackRates.map(({ label, rate }) => (
-                <PlaybackButton
-                  key={rate}
-                  label={label}
-                  onClick={() => changePlaybackRate(rate)}
-                  active={Math.abs(playbackRate - rate) < 0.001} // Usar tolerancia para precisión
-                  disabled={!videoAvailable} // Pasar la propiedad disabled
-                />
-              ))}
-            </div>
+                  },
+                }}
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center w-full h-full bg-gray-800 text-white text-xl font-semibold rounded-lg">
+                <VideoCameraIcon className="h-12 w-12 mb-3" />{' '}
+                {/* Icono de tamaño ajustado */}
+                <span>No hay ningún video disponible</span>
+              </div>
+            )}
           </div>
 
+          {/* Controles de Velocidad de Reproducción */}
+          <div className="mt-6 flex justify-center space-x-4">
+            {playbackRates.map(({ label, rate }) => (
+              <PlaybackButton
+                key={rate}
+                label={label}
+                onClick={() => changePlaybackRate(rate)}
+                active={Math.abs(playbackRate - rate) < 0.001} // Usar tolerancia para precisión
+                disabled={!videoAvailable} // Pasar la propiedad disabled
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Sección Derecha: Mapas de Calor y Leyenda */}
+        <div className="lg:w-1/3 w-full bg-gray-50 p-6 rounded-lg shadow-inner flex justify-center">
           {/* Sección Derecha: Mapas de Calor y Leyenda */}
-          <div className="lg:w-1/3 w-full bg-gray-50 p-6 rounded-lg shadow-inner flex justify-center">
-            {/* Sección Derecha: Mapas de Calor y Leyenda */}
-            <div className="lg:w-1/3 w-full bg-gray-50 p-6 rounded-lg shadow-inner flex flex-col items-center">
-              {/* Heatmap Control Panel Arriba */}
-              <div className="w-full mb-6">
-                <HeatmapControlPanel
-                  updateHz={updateHz}
-                  onUpdateHzChange={handleUpdateHzChange}
-                  getRenderFps={getRenderFps}
+          <div className="lg:w-1/3 w-full bg-gray-50 p-6 rounded-lg shadow-inner flex flex-col items-center">
+            {/* Heatmap Control Panel Arriba */}
+            <div className="w-full mb-6">
+              <HeatmapControlPanel
+                updateHz={updateHz}
+                onUpdateHzChange={handleUpdateHzChange}
+                getRenderFps={getRenderFps}
+              />
+            </div>
+
+            {/* Contenedor de los Mapas de Calor */}
+            <div className="flex flex-row justify-center space-x-6 relative w-full">
+              {/* Mapa de Calor Izquierdo */}
+              <div className="flex-shrink-0">
+                <HeatMap
+                  ref={leftHeatmapRef}
+                  width={175}
+                  height={530}
+                  points={leftPoints}
+                  initialUpdateHz={leftWearables[0].frequency}
+                  onAnimationEnd={handleLeftAnimationEnd}
                 />
               </div>
 
-              {/* Contenedor de los Mapas de Calor */}
-              <div className="flex flex-row justify-center space-x-6 relative w-full">
-                {/* Mapa de Calor Izquierdo */}
-                <div className="flex-shrink-0">
-                  <HeatMap
-                    ref={leftHeatmapRef}
-                    width={175}
-                    height={530}
-                    points={leftPoints}
-                    initialUpdateHz={leftWearables[0].frequency}
-                    onAnimationEnd={handleLeftAnimationEnd}
-                  />
-                </div>
-
-                {/* Mapa de Calor Derecho */}
-                <div className="flex-shrink-0">
-                  <HeatMap
-                    ref={rightHeatmapRef}
-                    width={175}
-                    height={530}
-                    points={rightPoints}
-                    initialUpdateHz={rightWearables[0].frequency}
-                    onAnimationEnd={handleRightAnimationEnd}
-                  />
-                </div>
-
-                {/* Leyenda de Colores a la Derecha */}
-                <div className="absolute top-0 right-[-160px]">
-                  <ColorLegend />
-                </div>
+              {/* Mapa de Calor Derecho */}
+              <div className="flex-shrink-0">
+                <HeatMap
+                  ref={rightHeatmapRef}
+                  width={175}
+                  height={530}
+                  points={rightPoints}
+                  initialUpdateHz={rightWearables[0].frequency}
+                  onAnimationEnd={handleRightAnimationEnd}
+                />
               </div>
 
-              {/* Botones de Control de Animación Abajo */}
-              <div className="flex justify-center mt-6 space-x-6 w-full">
-                <ActionButton
+              {/* Leyenda de Colores a la Derecha */}
+              <div className="absolute top-0 right-[-160px]">
+                <ColorLegend />
+              </div>
+            </div>
+
+            {/* Botones de Control de Animación Abajo */}
+            <div className="flex justify-center mt-6 space-x-6 w-full">
+              {/* <ActionButton
                   onClick={handlePlay}
                   label={isPlaying ? 'Playing' : isPaused ? 'Paused' : 'Play'}
                   color={isPlaying ? 'orange' : isPaused ? 'blue' : 'green'}
-                />
-                <ActionButton onClick={handleReset} label="Reset" color="red" />
-              </div>
+                /> */}
+              <ActionButton
+                onClick={handlePlay}
+                label={isPlaying ? 'Pause' : isPaused ? 'Resume' : 'Play'}
+                color={isPlaying ? 'orange' : 'green'}
+              />
+
+              <ActionButton onClick={handleReset} label="Reset" color="red" />
             </div>
           </div>
         </div>
-        {/* Botones de Acción Unificados */}
-        <div className="flex justify-center mt-12 space-x-6">
-          <ActionButton
-            onClick={resetGraphs}
-            label="Resetear Gráficos"
-            color="red"
-          />
-          <ActionButton
-            onClick={() =>
-              descargarDatosVisibles(
-                refs.leftPressureSensor,
-                refs.rightPressureSensor,
-                leftWearables,
-                rightWearables,
-                experimentId,
-                participantId,
-                trialId,
-                swId,
-              )
-            }
-            label="Descargar Datos (ZIP)"
-            color="blue"
-          />
+      </div>
+      {/* Botones de Acción Unificados */}
+      <div className="flex justify-center mt-12 space-x-6">
+        <ActionButton
+          onClick={resetGraphs}
+          label="Resetear Gráficos"
+          color="red"
+        />
+        <ActionButton
+          onClick={() =>
+            descargarDatosVisibles(
+              refs.leftPressureSensor,
+              refs.rightPressureSensor,
+              leftWearables,
+              rightWearables,
+              experimentId,
+              participantId,
+              trialId,
+              swId,
+            )
+          }
+          label="Descargar Datos (ZIP)"
+          color="blue"
+        />
+      </div>
+
+      {/* Sección de Gráficos Detallados */}
+      <div className="mt-16 flex flex-col lg:flex-row gap-8">
+        {/* Gráficos Izquierdo */}
+        <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
+          {leftWearables.map((_wearable, index) => (
+            <Fragment key={index}>
+              <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
+                Sensor de Presión Izquierdo
+              </h2>
+              <div
+                ref={refs.leftPressureSensor}
+                id="leftPressureSensor"
+                className="mb-6"
+              ></div>
+              <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
+                Acelerómetro Izquierdo
+              </h2>
+              <div
+                ref={refs.leftAccelerometer}
+                id="leftAccelerometer"
+                className="mb-6"
+              ></div>
+              <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
+                Giroscopio Izquierdo
+              </h2>
+              <div
+                ref={refs.leftGyroscope}
+                id="leftGyroscope"
+                className="mb-6"
+              ></div>
+            </Fragment>
+          ))}
         </div>
 
-        {/* Sección de Gráficos Detallados */}
-        <div className="mt-16 flex flex-col lg:flex-row gap-8">
-          {/* Gráficos Izquierdo */}
-          <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
-            {leftWearables.map((_wearable, index) => (
-              <Fragment key={index}>
-                <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                  Sensor de Presión Izquierdo
-                </h2>
-                <div
-                  ref={refs.leftPressureSensor}
-                  id="leftPressureSensor"
-                  className="mb-6"
-                ></div>
-                <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                  Acelerómetro Izquierdo
-                </h2>
-                <div
-                  ref={refs.leftAccelerometer}
-                  id="leftAccelerometer"
-                  className="mb-6"
-                ></div>
-                <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                  Giroscopio Izquierdo
-                </h2>
-                <div
-                  ref={refs.leftGyroscope}
-                  id="leftGyroscope"
-                  className="mb-6"
-                ></div>
-              </Fragment>
-            ))}
-          </div>
-
-          {/* Gráficos Derecho */}
-          <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
-            {rightWearables.map((_wearable, index) => (
-              <Fragment key={index}>
-                <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                  Sensor de Presión Derecho
-                </h2>
-                <div
-                  ref={refs.rightPressureSensor}
-                  id="rightPressureSensor"
-                ></div>
-                <h2 className="text-xl font-semibold text-center text-gray-800 mb-4 mt-6">
-                  Acelerómetro Derecho
-                </h2>
-                <div
-                  ref={refs.rightAccelerometer}
-                  id="rightAccelerometer"
-                  className="mb-6"
-                ></div>
-                <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                  Giroscopio Derecho
-                </h2>
-                <div
-                  ref={refs.rightGyroscope}
-                  id="rightGyroscope"
-                  className="mb-6"
-                ></div>
-              </Fragment>
-            ))}
-          </div>
+        {/* Gráficos Derecho */}
+        <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
+          {rightWearables.map((_wearable, index) => (
+            <Fragment key={index}>
+              <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
+                Sensor de Presión Derecho
+              </h2>
+              <div
+                ref={refs.rightPressureSensor}
+                id="rightPressureSensor"
+              ></div>
+              <h2 className="text-xl font-semibold text-center text-gray-800 mb-4 mt-6">
+                Acelerómetro Derecho
+              </h2>
+              <div
+                ref={refs.rightAccelerometer}
+                id="rightAccelerometer"
+                className="mb-6"
+              ></div>
+              <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
+                Giroscopio Derecho
+              </h2>
+              <div
+                ref={refs.rightGyroscope}
+                id="rightGyroscope"
+                className="mb-6"
+              ></div>
+            </Fragment>
+          ))}
         </div>
       </div>
     </div>
@@ -620,34 +704,6 @@ const PlaybackButton = ({
     {label}
   </button>
 );
-
-// Componente para los botones de acción
-// const ActionButton = ({
-//   onClick,
-//   label,
-//   color = 'blue',
-// }: {
-//   onClick: () => void;
-//   label: string;
-//   color?: 'blue' | 'red' | 'green';
-//   disabled?: boolean; // Add disabled prop
-// }) => {
-//   const colorClasses =
-//     color === 'red'
-//       ? 'bg-red-500 hover:bg-red-700'
-//       : color === 'green'
-//       ? 'bg-green-500 hover:bg-green-700'
-//       : 'bg-blue-500 hover:bg-blue-700';
-
-//   return (
-//     <button
-//       onClick={onClick}
-//       className={`${colorClasses} text-white font-bold py-3 px-8 rounded shadow-lg hover:shadow-xl transition duration-200 text-xl`}
-//     >
-//       {label}
-//     </button>
-//   );
-// };
 
 const ActionButton = ({
   onClick,
@@ -949,7 +1005,7 @@ async function descargarDatosVisibles(
 
     const frames = wearable.map((item: any) => new DataFrame(item.dataframe));
     const df = concat({ dfList: frames, axis: 1 });
-    const csv = toCSV(df) || '';
+    const csv = toCSV(df, {header: false}) || '';
 
     const lines = csv.split('\n');
     const selectedData = lines.slice(startIndex, endIndex + 1).join('\n');
