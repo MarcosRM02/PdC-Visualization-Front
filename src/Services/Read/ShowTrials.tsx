@@ -64,8 +64,15 @@ const ShowTrials = () => {
         );
         let trialsData = response.data;
 
-        // Ordenar los trials por ID de manera ascendente
-        trialsData.sort((a: any, b: any) => a.id - b.id);
+        // // Ordenar los trials por ID de manera ascendente
+        // trialsData.sort((a: any, b: any) => a.id - b.id);
+
+        // Ordenar los trials por fecha de manera ascendente
+        trialsData.sort((a: any, b: any) => {
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          return dateA.getTime() - dateB.getTime();
+        });
 
         setSWDatas(trialsData);
         setFilteredSWDatas(trialsData);

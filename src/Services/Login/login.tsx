@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 const Login = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [welcomeMessage, setWelcomeMessage] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const navigate = useNavigate();
 
   // Efecto para verificar la existencia de un token y validar su vigencia
@@ -66,16 +66,16 @@ const Login = () => {
         });
       } else {
         const errorData = await response.json();
-        setWelcomeMessage(errorData.message);
+        setErrorMessage(errorData.message);
         setTimeout(() => {
-          setWelcomeMessage('');
+          setErrorMessage('');
         }, 3000);
       }
     } catch (error) {
       console.error('Login error:', error);
-      setWelcomeMessage('An error occurred. Please try again later.');
+      setErrorMessage('An error occurred. Please try again later.');
       setTimeout(() => {
-        setWelcomeMessage('');
+        setErrorMessage('');
       }, 3000);
     }
   };
@@ -121,11 +121,9 @@ const Login = () => {
               />
             </div>
           </div>
-          {welcomeMessage && (
-            <div className="rounded-md bg-green-50 p-4">
-              <p className="text-sm font-medium text-green-800">
-                {welcomeMessage}
-              </p>
+          {errorMessage && (
+            <div className="rounded-md bg-red-50 p-4">
+              <p className="text-sm font-medium text-red-800">{errorMessage}</p>
             </div>
           )}
           <button
