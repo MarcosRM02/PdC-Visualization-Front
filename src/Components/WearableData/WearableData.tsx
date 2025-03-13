@@ -59,7 +59,9 @@ const WearablesData = ({
     right: false,
   });
   const [videoSrc, setVideoSrc] = useState('');
-  const [videoError, setVideoError] = useState<boolean>(false); // poner setVideoError cuando meta los videos bien
+  const [videoError, setVideoError] = useState<boolean>(false);
+  const [videoSrc2, setVideoSrc2] = useState('');
+  const [hmVideoError, setHmVideoError] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
   const leftWearables = wearables.filter(
@@ -171,18 +173,22 @@ const WearablesData = ({
         const response = await axios.get(
           `${apiUrl}/trials/retrieve-video/${trialId}`,
           {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
+            headers: { Authorization: `Bearer ${accessToken}` },
             responseType: 'blob',
           },
         );
         const videoBlob = response.data;
         const videoUrl = URL.createObjectURL(videoBlob);
         setVideoSrc(videoUrl);
-      } catch (error) {
-        console.error('Error fetching the video:', error);
-        setVideoError(true);
+      } catch (error: any) {
+        // Si es un 404, simplemente dejamos videoSrc vacío y no seteamos el error
+        if (error.response && error.response.status === 404) {
+          console.warn('Video principal no disponible (404)');
+          setVideoSrc('');
+        } else {
+          console.error('Error fetching the video:', error);
+          setVideoError(true);
+        }
       }
     };
 
@@ -197,30 +203,31 @@ const WearablesData = ({
 
   // Obtención del HM desde la API
 
-  const [videoSrc2, setVideoSrc2] = useState('');
-
   useEffect(() => {
-    const fetchVideo = async () => {
+    const fetchHMVideo = async () => {
       try {
         const response = await axios.get(
           `${apiUrl}/trials/retrieve-HMvideo/${trialId}`,
           {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
+            headers: { Authorization: `Bearer ${accessToken}` },
             responseType: 'blob',
           },
         );
         const videoBlob = response.data;
         const videoUrl = URL.createObjectURL(videoBlob);
         setVideoSrc2(videoUrl);
-      } catch (error) {
-        console.error('Error fetching the video:', error);
-        setVideoError(true);
+      } catch (error: any) {
+        if (error.response && error.response.status === 404) {
+          console.warn('Video HM no disponible (404)');
+          setVideoSrc2('');
+        } else {
+          console.error('Error fetching the HM video:', error);
+          setHmVideoError(true);
+        }
       }
     };
 
-    fetchVideo();
+    fetchHMVideo();
 
     return () => {
       if (videoSrc2) {
@@ -251,9 +258,8 @@ const WearablesData = ({
     { label: '2x', rate: 2 },
   ];
 
-  // const videoAvailable = !videoError && (videoFile !== '' || videoFile2 !== '');
-  // const videoAvailable = !videoError && videoSrc !== '';
-  const videoAvailable = !!videoSrc && !videoError;
+  const videoAvailable =
+    (!!videoSrc || !!videoSrc2) && !videoError && !hmVideoError;
 
   // Efecto duplicado para animaciones finalizadas
   useEffect(() => {
