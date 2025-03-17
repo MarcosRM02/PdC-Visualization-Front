@@ -5,7 +5,6 @@ import axios from 'axios';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import { MdOutlineAddBox } from 'react-icons/md';
 import { FaSearch, FaUndo } from 'react-icons/fa';
-import LogoutButton from '../../Components/CommonComponents/LogoutButton';
 import BackButton from '../../Components/CommonComponents/BackButton';
 import ParticipantCard from '../../Components/Participants/ParticipantCard';
 import { useParams } from 'react-router-dom';
@@ -109,85 +108,87 @@ const ShowParticipant = () => {
   const closeCreateModal = () => setIsCreateModalOpen(false);
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      {/* Cabecera con Botones de Navegación */}
-      <div className="flex justify-between items-center mb-6">
-        <BackButton />
-        <LogoutButton />
-      </div>
-
-      {/* Título Principal */}
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">Participants</h1>
-
-      {/* Sección de Filtros */}
-      <div className="flex flex-col md:flex-row items-center justify-between mb-6 space-y-4 md:space-y-0">
-        {/* Filtro por Código */}
-        <div className="flex items-center bg-gray-100 rounded-lg px-4 py-2 w-full md:w-1/3">
-          <FaSearch className="text-gray-500 mr-2" />
-          <input
-            type="text"
-            placeholder="Buscar por código..."
-            value={searchCode}
-            onChange={(e) => setSearchCode(e.target.value)}
-            className="bg-transparent focus:outline-none w-full"
-            aria-label="Buscar por código"
-          />
+    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+      {/* Área fija: cabecera, filtros y botones */}
+      <div className="p-6">
+        {/* Título Principal */}
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Participants</h1>
+        <div className="flex justify-between items-center mb-6">
+          <BackButton />
         </div>
 
-        {/* Botón para Resetear Filtros */}
-        <button
-          onClick={resetFilters}
-          className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors duration-200"
-          aria-label="Resetear filtros"
-        >
-          <FaUndo className="mr-2" />
-          Resetear
-        </button>
-      </div>
+        {/* Sección de Filtros */}
+        <div className="flex flex-col md:flex-row items-center justify-between mb-6 space-y-4 md:space-y-0">
+          {/* Filtro por Código */}
+          <div className="flex items-center bg-gray-100 rounded-lg px-4 py-2 w-full md:w-1/3">
+            <FaSearch className="text-gray-500 mr-2" />
+            <input
+              type="text"
+              placeholder="Buscar por código..."
+              value={searchCode}
+              onChange={(e) => setSearchCode(e.target.value)}
+              className="bg-transparent focus:outline-none w-full"
+              aria-label="Buscar por código"
+            />
+          </div>
 
-      {/* Botón para Abrir el Modal de Creación */}
-      <div className="flex justify-end mb-6">
-        <button
-          onClick={openCreateModal}
-          className="flex items-center text-sky-800 hover:text-sky-900 transition-colors duration-200"
-        >
-          <MdOutlineAddBox className="text-4xl mr-2" />
-        </button>
-      </div>
-
-      {/* Mostrar Errores */}
-      {error && (
-        <div className="flex items-center justify-center bg-red-200 text-red-700 px-4 py-2 rounded-lg mb-4">
-          {error}
+          {/* Botón para Resetear Filtros */}
+          <button
+            onClick={resetFilters}
+            className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors duration-200"
+            aria-label="Resetear filtros"
+          >
+            <FaUndo className="mr-2" />
+            Resetear
+          </button>
         </div>
-      )}
+
+        {/* Botón para Abrir el Modal de Creación */}
+        <div className="flex justify-end mb-6">
+          <button
+            onClick={openCreateModal}
+            className="flex items-center text-sky-800 hover:text-sky-900 transition-colors duration-200"
+          >
+            <MdOutlineAddBox className="text-4xl mr-2" />
+          </button>
+        </div>
+
+        {/* Mostrar Errores */}
+        {error && (
+          <div className="flex items-center justify-center bg-red-200 text-red-700 px-4 py-2 rounded-lg mb-4">
+            {error}
+          </div>
+        )}
+      </div>
 
       {/* Contenido Principal */}
-      {loading ? (
-        <Spinner />
-      ) : filteredParticipants.length > 0 ? (
-        <ParticipantCard
-          participants={filteredParticipants}
-          onParticipantDeleted={handleParticipantDeleted} // Pasar el callback
-          onParticipantEdited={handleParticipantEdited} // Pasar el nuevo callback
-        />
-      ) : (
-        <div className="flex flex-col items-center justify-center mt-20">
-          <h2 className="text-2xl font-semibold text-gray-700">
-            No Participants Available
-          </h2>
-          <p className="text-gray-500 mt-2">
-            Intenta ajustar los filtros de búsqueda.
-          </p>
-        </div>
-      )}
+      <div className="flex-1 overflow-auto min-h-0 bg-white p-4 pb-24">
+        {loading ? (
+          <Spinner />
+        ) : filteredParticipants.length > 0 ? (
+          <ParticipantCard
+            participants={filteredParticipants}
+            onParticipantDeleted={handleParticipantDeleted} // Pasar el callback
+            onParticipantEdited={handleParticipantEdited} // Pasar el nuevo callback
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center mt-20">
+            <h2 className="text-2xl font-semibold text-gray-700">
+              No Participants Available
+            </h2>
+            <p className="text-gray-500 mt-2">
+              Intenta ajustar los filtros de búsqueda.
+            </p>
+          </div>
+        )}
 
-      {/* Modal de Crear Participante */}
-      <CreateParticipantModal
-        isOpen={isCreateModalOpen}
-        onClose={closeCreateModal}
-        onParticipantCreated={handleParticipantEdited} // Pasar el callback
-      />
+        {/* Modal de Crear Participante */}
+        <CreateParticipantModal
+          isOpen={isCreateModalOpen}
+          onClose={closeCreateModal}
+          onParticipantCreated={handleParticipantEdited} // Pasar el callback
+        />
+      </div>
     </div>
   );
 };
