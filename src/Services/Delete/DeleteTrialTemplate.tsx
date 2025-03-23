@@ -1,4 +1,4 @@
-// src/Services/Delete/DeleteExperiment.tsx
+// src/Services/Delete/DeleteTrial.tsx
 
 import React, { useState, useEffect } from 'react';
 import Spinner from '../../Components/CommonComponents/Spinner';
@@ -6,18 +6,18 @@ import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
 
-interface DeleteExperimentModalProps {
+interface DeleteTrialTemplateModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onExperimentDeleted: () => void; // Callback para notificar al padre
-  experimentId: number; // ID del experimento a eliminar
+  onTrialDeleted: () => void; // Callback para notificar al padre
+  trialId: number; // ID de la prueba a eliminar
 }
 
-const DeleteExperimentModal: React.FC<DeleteExperimentModalProps> = ({
+const DeleteTrialTemplate: React.FC<DeleteTrialTemplateModalProps> = ({
   isOpen,
   onClose,
-  onExperimentDeleted,
-  experimentId,
+  onTrialDeleted,
+  trialId,
 }) => {
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -25,9 +25,9 @@ const DeleteExperimentModal: React.FC<DeleteExperimentModalProps> = ({
   const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  const handleDeleteExperiment = async () => {
+  const handleDeleteTrial = async () => {
     setLoading(true);
-    console.log(`Attempting to delete experiment with ID: ${experimentId}`);
+    console.log(`Attempting to delete trial with ID: ${trialId}`);
 
     const config = {
       headers: {
@@ -36,20 +36,18 @@ const DeleteExperimentModal: React.FC<DeleteExperimentModalProps> = ({
     };
 
     try {
-      await axios.delete(
-        `${apiUrl}/experiments/delete/${experimentId}`,
-        config,
-      );
+      await axios.delete(`${apiUrl}/trialTemplates/delete/${trialId}`, config);
       setLoading(false);
-      enqueueSnackbar('Experimento eliminado exitosamente', {
+      enqueueSnackbar('Template eliminada exitosamente', {
         variant: 'success',
       });
-      onExperimentDeleted(); // Notificar al componente padre
+      console.log('Trial deleted successfully. Calling callback.');
+      onTrialDeleted(); // Notificar al componente padre
       onClose();
     } catch (error) {
       setLoading(false);
-      enqueueSnackbar('Error al eliminar el experimento', { variant: 'error' });
-      console.error('Error deleting experiment:', error);
+      enqueueSnackbar('Error al eliminar la Template', { variant: 'error' });
+      console.error('Error deleting Template:', error);
     }
   };
 
@@ -67,7 +65,7 @@ const DeleteExperimentModal: React.FC<DeleteExperimentModalProps> = ({
         {/* Cabecera del Modal */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Eliminar Experimento
+            Eliminar Template
           </h2>
           <button onClick={onClose} aria-label="Cerrar modal">
             <FaTimes className="text-red-600 hover:text-gray-800" />
@@ -82,7 +80,7 @@ const DeleteExperimentModal: React.FC<DeleteExperimentModalProps> = ({
         ) : (
           <div className="flex flex-col space-y-4">
             <h3 className="text-lg">
-              ¿Estás seguro de que deseas eliminar este experimento?
+              ¿Estás seguro de que deseas eliminar esta template?
             </h3>
 
             <div className="flex justify-end space-x-4 mt-4">
@@ -93,7 +91,7 @@ const DeleteExperimentModal: React.FC<DeleteExperimentModalProps> = ({
                 Cancelar
               </button>
               <button
-                onClick={handleDeleteExperiment}
+                onClick={handleDeleteTrial}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
               >
                 Sí, Eliminar
@@ -106,4 +104,4 @@ const DeleteExperimentModal: React.FC<DeleteExperimentModalProps> = ({
   );
 };
 
-export default DeleteExperimentModal;
+export default DeleteTrialTemplate;

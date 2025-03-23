@@ -1,4 +1,4 @@
-// src/Services/Delete/DeleteExperiment.tsx
+// src/Components/Participants/DeleteParticipantModal.tsx
 
 import React, { useState, useEffect } from 'react';
 import Spinner from '../../Components/CommonComponents/Spinner';
@@ -6,28 +6,25 @@ import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
 
-interface DeleteExperimentModalProps {
+interface DeleteParticipantTemplateModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onExperimentDeleted: () => void; // Callback para notificar al padre
-  experimentId: number; // ID del experimento a eliminar
+  onParticipantDeleted: () => void; // Callback para notificar al padre
+  participantId: number; // ID del participante a eliminar
 }
 
-const DeleteExperimentModal: React.FC<DeleteExperimentModalProps> = ({
-  isOpen,
-  onClose,
-  onExperimentDeleted,
-  experimentId,
-}) => {
+const DeleteParticipantTemplateModal: React.FC<
+  DeleteParticipantTemplateModalProps
+> = ({ isOpen, onClose, onParticipantDeleted, participantId }) => {
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
   const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  const handleDeleteExperiment = async () => {
+  const handleDeleteParticipant = async () => {
     setLoading(true);
-    console.log(`Attempting to delete experiment with ID: ${experimentId}`);
+    console.log(`Attempting to delete participant with ID: ${participantId}`);
 
     const config = {
       headers: {
@@ -37,19 +34,22 @@ const DeleteExperimentModal: React.FC<DeleteExperimentModalProps> = ({
 
     try {
       await axios.delete(
-        `${apiUrl}/experiments/delete/${experimentId}`,
+        `${apiUrl}/participantTemplates/delete/${participantId}`,
         config,
       );
       setLoading(false);
-      enqueueSnackbar('Experimento eliminado exitosamente', {
+      enqueueSnackbar('Participante eliminado exitosamente.', {
         variant: 'success',
       });
-      onExperimentDeleted(); // Notificar al componente padre
+      console.log('Participant deleted successfully. Calling callback.');
+      onParticipantDeleted(); // Notificar al componente padre
       onClose();
     } catch (error) {
       setLoading(false);
-      enqueueSnackbar('Error al eliminar el experimento', { variant: 'error' });
-      console.error('Error deleting experiment:', error);
+      enqueueSnackbar('Error al eliminar el participante.', {
+        variant: 'error',
+      });
+      console.error('Error deleting participant:', error);
     }
   };
 
@@ -67,7 +67,7 @@ const DeleteExperimentModal: React.FC<DeleteExperimentModalProps> = ({
         {/* Cabecera del Modal */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Eliminar Experimento
+            Eliminar Participante
           </h2>
           <button onClick={onClose} aria-label="Cerrar modal">
             <FaTimes className="text-red-600 hover:text-gray-800" />
@@ -82,7 +82,7 @@ const DeleteExperimentModal: React.FC<DeleteExperimentModalProps> = ({
         ) : (
           <div className="flex flex-col space-y-4">
             <h3 className="text-lg">
-              ¿Estás seguro de que deseas eliminar este experimento?
+              ¿Estás seguro de que deseas eliminar este participante?
             </h3>
 
             <div className="flex justify-end space-x-4 mt-4">
@@ -93,7 +93,7 @@ const DeleteExperimentModal: React.FC<DeleteExperimentModalProps> = ({
                 Cancelar
               </button>
               <button
-                onClick={handleDeleteExperiment}
+                onClick={handleDeleteParticipant}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
               >
                 Sí, Eliminar
@@ -106,4 +106,4 @@ const DeleteExperimentModal: React.FC<DeleteExperimentModalProps> = ({
   );
 };
 
-export default DeleteExperimentModal;
+export default DeleteParticipantTemplateModal;

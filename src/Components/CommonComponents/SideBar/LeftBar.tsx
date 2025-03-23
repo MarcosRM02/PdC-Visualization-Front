@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaHome, FaFolderOpen, FaUserFriends } from 'react-icons/fa';
+import { RiGitRepositoryFill } from 'react-icons/ri';
 
 interface LeftBarProps {
   selectedPanel: string | null;
@@ -40,9 +41,25 @@ const LeftBar: React.FC<LeftBarProps> = ({ selectedPanel, togglePanel }) => {
         className={`my-2 p-2 hover:bg-gray-700 rounded 
           ${selectedPanel === 'settings' ? 'bg-gray-700' : ''}
         `}
-        onClick={() => togglePanel('settings')}
+        onClick={() => {
+          togglePanel('allParticipants');
+          navigate(`/participantTemplates/by-professional/${professionalId}`); // Ajusta la ruta según tu necesidad
+        }}
       >
         <FaUserFriends />
+      </button>
+      {/* Botón           ${selectedPanel === 'templates' ? 'bg-gray-700' : ''}
+       */}
+      <button
+        className={`my-2 p-2 hover:bg-gray-700 rounded 
+          ${selectedPanel === 'templates' ? 'bg-gray-700' : ''}
+        `}
+        onClick={() => {
+          togglePanel('templates');
+          navigate(`/templates/by-professional/${professionalId}`); // Ajusta la ruta según tu necesidad
+        }}
+      >
+        <RiGitRepositoryFill />
       </button>
     </div>
   );

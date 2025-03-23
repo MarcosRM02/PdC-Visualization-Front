@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import {
   HiOutlineUser,
   HiOutlineInformationCircle,
-  HiOutlineCalendar,
-  HiOutlineDocumentText,
   HiOutlineUserGroup,
   HiOutlinePencil,
   HiOutlineTrash,
+  HiOutlineAnnotation,
 } from 'react-icons/hi';
+import { FaRegCalendarAlt, FaRegCalendarCheck } from 'react-icons/fa';
 import DeleteExperimentModal from '../../Services/Delete/DeleteExperiment';
 import EditExperimentModal from '../../Services/Update/EditExperiment';
 import { Link } from 'react-router-dom';
@@ -110,7 +110,7 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
 
             {/* Start Date */}
             <div className="flex items-center gap-x-3">
-              <HiOutlineCalendar className="text-teal-600 text-2xl" />
+              <FaRegCalendarAlt className="text-teal-600 text-2xl" />
               <h4 className="text-slate-800 font-medium">
                 Fecha de Inicio: {formattedStartDate || '—'}
               </h4>
@@ -118,7 +118,7 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
 
             {/* Finish Date */}
             <div className="flex items-center gap-x-3">
-              <HiOutlineCalendar className="text-cyan-600 text-2xl" />
+              <FaRegCalendarCheck className="text-cyan-600 text-2xl" />
               <h4 className="text-slate-800 font-medium">
                 Fecha de Finalización: {formattedFinishDate || '—'}
               </h4>
@@ -126,7 +126,7 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
 
             {/* Notes */}
             <div className="flex items-center gap-x-3">
-              <HiOutlineDocumentText className="text-violet-600 text-2xl" />
+              <HiOutlineAnnotation className="text-violet-600 text-2xl" />
               <h4 className="text-slate-800 font-medium">
                 Notas: {experiment.notes || '—'}
               </h4>
@@ -147,19 +147,19 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
           {/* Edit Button */}
           <button
             onClick={handleEditClick}
-            className="bg-emerald-500 text-white p-2 rounded-md hover:bg-emerald-600 transition-colors duration-200 group"
+            className="text-yellow-500   rounded-md duration-200 group"
             aria-label="Editar experimento"
           >
-            <HiOutlinePencil className="text-lg group-hover:scale-110 transition-transform" />
+            <HiOutlinePencil className="text-3xl  group-hover:scale-150 transition-transform" />
           </button>
 
           {/* Delete Button */}
           <button
             onClick={handleDeleteClick}
-            className="bg-rose-500 text-white p-2 rounded-md hover:bg-rose-600 transition-colors duration-200 group"
+            className="text-rose-500  rounded-md duration-200 group"
             aria-label="Eliminar experimento"
           >
-            <HiOutlineTrash className="text-lg group-hover:scale-110 transition-transform" />
+            <HiOutlineTrash className="text-3xl group-hover:scale-150 transition-transform" />
           </button>
         </div>
       </div>

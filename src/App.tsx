@@ -16,6 +16,9 @@ import EditTrial from './Services/Update/EditTrial';
 import DeleteTrial from './Services/Delete/DeleteTrial';
 import ShowWearables from './Services/Read/ShowWearablesData';
 import PrivateRoute from './PrivateRoute';
+import ShowTemplates from './Services/Read/ShowTemplates';
+import ShowTrialsTemplates from './Services/Read/ShowTrialsTemplates';
+import ShowAllParticipants from './Services/Read/ShowAllParticipants';
 
 const App = () => {
   return (
@@ -193,6 +196,33 @@ const App = () => {
         <Route
           path="/swData/getData/:experimentId/:participantId/:swId/:trialId"
           element={<ShowWearables />}
+        />
+        {/* Nuevas rutas */}
+        <Route
+          path="/templates/by-professional/:id"
+          element={<ShowTemplates />}
+        />
+        <Route
+          path="/trialTemplates/by-professional/:id"
+          element={<ShowTrialsTemplates />}
+        />
+        <Route
+          path="/trialTemplates/create/:id"
+          element={
+            <CreateTrial
+              isOpen={false}
+              onClose={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              onTrialCreated={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+            />
+          }
+        />
+        <Route
+          path="/participantTemplates/by-professional/:id"
+          element={<ShowAllParticipants />}
         />
       </Route>
     </Routes>

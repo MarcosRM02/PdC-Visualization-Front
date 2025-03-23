@@ -3,10 +3,10 @@ import {
   HiOutlineQrcode,
   HiOutlinePencil,
   HiOutlineTrash,
-  HiOutlineCalendar,
-  HiOutlineClipboardList,
   HiOutlineAnnotation,
+  HiOutlineInformationCircle,
 } from 'react-icons/hi';
+import { FaRegCalendarCheck } from 'react-icons/fa';
 import { getIDFromAPI } from '../../Services/Read/CreateWearablesURL';
 import EditTrialModal from '../../Services/Update/EditTrial';
 import DeleteTrialModal from '../../Services/Delete/DeleteTrial';
@@ -108,7 +108,7 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
           <div key={trials.id} className="my-2 space-y-4">
             {/* Fecha */}
             <div className="flex items-center gap-x-3">
-              <HiOutlineCalendar className="text-emerald-600 text-2xl" />
+              <FaRegCalendarCheck className="text-emerald-600 text-2xl" />
               <h4 className="text-slate-800 font-medium">
                 Fecha: {formattedDate || '—'}
               </h4>
@@ -124,7 +124,7 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
 
             {/* Descripción */}
             <div className="flex items-center gap-x-3">
-              <HiOutlineClipboardList className="text-slate-600 text-2xl" />
+              <HiOutlineInformationCircle className="text-slate-600 text-2xl" />
               <h4 className="text-slate-800 font-medium">
                 Descripción: {trials.description || '—'}
               </h4>
@@ -134,29 +134,28 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
             <div className="flex items-center gap-x-3">
               <HiOutlineAnnotation className="text-slate-600 text-2xl" />
               <h4 className="text-slate-800 font-medium">
-                Anotación: {trials.annotation || '—'}
+                Notas: {trials.annotation || '—'}
               </h4>
             </div>
           </div>
         </Link>
         {/* Action Buttons */}
         <div className="flex justify-end items-center gap-x-4 mt-2">
-          {/* Edit Button */}
           <button
             onClick={handleEditClick}
-            className="bg-emerald-500 text-white p-2 rounded-md hover:bg-emerald-600 transition-colors duration-200 group"
-            aria-label="Editar prueba"
+            className="text-yellow-500   rounded-md duration-200 group"
+            aria-label="Editar experimento"
           >
-            <HiOutlinePencil className="text-lg group-hover:scale-110 transition-transform" />
+            <HiOutlinePencil className="text-3xl  group-hover:scale-150 transition-transform" />
           </button>
 
           {/* Delete Button */}
           <button
             onClick={handleDeleteClick}
-            className="bg-rose-500 text-white p-2 rounded-md hover:bg-rose-600 transition-colors duration-200 group"
-            aria-label="Eliminar prueba"
+            className="text-rose-500  rounded-md duration-200 group"
+            aria-label="Eliminar experimento"
           >
-            <HiOutlineTrash className="text-lg group-hover:scale-110 transition-transform" />
+            <HiOutlineTrash className="text-3xl group-hover:scale-150 transition-transform" />
           </button>
         </div>
       </div>

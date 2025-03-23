@@ -6,10 +6,9 @@ import {
   HiOutlineTrash,
 } from 'react-icons/hi';
 import UserModal from './UserModal';
-import EditParticipantModal from '../../Services/Update/EditParticipant';
-import DeleteParticipantModal from '../../Services/Delete/DeleteParticipant';
+import EditParticipantTemplateModal from '../../Services/Update/EditParticipantTemplate';
+import DeleteParticipantTemplateModal from '../../Services/Delete/DeleteParticipant';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 
 interface Participant {
   id: number;
@@ -19,17 +18,15 @@ interface Participant {
   };
 }
 
-interface ParticipantSingleCardProps {
+interface ParticipantTemplateSingleCardProps {
   participants: Participant;
   onParticipantDeleted: () => void;
   onParticipantEdited: () => void;
 }
 
-const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
-  participants,
-  onParticipantDeleted,
-  onParticipantEdited,
-}) => {
+const ParticipantTemplateSingleCard: React.FC<
+  ParticipantTemplateSingleCardProps
+> = ({ participants, onParticipantDeleted, onParticipantEdited }) => {
   const [showModal, setShowModal] = useState(false);
   const [modalData, setModalData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -85,23 +82,19 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
 
   const formattedCode = participants.code || '—';
 
-  const detailsUrl = `/trials/by-participant/${participants.id}`;
-
   return (
     <>
       {/* Enlace que permite abrir en nueva pestaña */}
       <div className="border border-slate-200 bg-white rounded-lg px-6 py-5 m-4 relative shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out cursor-pointer">
-        <Link to={detailsUrl} rel="noopener noreferrer">
-          <div key={participants.id} className="my-2 space-y-4">
-            {/* Código */}
-            <div className="flex items-center gap-x-3">
-              <HiOutlineIdentification className="text-emerald-600 text-2xl" />
-              <h4 className="text-slate-800 font-medium">
-                Código: {formattedCode}
-              </h4>
-            </div>
+        <div key={participants.id} className="my-2 space-y-4">
+          {/* Código */}
+          <div className="flex items-center gap-x-3">
+            <HiOutlineIdentification className="text-emerald-600 text-2xl" />
+            <h4 className="text-slate-800 font-medium">
+              Código: {formattedCode}
+            </h4>
           </div>
-        </Link>
+        </div>
 
         {/* Botones de acción */}
         <div className="flex justify-end items-center gap-x-4 mt-2">
@@ -142,7 +135,7 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
         )}
       </div>
       {/* Modal de edición */}
-      <EditParticipantModal
+      <EditParticipantTemplateModal
         isOpen={isEditModalOpen}
         onClose={() => setEditModalOpen(false)}
         participantId={participants.id}
@@ -150,7 +143,7 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
       />
 
       {/* Modal de eliminación */}
-      <DeleteParticipantModal
+      <DeleteParticipantTemplateModal
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         participantId={participants.id}
@@ -174,4 +167,4 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
   );
 };
 
-export default React.memo(ParticipantSingleCard);
+export default React.memo(ParticipantTemplateSingleCard);

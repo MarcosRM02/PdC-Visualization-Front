@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  HiOutlineIdentification,
+  HiOutlineQrcode,
   HiOutlineEye,
   HiOutlinePencil,
   HiOutlineTrash,
@@ -95,7 +95,7 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
           <div key={participants.id} className="my-2 space-y-4">
             {/* Código */}
             <div className="flex items-center gap-x-3">
-              <HiOutlineIdentification className="text-emerald-600 text-2xl" />
+              <HiOutlineQrcode className="text-emerald-600 text-2xl" />
               <h4 className="text-slate-800 font-medium">
                 Código: {formattedCode}
               </h4>
@@ -111,28 +111,28 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
               e.stopPropagation();
               setShowModal(true);
             }}
-            className="text-teal-500 rounded-md duration-200 group"
+            className="bg-teal-500 text-white p-2 rounded-md hover:bg-teal-600 transition-colors duration-200 group"
             aria-label="Mostrar detalles"
           >
-            <HiOutlineEye className="text-3xl group-hover:scale-150 transition-transform" />
+            <HiOutlineEye className="text-lg group-hover:scale-110 transition-transform" />
           </button>
 
           {/* Editar */}
           <button
             onClick={handleEditClick}
-            className="text-yellow-500 rounded-md  duration-200 group"
-            aria-label="Editar experimento"
+            className="bg-emerald-500 text-white p-2 rounded-md hover:bg-emerald-600 transition-colors duration-200 group"
+            aria-label="Editar participante"
           >
-            <HiOutlinePencil className="text-3xl group-hover:scale-150 transition-transform" />
+            <HiOutlinePencil className="text-lg group-hover:scale-110 transition-transform" />
           </button>
 
           {/* Eliminar */}
           <button
             onClick={handleDeleteClick}
-            className="text-rose-500  rounded-md duration-200 group"
-            aria-label="Eliminar experimento"
+            className="bg-rose-500 text-white p-2 rounded-md hover:bg-rose-600 transition-colors duration-200 group"
+            aria-label="Eliminar participante"
           >
-            <HiOutlineTrash className="text-3xl group-hover:scale-150 transition-transform" />
+            <HiOutlineTrash className="text-lg group-hover:scale-110 transition-transform" />
           </button>
         </div>
 
