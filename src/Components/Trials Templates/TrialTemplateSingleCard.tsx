@@ -25,15 +25,11 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [refresh, setRefresh] = useState(false);
 
-  // Función para formatear la fecha y validar su validez
+  // Función para formatear la fecha
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
-
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) {
-      return '';
-    }
-
+    if (isNaN(date.getTime())) return '';
     const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'long',
@@ -67,63 +63,72 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
 
   return (
     <>
-      {/* Enlace que permite abrir en nueva pestaña */}
       <div className="border border-slate-200 bg-white rounded-lg px-6 py-5 m-4 relative shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out cursor-pointer">
-        <div key={trials.id} className="my-2 space-y-4">
+        <div className="my-2 space-y-4">
           {/* Fecha */}
           <div className="flex items-center gap-x-3">
-            <FaRegCalendarCheck className="text-emerald-600 text-2xl" />
-            <h4 className="text-slate-800 font-medium">
-              Fecha: {formattedDate || '—'}
+            <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
+              <FaRegCalendarCheck className="text-white text-lg" />
+            </div>
+            <h4 className="text-gray-800 font-medium">
+              <strong>Fecha:</strong> {formattedDate || '—'}
             </h4>
           </div>
 
           {/* Código */}
           <div className="flex items-center gap-x-3">
-            <HiOutlineQrcode className="text-emerald-600 text-2xl" />
-            <h4 className="text-slate-800 font-medium">
-              Código: {trials.code || '—'}
+            <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
+              <HiOutlineQrcode className="text-white text-lg" />
+            </div>
+            <h4 className="text-gray-800 font-medium">
+              <strong>Código:</strong> {trials.code || '—'}
             </h4>
           </div>
 
           {/* Descripción */}
           <div className="flex items-center gap-x-3">
-            <HiOutlineInformationCircle className="text-slate-600 text-2xl" />
-            <h4 className="text-slate-800 font-medium">
-              Descripción: {trials.description || '—'}
+            <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
+              <HiOutlineInformationCircle className="text-white text-lg" />
+            </div>
+            <h4 className="text-gray-800 font-medium">
+              <strong>Descripción:</strong> {trials.description || '—'}
             </h4>
           </div>
 
           {/* Anotación */}
           <div className="flex items-center gap-x-3">
-            <HiOutlineAnnotation className="text-slate-600 text-2xl" />
-            <h4 className="text-slate-800 font-medium">
-              Notas: {trials.annotation || '—'}
+            <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
+              <HiOutlineAnnotation className="text-white text-lg" />
+            </div>
+            <h4 className="text-gray-800 font-medium">
+              <strong>Notas:</strong> {trials.annotation || '—'}
             </h4>
           </div>
         </div>
-        {/* Action Buttons */}
+
+        {/* Botones de acción */}
         <div className="flex justify-end items-center gap-x-4 mt-2">
+          {/* Botón Editar */}
           <button
             onClick={handleEditClick}
-            className="text-yellow-500   rounded-md duration-200 group"
-            aria-label="Editar experimento"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
+            aria-label="Editar plantilla"
           >
-            <HiOutlinePencil className="text-3xl  group-hover:scale-150 transition-transform" />
+            <HiOutlinePencil className="text-white text-2xl" />
           </button>
 
-          {/* Delete Button */}
+          {/* Botón Eliminar */}
           <button
             onClick={handleDeleteClick}
-            className="text-rose-500  rounded-md duration-200 group"
-            aria-label="Eliminar experimento"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-rose-600 hover:bg-rose-500 transition duration-200"
+            aria-label="Eliminar plantilla"
           >
-            <HiOutlineTrash className="text-3xl group-hover:scale-150 transition-transform" />
+            <HiOutlineTrash className="text-white text-2xl" />
           </button>
         </div>
       </div>
 
-      {/* Edit Trial Modal */}
+      {/* Modal de Edición */}
       <EditTrialTemplateModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
@@ -131,7 +136,7 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
         onTrialEdited={handleTrialEdited}
       />
 
-      {/* Delete Trial Modal */}
+      {/* Modal de Eliminación */}
       <DeleteTrialTemplate
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}

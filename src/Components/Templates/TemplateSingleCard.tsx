@@ -1,3 +1,4 @@
+// TemplateSingleCard.tsx
 import React, { useState } from 'react';
 import {
   HiOutlineQrcode,
@@ -50,57 +51,63 @@ const TemplateSingleCard: React.FC<TemplateSingleCardProps> = ({
 
   return (
     <>
-      {/* Enlace que permite abrir en nueva pestaña */}
       <div className="border border-slate-200 bg-white rounded-lg px-6 py-5 m-4 relative shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out cursor-pointer">
         <Link to={detailsUrl} rel="noopener noreferrer">
           <div key={template.id} className="my-2 space-y-4">
-            {/* Código */}
+            {/* Nombre */}
             <div className="flex items-center gap-x-3">
-              <HiOutlineQrcode className="text-emerald-600 text-2xl" />
-              <h4 className="text-slate-800 font-medium">
+              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
+                <HiOutlineQrcode className="text-white text-lg" />
+              </div>
+              <h4 className="text-gray-800 font-semibold text-lg">
                 Nombre: {template.name || '—'}
               </h4>
             </div>
 
             {/* Descripción */}
             <div className="flex items-center gap-x-3">
-              <HiOutlineInformationCircle className="text-slate-600 text-2xl" />
-              <h4 className="text-slate-800 font-medium">
+              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
+                <HiOutlineInformationCircle className="text-white text-lg" />
+              </div>
+              <h4 className="text-gray-800 font-medium">
                 Descripción: {template.description || '—'}
               </h4>
             </div>
           </div>
-          {/* Number of Participants */}
+          {/* Número de Templates */}
           <div className="flex items-center gap-x-3">
-            <HiOutlineUserGroup className="text-sky-600 text-2xl" />
-            <h4 className="text-slate-800 font-semibold">
+            <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
+              <HiOutlineUserGroup className="text-white text-lg" />
+            </div>
+            <h4 className="text-gray-800 font-semibold">
               Número de Templates: {template.numberOfTemplates}
             </h4>
           </div>
         </Link>
 
-        {/* Action Buttons */}
+        {/* Botones de acción */}
         <div className="flex justify-end items-center gap-x-4 mt-2">
+          {/* Botón Editar */}
           <button
             onClick={handleEditClick}
-            className="text-yellow-500   rounded-md duration-200 group"
-            aria-label="Editar experimento"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
+            aria-label="Editar plantilla"
           >
-            <HiOutlinePencil className="text-3xl  group-hover:scale-150 transition-transform" />
+            <HiOutlinePencil className="text-white text-2xl" />
           </button>
 
-          {/* Delete Button */}
+          {/* Botón Eliminar */}
           <button
             onClick={handleDeleteClick}
-            className="text-rose-500  rounded-md duration-200 group"
-            aria-label="Eliminar experimento"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-rose-600 hover:bg-rose-500 transition duration-200"
+            aria-label="Eliminar plantilla"
           >
-            <HiOutlineTrash className="text-3xl group-hover:scale-150 transition-transform" />
+            <HiOutlineTrash className="text-white text-2xl" />
           </button>
         </div>
       </div>
 
-      {/* Edit Trial Modal */}
+      {/* Modal de edición */}
       <EditTemplateModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
@@ -108,7 +115,7 @@ const TemplateSingleCard: React.FC<TemplateSingleCardProps> = ({
         onTrialEdited={handleTrialEdited}
       />
 
-      {/* Delete Trial Modal */}
+      {/* Modal de eliminación */}
       <DeleteTemplate
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}

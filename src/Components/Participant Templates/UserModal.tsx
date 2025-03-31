@@ -1,3 +1,4 @@
+// UserModal.tsx
 import React, { useState, useEffect } from 'react';
 import {
   HiOutlineXCircle,
@@ -5,9 +6,9 @@ import {
   HiOutlineCake,
   HiOutlineUser,
 } from 'react-icons/hi';
-import { GiFootprint, GiWeightScale } from 'react-icons/gi'; // Importa GiFootprint
-import EditPersonalDataTemplateModal from '../../Services/Update/EditPersonalDataTemplate';
+import { GiFootprint, GiWeightScale } from 'react-icons/gi';
 import { FaRulerVertical } from 'react-icons/fa';
+import EditPersonalDataTemplateModal from '../../Services/Update/EditPersonalDataTemplate';
 
 interface UserModalProps {
   user: any;
@@ -39,10 +40,10 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center">
         <div className="bg-white rounded-lg p-6 shadow-lg">
-          <p className="text-slate-700">No personal data available.</p>
+          <p className="text-gray-700">No personal data available.</p>
           <button
             onClick={onClose}
-            className="mt-4 px-4 py-2 bg-rose-500 text-white rounded hover:bg-rose-600 transition-colors"
+            className="mt-4 px-4 py-2 bg-rose-600 text-white rounded hover:bg-rose-700 transition-colors"
           >
             Cerrar
           </button>
@@ -50,6 +51,7 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
       </div>
     );
   }
+
   return (
     <>
       <div
@@ -63,31 +65,33 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
           onClick={(event) => event.stopPropagation()}
           className="w-full max-w-lg bg-white rounded-lg px-6 py-5 relative shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out"
         >
-          {/* Close Button */}
+          {/* Botón de cierre */}
           <button
             onClick={onClose}
             aria-label="Cerrar modal"
             className="absolute top-4 right-4 focus:outline-none group"
           >
-            <HiOutlineXCircle className="text-2xl text-rose-500 cursor-pointer group-hover:text-rose-600 transition-colors" />
+            <HiOutlineXCircle className="text-2xl text-rose-600 cursor-pointer group-hover:text-rose-700 transition-colors" />
           </button>
 
-          {/* Modal Title */}
+          {/* Título del modal */}
           <h2
             id="modal-title"
-            className="text-2xl font-semibold mb-4 text-slate-800"
+            className="text-2xl font-semibold mb-4 text-gray-800"
           >
             Datos Personales del Participante
           </h2>
 
-          {/* Modal Content */}
+          {/* Contenido del modal */}
           <div className="space-y-4">
             {/* Nombre */}
             <div className="flex items-center gap-x-3">
-              <HiOutlineUser className="text-emerald-600 text-2xl" />
+              <div className="w-10 h-10 flex items-center justify-center rounded-full bg-sky-950">
+                <HiOutlineUser className="text-white text-xl" />
+              </div>
               <div>
-                <span className="text-slate-700 font-medium">Nombre:</span>
-                <span className="ml-2 text-slate-800">
+                <span className="text-gray-700 font-medium">Nombre:</span>
+                <span className="ml-2 text-gray-800 font-semibold text-xl">
                   {currentUser.name || '—'}
                 </span>
               </div>
@@ -95,10 +99,12 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
 
             {/* Edad */}
             <div className="flex items-center gap-x-3">
-              <HiOutlineCake className="text-indigo-600 text-2xl" />
+              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
+                <HiOutlineCake className="text-white text-lg" />
+              </div>
               <div>
-                <span className="text-slate-700 font-medium">Edad:</span>
-                <span className="ml-2 text-slate-800">
+                <span className="text-gray-700 font-medium">Edad:</span>
+                <span className="ml-2 text-gray-800 font-medium">
                   {currentUser.age || '—'} años
                 </span>
               </div>
@@ -106,11 +112,12 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
 
             {/* Altura */}
             <div className="flex items-center gap-x-3">
-              <FaRulerVertical className="text-teal-600 text-2xl" />{' '}
-              {/* Icono actualizado */}
+              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
+                <FaRulerVertical className="text-white text-lg" />
+              </div>
               <div>
-                <span className="text-slate-700 font-medium">Altura:</span>
-                <span className="ml-2 text-slate-800">
+                <span className="text-gray-700 font-medium">Altura:</span>
+                <span className="ml-2 text-gray-800 font-medium">
                   {currentUser.height ? `${currentUser.height} m` : '—'}
                 </span>
               </div>
@@ -118,10 +125,12 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
 
             {/* Peso */}
             <div className="flex items-center gap-x-3">
-              <GiWeightScale className="text-cyan-600 text-2xl" />
+              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
+                <GiWeightScale className="text-white text-lg" />
+              </div>
               <div>
-                <span className="text-slate-700 font-medium">Peso:</span>
-                <span className="ml-2 text-slate-800">
+                <span className="text-gray-700 font-medium">Peso:</span>
+                <span className="ml-2 text-gray-800 font-medium">
                   {currentUser.weight || '—'} kg
                 </span>
               </div>
@@ -129,33 +138,34 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
 
             {/* Longitud de Pie */}
             <div className="flex items-center gap-x-3">
-              <GiFootprint className="text-violet-600 text-2xl" />{' '}
-              {/* Icono actualizado */}
+              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
+                <GiFootprint className="text-white text-lg" />
+              </div>
               <div>
-                <span className="text-slate-700 font-medium">
+                <span className="text-gray-700 font-medium">
                   Longitud de Pie:
                 </span>
-                <span className="ml-2 text-slate-800">
+                <span className="ml-2 text-gray-800 font-medium">
                   {currentUser.footLength || '—'} cm
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Edit Button */}
+          {/* Botón de edición */}
           <div className="flex justify-end items-center gap-x-4 mt-6">
             <button
               onClick={openEditModal}
-              className="bg-emerald-500 text-white p-2 rounded-md hover:bg-emerald-600 transition-colors duration-200 group"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200 group"
               aria-label="Editar datos personales"
             >
-              <HiOutlinePencil className="text-lg group-hover:scale-110 transition-transform" />
+              <HiOutlinePencil className="text-white text-2xl group-hover:scale-110 transition-transform" />
             </button>
           </div>
         </div>
       </div>
 
-      {/* Edit Personal Data Modal */}
+      {/* Modal de edición de datos personales */}
       <EditPersonalDataTemplateModal
         isOpen={isEditModalOpen}
         onClose={closeEditModal}

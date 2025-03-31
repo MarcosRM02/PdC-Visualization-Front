@@ -1,3 +1,4 @@
+// ParticipantSingleCard.tsx
 import React, { useState, useEffect } from 'react';
 import {
   HiOutlineIdentification,
@@ -84,19 +85,19 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
   }, [showModal, participants.personalData?.id, accessToken, apiUrl]);
 
   const formattedCode = participants.code || '—';
-
   const detailsUrl = `/trials/by-participant/${participants.id}`;
 
   return (
     <>
-      {/* Enlace que permite abrir en nueva pestaña */}
       <div className="border border-slate-200 bg-white rounded-lg px-6 py-5 m-4 relative shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out cursor-pointer">
         <Link to={detailsUrl} rel="noopener noreferrer">
           <div key={participants.id} className="my-2 space-y-4">
             {/* Código */}
             <div className="flex items-center gap-x-3">
-              <HiOutlineIdentification className="text-emerald-600 text-2xl" />
-              <h4 className="text-slate-800 font-medium">
+              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-950">
+                <HiOutlineIdentification className="text-white text-lg" />
+              </div>
+              <h4 className="text-gray-800 font-semibold">
                 Código: {formattedCode}
               </h4>
             </div>
@@ -111,28 +112,28 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
               e.stopPropagation();
               setShowModal(true);
             }}
-            className="text-teal-500 rounded-md duration-200 group"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
             aria-label="Mostrar detalles"
           >
-            <HiOutlineEye className="text-3xl group-hover:scale-150 transition-transform" />
+            <HiOutlineEye className="text-white text-2xl" />
           </button>
 
           {/* Editar */}
           <button
             onClick={handleEditClick}
-            className="text-yellow-500 rounded-md  duration-200 group"
-            aria-label="Editar experimento"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
+            aria-label="Editar participante"
           >
-            <HiOutlinePencil className="text-3xl group-hover:scale-150 transition-transform" />
+            <HiOutlinePencil className="text-white text-2xl" />
           </button>
 
           {/* Eliminar */}
           <button
             onClick={handleDeleteClick}
-            className="text-rose-500  rounded-md duration-200 group"
-            aria-label="Eliminar experimento"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-rose-600 hover:bg-rose-500 transition duration-200"
+            aria-label="Eliminar participante"
           >
-            <HiOutlineTrash className="text-3xl group-hover:scale-150 transition-transform" />
+            <HiOutlineTrash className="text-white text-2xl" />
           </button>
         </div>
 
@@ -141,6 +142,7 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
           <UserModal user={modalData} onClose={() => setShowModal(false)} />
         )}
       </div>
+
       {/* Modal de edición */}
       <EditParticipantModal
         isOpen={isEditModalOpen}

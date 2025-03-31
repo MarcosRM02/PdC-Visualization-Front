@@ -184,7 +184,7 @@ const ShowTrials = () => {
         <div className="flex justify-end mb-6">
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className="flex items-center text-sky-800 hover:text-sky-900 transition-colors duration-200"
+            className="flex items-center text-sky-900 hover:text-blue-800 transition-colors duration-200"
           >
             <MdOutlineAddBox className="text-4xl mr-2" />
           </button>

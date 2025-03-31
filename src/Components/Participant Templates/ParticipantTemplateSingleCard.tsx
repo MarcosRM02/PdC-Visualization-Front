@@ -55,6 +55,7 @@ const ParticipantTemplateSingleCard: React.FC<
     setDeleteModalOpen(false);
     onParticipantDeleted();
   };
+
   useEffect(() => {
     if (showModal && participants.personaldataid) {
       const config = {
@@ -81,50 +82,52 @@ const ParticipantTemplateSingleCard: React.FC<
   }, [showModal, participants.personaldataid, accessToken, apiUrl]);
 
   const formattedCode = participants.code || '—';
+
   return (
     <>
-      {/* Enlace que permite abrir en nueva pestaña */}
       <div className="border border-slate-200 bg-white rounded-lg px-6 py-5 m-4 relative shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out cursor-pointer">
         <div key={participants.id} className="my-2 space-y-4">
-          {/* Código */}
+          {/* Campo: Código */}
           <div className="flex items-center gap-x-3">
-            <HiOutlineIdentification className="text-emerald-600 text-2xl" />
-            <h4 className="text-slate-800 font-medium">
-              Código: {formattedCode}
+            <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
+              <HiOutlineIdentification className="text-white text-lg" />
+            </div>
+            <h4 className="text-gray-800 font-medium">
+              <strong>Código:</strong> {formattedCode}
             </h4>
           </div>
         </div>
 
         {/* Botones de acción */}
         <div className="flex justify-end items-center gap-x-4 mt-2">
-          {/* Mostrar Detalles */}
+          {/* Botón: Mostrar Detalles */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               setShowModal(true);
             }}
-            className="text-teal-500 rounded-md duration-200 group"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
             aria-label="Mostrar detalles"
           >
-            <HiOutlineEye className="text-3xl group-hover:scale-150 transition-transform" />
+            <HiOutlineEye className="text-white text-2xl" />
           </button>
 
-          {/* Editar */}
+          {/* Botón: Editar */}
           <button
             onClick={handleEditClick}
-            className="text-yellow-500 rounded-md  duration-200 group"
-            aria-label="Editar experimento"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
+            aria-label="Editar participante"
           >
-            <HiOutlinePencil className="text-3xl group-hover:scale-150 transition-transform" />
+            <HiOutlinePencil className="text-white text-2xl" />
           </button>
 
-          {/* Eliminar */}
+          {/* Botón: Eliminar */}
           <button
             onClick={handleDeleteClick}
-            className="text-rose-500  rounded-md duration-200 group"
-            aria-label="Eliminar experimento"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-rose-600 hover:bg-rose-500 transition duration-200"
+            aria-label="Eliminar participante"
           >
-            <HiOutlineTrash className="text-3xl group-hover:scale-150 transition-transform" />
+            <HiOutlineTrash className="text-white text-2xl" />
           </button>
         </div>
 
@@ -133,6 +136,7 @@ const ParticipantTemplateSingleCard: React.FC<
           <UserModal user={modalData} onClose={() => setShowModal(false)} />
         )}
       </div>
+
       {/* Modal de edición */}
       <EditParticipantTemplateModal
         isOpen={isEditModalOpen}

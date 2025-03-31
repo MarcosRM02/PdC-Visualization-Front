@@ -177,7 +177,7 @@ const ShowParticipant = () => {
           <div className="relative inline-block" ref={menuRef}>
             <button
               onClick={() => setMenuOpen((prev) => !prev)}
-              className="flex items-center text-sky-800 hover:text-sky-900 transition-colors duration-200"
+              className="flex items-center text-sky-900 hover:text-blue-800 transition-colors duration-200"
             >
               <MdOutlineAddBox className="text-4xl mr-2" />
             </button>
