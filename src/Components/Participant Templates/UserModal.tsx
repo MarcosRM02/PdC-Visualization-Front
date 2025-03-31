@@ -6,7 +6,7 @@ import {
   HiOutlineUser,
 } from 'react-icons/hi';
 import { GiFootprint, GiWeightScale } from 'react-icons/gi'; // Importa GiFootprint
-import EditPersonalDataModal from '../../Services/Update/EditPersonalData';
+import EditPersonalDataTemplateModal from '../../Services/Update/EditPersonalDataTemplate';
 import { FaRulerVertical } from 'react-icons/fa';
 
 interface UserModalProps {
@@ -50,7 +50,6 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
       </div>
     );
   }
-
   return (
     <>
       <div
@@ -157,7 +156,7 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
       </div>
 
       {/* Edit Personal Data Modal */}
-      <EditPersonalDataModal
+      <EditPersonalDataTemplateModal
         isOpen={isEditModalOpen}
         onClose={closeEditModal}
         personalDataId={currentUser.id}

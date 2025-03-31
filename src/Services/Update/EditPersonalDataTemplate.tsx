@@ -1,4 +1,4 @@
-// src/Components/Participants/CreateParticipantModal.tsx
+// src/Components/Participants/EditPersonalDataModal.tsx
 
 import React, { useEffect, useState } from 'react';
 import Spinner from '../../Components/CommonComponents/Spinner';
@@ -6,45 +6,40 @@ import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
 import { NumericFormat } from 'react-number-format';
-import { useParams } from 'react-router-dom';
 
-interface CreateParticipantTemplateModalProps {
+interface EditPersonalDataModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onParticipantCreated: () => void; // Callback para notificar al padre
+  personalDataId: string; // ID de personalData a editar
+  onPersonalDataEdited: (updatedUser: any) => void; // Callback con el usuario actualizado
 }
 
-const CreateParticipantTemplateModal: React.FC<
-  CreateParticipantTemplateModalProps
-> = ({ isOpen, onClose, onParticipantCreated }) => {
+const EditPersonalDataTemplateModal: React.FC<EditPersonalDataModalProps> = ({
+  isOpen,
+  onClose,
+  personalDataId,
+  onPersonalDataEdited,
+}) => {
   const [height, setHeight] = useState<number | undefined>(undefined);
   const [weight, setWeight] = useState<number | undefined>(undefined);
   const [footLength, setFootLength] = useState<number | undefined>(undefined);
   const [name, setName] = useState('');
   const [age, setAge] = useState<string>('');
-  const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
-  const { id } = useParams<{ id: string }>(); // ID del experimento
+
   const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
 
-  const handleCreateParticipant = async () => {
-    // Validaciones básicas
-    if (!code.trim()) {
-      enqueueSnackbar('El campo "Code" es obligatorio.', {
-        variant: 'warning',
-      });
-      return;
-    }
-
-    const dataToSend = {
-      ...(name && { name }),
-      ...(age && { age: Number(age) }),
-      ...(height !== undefined && { height }),
-      ...(weight !== undefined && { weight }),
-      ...(footLength !== undefined && { footLength }),
+  const handleEditPersonalData = async () => {
+    // Construir el objeto de datos con todos los campos
+    const data: any = {
+      name: name.trim() ? name : '',
+      age: age.trim() ? Number(age) : null,
+      height: height !== undefined ? height : null,
+      weight: weight !== undefined ? weight : null,
+      footLength: footLength !== undefined ? footLength : null,
     };
 
     const config = {
@@ -54,59 +49,21 @@ const CreateParticipantTemplateModal: React.FC<
     };
 
     setLoading(true);
-
     try {
-      // Primera solicitud POST para personalData
-      const response1 = await axios.post(
-        `${apiUrl}/personalDataTemplate`,
-        dataToSend,
+      const response = await axios.put(
+        `${apiUrl}/personalDataTemplate/edit/${personalDataId}`,
+        data,
         config,
       );
-
-      // Verifica que la respuesta contenga el ID de personalData
-      let newPersonalDataId = response1.data;
-
-      // if (typeof response1.data === 'object') {
-      //   newPersonalDataId =
-      //     response1.data.id ||
-      //     response1.data.ID ||
-      //     response1.data.personalDataId;
-      // } else if (typeof response1.data === 'number') {
-      //   newPersonalDataId = response1.data;
-      // }
-
-      console.log('Nuevo personalData ID:', newPersonalDataId);
-
-      if (!newPersonalDataId) {
-        throw new Error('No se obtuvo el ID de personalData en la respuesta.');
-      }
-
-      // Segunda solicitud POST para crear el participante utilizando el ID del experimento
-      const participantData = {
-        code,
-        personaldataid: newPersonalDataId,
-      };
-
-      await axios.post(
-        `${apiUrl}/participantTemplates/create/${id}`,
-        participantData,
-        config,
-      );
-
       setLoading(false);
-      enqueueSnackbar('Participant Created successfully', {
+      enqueueSnackbar('Personal Data Edited successfully', {
         variant: 'success',
       });
       onClose();
-      onParticipantCreated(); // Notificar al componente padre
 
-      // Limpiar campos
-      setCode('');
-      setName('');
-      setAge('');
-      setHeight(undefined);
-      setWeight(undefined);
-      setFootLength(undefined);
+      // Obtener los datos actualizados desde la respuesta
+      const updatedUser = response.data;
+      onPersonalDataEdited(updatedUser); // Pasar los datos actualizados al componente padre
     } catch (error: any) {
       setLoading(false);
       if (
@@ -117,19 +74,61 @@ const CreateParticipantTemplateModal: React.FC<
         enqueueSnackbar(`Error: ${error.response.data.message}`, {
           variant: 'error',
         });
-      } else if (error.message) {
-        enqueueSnackbar(`Error: ${error.message}`, { variant: 'error' });
       } else {
-        enqueueSnackbar('Error creating the participant', { variant: 'error' });
+        enqueueSnackbar('Error editing personal data', { variant: 'error' });
       }
-      console.error('Error creating participant:', error);
+      console.error('Error editing personal data:', error);
     }
   };
 
   useEffect(() => {
+    if (isOpen && personalDataId) {
+      const fetchPersonalData = async () => {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        };
+        setLoading(true);
+        try {
+          const response = await axios.get(
+            `${apiUrl}/personalDataTemplate/${personalDataId}`,
+            config,
+          );
+          setName(response.data.name || '');
+          setAge(response.data.age ? String(response.data.age) : '');
+          setHeight(
+            response.data.height !== undefined
+              ? response.data.height
+              : undefined,
+          );
+          setWeight(
+            response.data.weight !== undefined
+              ? response.data.weight
+              : undefined,
+          );
+          setFootLength(
+            response.data.footLength !== undefined
+              ? response.data.footLength
+              : undefined,
+          );
+          setLoading(false);
+        } catch (error) {
+          setLoading(false);
+          enqueueSnackbar('Error fetching personal data.', {
+            variant: 'error',
+          });
+          console.error('Error fetching personal data:', error);
+        }
+      };
+
+      fetchPersonalData();
+    }
+  }, [isOpen, personalDataId, accessToken, apiUrl, enqueueSnackbar]);
+
+  useEffect(() => {
     if (!isOpen) {
       // Limpiar campos al cerrar el modal
-      setCode('');
       setName('');
       setAge('');
       setHeight(undefined);
@@ -146,7 +145,7 @@ const CreateParticipantTemplateModal: React.FC<
         {/* Cabecera del Modal */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Crear Participante
+            Editar Datos Personales
           </h2>
           <button
             onClick={onClose}
@@ -164,32 +163,13 @@ const CreateParticipantTemplateModal: React.FC<
           </div>
         ) : (
           <div className="flex flex-col space-y-4">
-            {/* Campo de Code (Requerido) */}
-            <div>
-              <label
-                className="block text-gray-700 text-lg mb-2"
-                htmlFor="code"
-              >
-                Code <span className="text-red-500">*</span>
-              </label>
-              <input
-                id="code"
-                type="text"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Ingrese el código del participante"
-                required
-              />
-            </div>
-
             {/* Campo de Name (Opcional) */}
             <div>
               <label
                 className="block text-gray-700 text-lg mb-2"
                 htmlFor="name"
               >
-                Name <span className="text-gray-500">(opcional)</span>
+                Name
               </label>
               <input
                 id="name"
@@ -204,7 +184,7 @@ const CreateParticipantTemplateModal: React.FC<
             {/* Campo de Age (Opcional) */}
             <div>
               <label className="block text-gray-700 text-lg mb-2" htmlFor="age">
-                Age <span className="text-gray-500">(opcional)</span>
+                Age
               </label>
               <input
                 id="age"
@@ -224,7 +204,7 @@ const CreateParticipantTemplateModal: React.FC<
                 className="block text-gray-700 text-lg mb-2"
                 htmlFor="height"
               >
-                Height <span className="text-gray-500">(opcional)</span>
+                Height
               </label>
               <NumericFormat
                 id="height"
@@ -249,7 +229,7 @@ const CreateParticipantTemplateModal: React.FC<
                 className="block text-gray-700 text-lg mb-2"
                 htmlFor="weight"
               >
-                Weight <span className="text-gray-500">(opcional)</span>
+                Weight
               </label>
               <NumericFormat
                 id="weight"
@@ -274,7 +254,7 @@ const CreateParticipantTemplateModal: React.FC<
                 className="block text-gray-700 text-lg mb-2"
                 htmlFor="footLength"
               >
-                Foot Length <span className="text-gray-500">(opcional)</span>
+                Foot Length
               </label>
               <NumericFormat
                 id="footLength"
@@ -295,7 +275,7 @@ const CreateParticipantTemplateModal: React.FC<
 
             {/* Botón de Guardar */}
             <button
-              onClick={handleCreateParticipant}
+              onClick={handleEditPersonalData}
               className="mt-4 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors duration-200"
               disabled={loading} // Deshabilitar mientras carga
             >
@@ -308,4 +288,4 @@ const CreateParticipantTemplateModal: React.FC<
   );
 };
 
-export default CreateParticipantTemplateModal;
+export default EditPersonalDataTemplateModal;

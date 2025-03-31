@@ -21,6 +21,7 @@ import ShowTrialsTemplates from './Services/Read/ShowTrialsTemplates';
 import ShowAllParticipants from './Services/Read/ShowAllParticipants';
 import DeleteParticipantTemplateModal from './Services/Delete/DeleteParticipantTemplate';
 import AddExistingParticipantsModal from './Services/Create/AddExistingParticipants';
+import EditPersonalDataTemplateModal from './Services/Update/EditPersonalDataTemplate';
 
 const App = () => {
   return (
@@ -288,6 +289,21 @@ const App = () => {
               throw new Error('Function not implemented.');
             }}
             onTrialCreated={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
+        }
+      />
+      <Route
+        path="/personalDataTemplate/edit/:id"
+        element={
+          <EditPersonalDataTemplateModal
+            isOpen={false}
+            onClose={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+            personalDataId={''}
+            onPersonalDataEdited={function (): void {
               throw new Error('Function not implemented.');
             }}
           />
