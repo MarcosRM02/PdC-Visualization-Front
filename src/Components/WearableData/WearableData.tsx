@@ -1,25 +1,16 @@
-// src/components/WearablesData.tsx
-import React, {
-  useRef,
-  useEffect,
-  useState,
-  Fragment,
-  useCallback,
-} from 'react';
+import { useRef, useEffect, useState, Fragment, useCallback } from 'react';
 import ReactPlayer from 'react-player';
 import axios from 'axios';
 import { DataFrame } from 'danfojs'; //concat tb estaba
 import Plotly from 'plotly.js-dist-min';
 import { throttle } from 'lodash';
-
 import { WearableDataProps } from '../../Types/Interfaces';
 import VideoSection from './VideoSection';
 import ControlPanel from './ControlPanel';
 import { handleRelayout, plotWearablesData } from './utils/plotHelpers';
 import { descargarDatosVisibles } from './utils/dataDownload';
-
-//import HeatmapControlPanel from './heatmapControl';
 import TimeProgressBar from './TimeProgressBar';
+//import CustomLegendPlot from './loDeLaLeyenda_UsarloMasTarde';
 
 const WearablesData = ({
   wearables,
@@ -507,6 +498,7 @@ const WearablesData = ({
           )
         }
       />
+      {/* <CustomLegendPlot /> */}
       {/* Sección de gráficos detallados */}
       <div className="mt-16 flex flex-col lg:flex-row gap-8">
         <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">

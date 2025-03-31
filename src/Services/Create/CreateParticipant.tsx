@@ -1,5 +1,3 @@
-// src/Components/Participants/CreateParticipantModal.tsx
-
 import React, { useEffect, useState } from 'react';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import axios from 'axios';
@@ -89,7 +87,7 @@ const CreateParticipantModal: React.FC<CreateParticipantModalProps> = ({
       // Segunda solicitud POST para crear el participante utilizando el ID del experimento
       const participantData = {
         code,
-        personalDataId: newPersonalDataId,
+        personaldataid: newPersonalDataId,
       };
 
       console.log('Datos del participante a crear:', participantData);
@@ -99,7 +97,7 @@ const CreateParticipantModal: React.FC<CreateParticipantModalProps> = ({
         participantData,
         config,
       );
-
+      console.log('Participante creado con éxito ', response1.data);
       setLoading(false);
       enqueueSnackbar('Participant Created successfully', {
         variant: 'success',

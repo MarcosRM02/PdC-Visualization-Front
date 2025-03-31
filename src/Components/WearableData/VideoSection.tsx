@@ -1,4 +1,3 @@
-// src/components/VideoSection.tsx
 import React from 'react';
 import ReactPlayer from 'react-player';
 import { VideoCameraIcon } from '@heroicons/react/24/solid';

@@ -1,4 +1,3 @@
-// src/components/TimeProgressBar.tsx
 import React from 'react';
 
 interface TimeProgressBarProps {

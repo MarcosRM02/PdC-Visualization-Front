@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { FC, useState, useEffect, memo } from 'react';
 import {
   HiOutlineQrcode,
   HiOutlineEye,
@@ -25,7 +25,7 @@ interface ParticipantSingleCardProps {
   onParticipantEdited: () => void;
 }
 
-const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
+const ParticipantSingleCard: FC<ParticipantSingleCardProps> = ({
   participants,
   onParticipantDeleted,
   onParticipantEdited,
@@ -174,4 +174,4 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
   );
 };
 
-export default React.memo(ParticipantSingleCard);
+export default memo(ParticipantSingleCard);

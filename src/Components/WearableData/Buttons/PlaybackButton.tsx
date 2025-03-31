@@ -1,4 +1,3 @@
-// src/components/Buttons/PlaybackButton.tsx
 import React from 'react';
 
 interface PlaybackButtonProps {
