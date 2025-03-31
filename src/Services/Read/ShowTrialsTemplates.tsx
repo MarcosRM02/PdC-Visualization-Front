@@ -1,5 +1,3 @@
-// src/Pages/Trials/ShowTrials.tsx
-
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
@@ -11,7 +9,8 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useSnackbar } from 'notistack';
 import CreateTrialTemplateModal from '../Create/CreateTrialTemplate';
-import BackButton from '../../Components/CommonComponents/BackButton';
+import Breadcrumb from '../../Components/CommonComponents/Breadcrumb';
+import { BreadcrumbItem } from '../../Types/Interfaces';
 
 const ShowTrialsTemplates = () => {
   const [sWDatas, setSWDatas] = useState<any[]>([]);
@@ -28,6 +27,7 @@ const ShowTrialsTemplates = () => {
   const { id } = useParams<{ id: string }>();
 
   const accessToken = localStorage.getItem('accessToken');
+  const professionalId = localStorage.getItem('id');
   const apiUrl = import.meta.env.VITE_API_URL;
   const { enqueueSnackbar } = useSnackbar();
 
@@ -45,6 +45,14 @@ const ShowTrialsTemplates = () => {
   const handleTrialCreated = useCallback(() => {
     setRefreshTrigger((prev) => !prev);
   }, [enqueueSnackbar]);
+
+  const breadcrumbItems: BreadcrumbItem[] = [
+    {
+      label: 'Templates',
+      path: `/templates/by-professional/${professionalId}`,
+    },
+    { label: 'Trial Templates', path: `/trialTemplates/by-professional/${id}` },
+  ];
 
   useEffect(() => {
     const fetchTrials = async () => {
@@ -129,12 +137,12 @@ const ShowTrialsTemplates = () => {
       {/* Área fija: cabecera, filtros y botones */}
       <div className="p-6">
         {/* Título Principal */}
+        <div className="flex justify-between items-center mb-6">
+          <Breadcrumb items={breadcrumbItems} />
+        </div>
         <h1 className="text-3xl font-bold text-gray-800 mb-6">
           Trial Templates
         </h1>
-        <div className="flex justify-between items-center mb-6">
-          <BackButton />
-        </div>
         {/* Sección de Filtros */}
         <div className="flex flex-col md:flex-row items-center justify-between mb-6 space-y-4 md:space-y-0">
           {/* Filtro por Código */}

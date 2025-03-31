@@ -104,3 +104,12 @@ export interface IProfessional {
 export interface IProfessionalProps {
   professionals: IProfessional[];
 }
+
+export type BreadcrumbItem = {
+  label: string;
+  path: string;
+};
+
+export interface BreadcrumbProps {
+  items: BreadcrumbItem[];
+}

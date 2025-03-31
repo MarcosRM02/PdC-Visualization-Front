@@ -1,5 +1,3 @@
-// src/Pages/Trials/ShowTrials.tsx
-
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
@@ -10,6 +8,8 @@ import { FaSearch, FaUndo } from 'react-icons/fa';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useSnackbar } from 'notistack';
 import CreateTemplateModal from '../Create/CreateTemplate';
+import Breadcrumb from '../../Components/CommonComponents/Breadcrumb';
+import { BreadcrumbItem } from '../../Types/Interfaces';
 
 const ShowTemplates = () => {
   const [sWDatas, setSWDatas] = useState<any[]>([]);
@@ -28,6 +28,10 @@ const ShowTemplates = () => {
   const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
   const { enqueueSnackbar } = useSnackbar();
+
+  const breadcrumbItems: BreadcrumbItem[] = [
+    { label: 'Templates', path: `/templates/by-professional/${id}` },
+  ];
 
   // Callback para manejar la edición de una prueba
   const handleTrialEdited = useCallback(() => {
@@ -99,6 +103,9 @@ const ShowTemplates = () => {
       {/* Área fija: cabecera, filtros y botones */}
       <div className="p-6">
         {/* Título Principal */}
+        <div className="flex justify-between items-center mb-6">
+          <Breadcrumb items={breadcrumbItems} />
+        </div>
         <h1 className="text-3xl font-bold text-gray-800 mb-6">Templates</h1>
         {/* Sección de Filtros */}
         <div className="flex flex-col md:flex-row items-center justify-between mb-6 space-y-4 md:space-y-0">

@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { useParams, useSearchParams } from 'react-router-dom';
-import BackButton from '../../Components/CommonComponents/BackButton';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import { WearableData } from '../../Types/Interfaces';
 import WearablesData from '../../Components/WearableData/WearableData';
+import Breadcrumb from '../../Components/CommonComponents/Breadcrumb';
+import { BreadcrumbItem } from '../../Types/Interfaces';
 
 const ShowWearables = () => {
   const [wearables, setWearables] = useState<WearableData[]>([]);
@@ -18,6 +19,18 @@ const ShowWearables = () => {
       .join('&');
   }, [wearableIds]);
   const apiUrl = import.meta.env.VITE_API_URL;
+  const breadcrumbItems: BreadcrumbItem[] = [
+    { label: 'Experimentos', path: '/' },
+    {
+      label: 'Participantes',
+      path: `/participants/by-experiment/${participantId}`,
+    },
+    { label: 'Trials', path: `/trials/by-participant/${trialId}` },
+    {
+      label: 'Wearables Data',
+      path: `/swData/getData/${experimentId}/${participantId}/${swId}/${trialId}?${wearableQuery}`,
+    },
+  ];
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
@@ -49,14 +62,10 @@ const ShowWearables = () => {
       {/* Área fija: cabecera, filtros y botones */}
       <div className="p-6">
         {/* Título Principal */}
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">
-          Wearables Data
-        </h1>
-
-        {/* Cabecera con Botones de Navegación */}
         <div className="flex justify-between items-center mb-6">
-          <BackButton />
+          <Breadcrumb items={breadcrumbItems} />
         </div>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Wearables Data</h1>
       </div>
       {/* Contenido Principal */}
 

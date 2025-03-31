@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import BackButton from '../../Components/CommonComponents/BackButton';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -42,7 +41,6 @@ const DeletePersonalData = () => {
 
   return (
     <div className="p-4">
-      <BackButton />
       <h1 className="text-3xl my-4">Delete Personal Data</h1>
       {loading ? <Spinner /> : ''}
       <div className="flex flex-col items-center border-2 border-sky-400 rounded-xl w-[600px] p-8 mx-auto">

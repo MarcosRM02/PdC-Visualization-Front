@@ -3,7 +3,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import BackButton from '../../Components/CommonComponents/BackButton';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import TrialCard from '../../Components/Trials/TrialCard';
 import { MdOutlineAddBox } from 'react-icons/md';
@@ -12,6 +11,8 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useSnackbar } from 'notistack';
 import CreateTrialModal from '../../Services/Create/CreateTrial'; // Importar el modal
+import Breadcrumb from '../../Components/CommonComponents/Breadcrumb';
+import { BreadcrumbItem } from '../../Types/Interfaces';
 
 const ShowTrials = () => {
   const [sWDatas, setSWDatas] = useState<any[]>([]);
@@ -29,6 +30,12 @@ const ShowTrials = () => {
   const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
   const { enqueueSnackbar } = useSnackbar();
+
+  const breadcrumbItems: BreadcrumbItem[] = [
+    { label: 'Experimentos', path: '/' },
+    { label: 'Participantes', path: `/participants/by-experiment/${id}` },
+    { label: 'Trials', path: `/trials/by-participant/${id}` },
+  ];
 
   // Callback para manejar la edición de una prueba
   const handleTrialEdited = useCallback(() => {
@@ -128,10 +135,10 @@ const ShowTrials = () => {
       {/* Área fija: cabecera, filtros y botones */}
       <div className="p-6">
         {/* Título Principal */}
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Trials</h1>
         <div className="flex justify-between items-center mb-6">
-          <BackButton />
+          <Breadcrumb items={breadcrumbItems} />
         </div>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Trials</h1>
 
         {/* Sección de Filtros */}
         <div className="flex flex-col md:flex-row items-center justify-between mb-6 space-y-4 md:space-y-0">

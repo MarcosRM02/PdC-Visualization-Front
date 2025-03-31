@@ -11,6 +11,13 @@ import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import ExperimentCard from '../../Components/Experiments/ExperimentCard';
 
+import Breadcrumb from '../../Components/CommonComponents/Breadcrumb';
+import { BreadcrumbItem } from '../../Types/Interfaces';
+
+const breadcrumbItems: BreadcrumbItem[] = [
+  { label: 'Experimentos', path: '/' },
+];
+
 interface Experiment {
   id: number;
   name: string;
@@ -136,8 +143,9 @@ const ShowExperiment = () => {
       {/* Área fija: cabecera, filtros y botones */}
       <div className="p-6">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Experiments</h1>
+          <Breadcrumb items={breadcrumbItems} />
         </div>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Experimentos</h1>
 
         <div className="flex flex-col md:flex-row items-center justify-between mb-6 space-y-4 md:space-y-0">
           <div className="flex items-center bg-gray-100 rounded-lg px-4 py-2 w-full md:w-1/3">

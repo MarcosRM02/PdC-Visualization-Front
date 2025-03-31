@@ -5,7 +5,6 @@ import axios from 'axios';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import { MdOutlineAddBox } from 'react-icons/md';
 import { FaSearch, FaUndo } from 'react-icons/fa';
-import BackButton from '../../Components/CommonComponents/BackButton';
 import ParticipantCard from '../../Components/Participants/ParticipantCard';
 import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
@@ -14,6 +13,9 @@ import CreateParticipantModal from '../../Services/Create/CreateParticipant'; //
 import AddExistingParticipantsModal from '../Create/AddExistingParticipants';
 import { IoPersonAddOutline } from 'react-icons/io5';
 import { BsPersonCheck } from 'react-icons/bs';
+
+import Breadcrumb from '../../Components/CommonComponents/Breadcrumb';
+import { BreadcrumbItem } from '../../Types/Interfaces';
 
 interface Participant {
   id: number;
@@ -43,6 +45,11 @@ const ShowParticipant = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   // Para detectar clics fuera del menú y cerrarlo
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const breadcrumbItems: BreadcrumbItem[] = [
+    { label: 'Experimentos', path: '/' },
+    { label: 'Participantes', path: `/participants/by-experiment/${id}` },
+  ];
 
   // Función para obtener los participantes
   const fetchParticipants = useCallback(async () => {
@@ -134,10 +141,10 @@ const ShowParticipant = () => {
       {/* Área fija: cabecera, filtros y botones */}
       <div className="p-6">
         {/* Título Principal */}
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Participants</h1>
         <div className="flex justify-between items-center mb-6">
-          <BackButton />
+          <Breadcrumb items={breadcrumbItems} />
         </div>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Participantes</h1>
 
         {/* Sección de Filtros */}
         <div className="flex flex-col md:flex-row items-center justify-between mb-6 space-y-4 md:space-y-0">
