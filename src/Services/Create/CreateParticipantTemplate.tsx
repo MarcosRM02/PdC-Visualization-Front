@@ -58,7 +58,7 @@ const CreateParticipantTemplateModal: React.FC<
     try {
       // Primera solicitud POST para personalData
       const response1 = await axios.post(
-        `${apiUrl}/personalData`,
+        `${apiUrl}/personalDataTemplate`,
         dataToSend,
         config,
       );
@@ -66,16 +66,16 @@ const CreateParticipantTemplateModal: React.FC<
       console.log('Respuesta personalData:', response1.data); // Verificar la estructura de la respuesta
 
       // Verifica que la respuesta contenga el ID de personalData
-      let newPersonalDataId: number | undefined;
+      let newPersonalDataId = response1.data;
 
-      if (typeof response1.data === 'object') {
-        newPersonalDataId =
-          response1.data.id ||
-          response1.data.ID ||
-          response1.data.personalDataId;
-      } else if (typeof response1.data === 'number') {
-        newPersonalDataId = response1.data;
-      }
+      // if (typeof response1.data === 'object') {
+      //   newPersonalDataId =
+      //     response1.data.id ||
+      //     response1.data.ID ||
+      //     response1.data.personalDataId;
+      // } else if (typeof response1.data === 'number') {
+      //   newPersonalDataId = response1.data;
+      // }
 
       console.log('Nuevo personalData ID:', newPersonalDataId);
 
@@ -86,7 +86,7 @@ const CreateParticipantTemplateModal: React.FC<
       // Segunda solicitud POST para crear el participante utilizando el ID del experimento
       const participantData = {
         code,
-        personalDataId: newPersonalDataId,
+        personaldataid: newPersonalDataId,
       };
 
       console.log('Datos del participante a crear:', participantData);

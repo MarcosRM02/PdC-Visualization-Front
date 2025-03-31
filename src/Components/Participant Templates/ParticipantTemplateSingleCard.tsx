@@ -64,7 +64,10 @@ const ParticipantTemplateSingleCard: React.FC<
       };
       setLoading(true);
       axios
-        .get(`${apiUrl}/personalData/${participants.personaldataid}`, config)
+        .get(
+          `${apiUrl}/personalDataTemplate/${participants.personaldataid}`,
+          config,
+        )
         .then((response) => {
           setModalData(response.data);
           setLoading(false);

@@ -15,7 +15,7 @@ const AddExistingParticipantsModal: React.FC<
   AddExistingParticipantsModalProps
 > = ({ isOpen, onClose, onTrialCreated }) => {
   const [swIds, setSWIds] = useState<
-    { id: number; code: string; personalDataId: number }[]
+    { id: number; code: string; personaldataid: number }[]
   >([]);
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -62,7 +62,7 @@ const AddExistingParticipantsModal: React.FC<
       .map((item) => ({
         id: item.id,
         code: item.code,
-        personalData: item.personalDataId,
+        personaldataid: item.personaldataid,
       }));
 
     const dataToSend = selectedParticipants;
