@@ -1,6 +1,6 @@
 // src/Pages/Participants/ShowParticipant.tsx
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import axios from 'axios';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import { MdOutlineAddBox } from 'react-icons/md';
@@ -11,6 +11,9 @@ import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import 'react-datepicker/dist/react-datepicker.css';
 import CreateParticipantModal from '../../Services/Create/CreateParticipant'; // Importa el modal de creación
+import AddExistingParticipantsModal from '../Create/AddExistingParticipants';
+import { IoPersonAddOutline } from 'react-icons/io5';
+import { BsPersonCheck } from 'react-icons/bs';
 
 interface Participant {
   id: number;
@@ -33,9 +36,13 @@ const ShowParticipant = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const { enqueueSnackbar } = useSnackbar();
-
+  // Estados para el modal de adición
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   // Estados para el modal de creación
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  // Para detectar clics fuera del menú y cerrarlo
+  const menuRef = useRef<HTMLDivElement>(null);
 
   // Función para obtener los participantes
   const fetchParticipants = useCallback(async () => {
@@ -89,6 +96,18 @@ const ShowParticipant = () => {
     setFilteredParticipants(filtered);
   }, [searchCode, participants]);
 
+  // Al hacer click en cualquier parte fuera del dropdown, se cierra
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   // Función para resetear filtros, memorizada con useCallback
   const resetFilters = useCallback(() => {
     setSearchCode('');
@@ -106,6 +125,9 @@ const ShowParticipant = () => {
   // Funciones para abrir y cerrar el modal de creación
   const openCreateModal = () => setIsCreateModalOpen(true);
   const closeCreateModal = () => setIsCreateModalOpen(false);
+
+  const openAddModal = () => setIsAddModalOpen(true);
+  const closeAddModal = () => setIsAddModalOpen(false);
 
   return (
     <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
@@ -143,14 +165,41 @@ const ShowParticipant = () => {
           </button>
         </div>
 
-        {/* Botón para Abrir el Modal de Creación */}
+        {/* Dropdown */}
         <div className="flex justify-end mb-6">
-          <button
-            onClick={openCreateModal}
-            className="flex items-center text-sky-800 hover:text-sky-900 transition-colors duration-200"
-          >
-            <MdOutlineAddBox className="text-4xl mr-2" />
-          </button>
+          <div className="relative inline-block" ref={menuRef}>
+            <button
+              onClick={() => setMenuOpen((prev) => !prev)}
+              className="flex items-center text-sky-800 hover:text-sky-900 transition-colors duration-200"
+            >
+              <MdOutlineAddBox className="text-4xl mr-2" />
+            </button>
+            {menuOpen && (
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white border rounded shadow z-50">
+                <ul>
+                  <li>
+                    <button
+                      onClick={openAddModal}
+                      className="flex items-center text-sky-800 hover:text-sky-900 transition-colors duration-200"
+                    >
+                      <BsPersonCheck className="text-2xl mr-2" />
+                      Import Participant
+                    </button>
+                  </li>
+                  <li className="border-t border-gray-200"></li>
+                  <li>
+                    <button
+                      onClick={openCreateModal}
+                      className="flex items-center text-sky-800 hover:text-sky-900 transition-colors duration-200"
+                    >
+                      <IoPersonAddOutline className="text-2xl mr-2" />
+                      Create Participant
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Mostrar Errores */}
@@ -181,7 +230,12 @@ const ShowParticipant = () => {
             </p>
           </div>
         )}
-
+        {/* Modal de Añadir Participantes Existentes */}
+        <AddExistingParticipantsModal
+          isOpen={isAddModalOpen}
+          onClose={closeAddModal}
+          onTrialCreated={handleParticipantEdited} // Pasar el callback
+        />
         {/* Modal de Crear Participante */}
         <CreateParticipantModal
           isOpen={isCreateModalOpen}

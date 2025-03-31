@@ -14,9 +14,7 @@ import CreateParticipantTemplateModal from '../Create/CreateParticipantTemplate'
 interface Participant {
   id: number;
   code: string;
-  personalData?: {
-    id: number;
-  };
+  personaldataid: number;
 }
 const ShowParticipant = () => {
   const [participants, setParticipants] = useState<Participant[]>([]);

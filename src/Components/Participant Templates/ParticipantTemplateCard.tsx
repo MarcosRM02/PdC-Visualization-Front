@@ -1,8 +1,17 @@
-// src/Components/Participants/ParticipantCard.tsx
-
 import React from 'react';
 import ParticipantTemplateSingleCard from './ParticipantTemplateSingleCard';
-import { IParticipantProp } from '../../Types/Interfaces';
+
+interface IParticipant {
+  id: number;
+  code: string;
+  personaldataid: number;
+}
+
+export interface IParticipantProp {
+  participants: IParticipant[];
+  onParticipantDeleted: () => void;
+  onParticipantEdited: () => void; // Añadir esta línea
+}
 
 const ParticipantTemplateCard: React.FC<IParticipantProp> = ({
   participants = [],

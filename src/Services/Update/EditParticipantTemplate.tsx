@@ -40,7 +40,7 @@ const EditParticipantTemplateModal: React.FC<EditParticipantModalProps> = ({
       setLoading(true);
       try {
         const response = await axios.get(
-          `${apiUrl}/participants/${participantId}`,
+          `${apiUrl}/participantTemplates/${participantId}`,
           config,
         );
         setCode(response.data.code);

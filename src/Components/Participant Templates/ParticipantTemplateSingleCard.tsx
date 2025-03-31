@@ -7,15 +7,13 @@ import {
 } from 'react-icons/hi';
 import UserModal from './UserModal';
 import EditParticipantTemplateModal from '../../Services/Update/EditParticipantTemplate';
-import DeleteParticipantTemplateModal from '../../Services/Delete/DeleteParticipant';
+import DeleteParticipantTemplateModal from '../../Services/Delete/DeleteParticipantTemplate';
 import axios from 'axios';
 
 interface Participant {
   id: number;
   code: string;
-  personalData?: {
-    id: number;
-  };
+  personaldataid: number;
 }
 
 interface ParticipantTemplateSingleCardProps {
@@ -57,9 +55,8 @@ const ParticipantTemplateSingleCard: React.FC<
     setDeleteModalOpen(false);
     onParticipantDeleted();
   };
-
   useEffect(() => {
-    if (showModal && participants.personalData?.id) {
+    if (showModal && participants.personaldataid) {
       const config = {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -67,7 +64,7 @@ const ParticipantTemplateSingleCard: React.FC<
       };
       setLoading(true);
       axios
-        .get(`${apiUrl}/personalData/${participants.personalData.id}`, config)
+        .get(`${apiUrl}/personalData/${participants.personaldataid}`, config)
         .then((response) => {
           setModalData(response.data);
           setLoading(false);
@@ -78,10 +75,9 @@ const ParticipantTemplateSingleCard: React.FC<
           setLoading(false);
         });
     }
-  }, [showModal, participants.personalData?.id, accessToken, apiUrl]);
+  }, [showModal, participants.personaldataid, accessToken, apiUrl]);
 
   const formattedCode = participants.code || '—';
-
   return (
     <>
       {/* Enlace que permite abrir en nueva pestaña */}

@@ -1,5 +1,3 @@
-// src/Components/Participants/UserModal.tsx
-
 import React, { useState, useEffect } from 'react';
 import {
   HiOutlineXCircle,

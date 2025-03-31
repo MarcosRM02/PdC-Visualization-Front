@@ -29,6 +29,7 @@ const CreateParticipantModal: React.FC<CreateParticipantModalProps> = ({
 
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams<{ id: string }>(); // ID del experimento
+  const professionalId = localStorage.getItem('id');
   const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -94,7 +95,7 @@ const CreateParticipantModal: React.FC<CreateParticipantModalProps> = ({
       console.log('Datos del participante a crear:', participantData);
 
       await axios.post(
-        `${apiUrl}/participants/create/${id}`,
+        `${apiUrl}/participants/create/${professionalId}/${id}`,
         participantData,
         config,
       );
