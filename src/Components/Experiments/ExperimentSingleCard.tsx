@@ -85,9 +85,7 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
           <div className="space-y-4">
             {/* Nombre – destacado */}
             <div className="flex items-center gap-x-3">
-              <div className="w-10 h-10 flex items-center justify-center rounded-full bg-sky-950">
-                <HiOutlineUser className="text-white text-xl" />
-              </div>
+              <HiOutlineUser className="text-sky-700 text-2xl" />
               <h4 className="text-gray-800 font-semibold text-2xl">
                 {experiment.name}
               </h4>
@@ -95,9 +93,8 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
 
             {/* Descripción */}
             <div className="flex items-center gap-x-3">
-              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
-                <HiOutlineInformationCircle className="text-white text-lg" />
-              </div>
+              <HiOutlineInformationCircle className="text-sky-700 text-2xl" />
+
               <h4 className="text-gray-800 font-medium">
                 <strong>Descripción:</strong> {experiment.description || '—'}
               </h4>
@@ -105,9 +102,8 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
 
             {/* Fecha de Inicio */}
             <div className="flex items-center gap-x-3">
-              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
-                <FaRegCalendarAlt className="text-white text-lg" />
-              </div>
+              <FaRegCalendarAlt className="text-sky-700 text-2xl" />
+
               <h4 className="text-gray-800 font-medium">
                 <strong>Fecha de Inicio:</strong> {formattedStartDate || '—'}
               </h4>
@@ -115,9 +111,8 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
 
             {/* Fecha de Finalización */}
             <div className="flex items-center gap-x-3">
-              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
-                <FaRegCalendarCheck className="text-white text-lg" />
-              </div>
+              <FaRegCalendarCheck className="text-sky-700 text-2xl" />
+
               <h4 className="text-gray-800 font-medium">
                 <strong>Fecha de Finalización:</strong>{' '}
                 {formattedFinishDate || '—'}
@@ -126,9 +121,8 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
 
             {/* Notas */}
             <div className="flex items-center gap-x-3">
-              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
-                <HiOutlineAnnotation className="text-white text-lg" />
-              </div>
+              <HiOutlineAnnotation className="text-sky-700 text-2xl" />
+
               <h4 className="text-gray-800 font-medium">
                 <strong>Notas:</strong> {experiment.notes || '—'}
               </h4>
@@ -136,9 +130,8 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
 
             {/* Número de Participantes */}
             <div className="flex items-center gap-x-3">
-              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
-                <HiOutlineUserGroup className="text-white text-lg" />
-              </div>
+              <HiOutlineUserGroup className="text-sky-700 text-2xl" />
+
               <h4 className="text-gray-800 font-semibold">
                 <strong>Número de Participantes:</strong>{' '}
                 {experiment.numberOfParticipants}
@@ -152,7 +145,7 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
           {/* Botón Editar */}
           <button
             onClick={handleEditClick}
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
             aria-label="Editar experimento"
           >
             <HiOutlinePencil className="text-white text-2xl" />
@@ -161,7 +154,7 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
           {/* Botón Eliminar */}
           <button
             onClick={handleDeleteClick}
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-rose-600 hover:bg-rose-500 transition duration-200"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-rose-600 hover:bg-rose-500 transition duration-200"
             aria-label="Eliminar experimento"
           >
             <HiOutlineTrash className="text-white text-2xl" />

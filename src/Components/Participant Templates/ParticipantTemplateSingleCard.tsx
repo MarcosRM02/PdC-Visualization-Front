@@ -89,9 +89,7 @@ const ParticipantTemplateSingleCard: React.FC<
         <div key={participants.id} className="my-2 space-y-4">
           {/* Campo: Código */}
           <div className="flex items-center gap-x-3">
-            <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
-              <HiOutlineIdentification className="text-white text-lg" />
-            </div>
+            <HiOutlineIdentification className="text-sky-700 text-2xl" />
             <h4 className="text-gray-800 font-medium">
               <strong>Código:</strong> {formattedCode}
             </h4>
@@ -99,14 +97,14 @@ const ParticipantTemplateSingleCard: React.FC<
         </div>
 
         {/* Botones de acción */}
-        <div className="flex justify-end items-center gap-x-4 mt-2">
+        <div className="flex justify-end items-center gap-x-4 mt-4">
           {/* Botón: Mostrar Detalles */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               setShowModal(true);
             }}
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-teal-600 hover:bg-emerald-500 transition duration-200"
             aria-label="Mostrar detalles"
           >
             <HiOutlineEye className="text-white text-2xl" />
@@ -115,7 +113,7 @@ const ParticipantTemplateSingleCard: React.FC<
           {/* Botón: Editar */}
           <button
             onClick={handleEditClick}
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
             aria-label="Editar participante"
           >
             <HiOutlinePencil className="text-white text-2xl" />
@@ -124,7 +122,7 @@ const ParticipantTemplateSingleCard: React.FC<
           {/* Botón: Eliminar */}
           <button
             onClick={handleDeleteClick}
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-rose-600 hover:bg-rose-500 transition duration-200"
+            className="w-8 h-8  flex items-center justify-center rounded-full bg-rose-600 hover:bg-rose-500 transition duration-200"
             aria-label="Eliminar participante"
           >
             <HiOutlineTrash className="text-white text-2xl" />

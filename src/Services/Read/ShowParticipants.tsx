@@ -182,12 +182,12 @@ const ShowParticipant = () => {
               <MdOutlineAddBox className="text-4xl mr-2" />
             </button>
             {menuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white border rounded shadow z-50">
+              <div className="absolute right-0 top-full mt-2 w-44  bg-gray-200 rounded shadow z-50">
                 <ul>
                   <li>
                     <button
                       onClick={openAddModal}
-                      className="flex items-center text-sky-800 hover:text-sky-900 transition-colors duration-200"
+                      className="flex items-center w-44 bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors duration-200"
                     >
                       <BsPersonCheck className="text-2xl mr-2" />
                       Import Participant
@@ -197,7 +197,7 @@ const ShowParticipant = () => {
                   <li>
                     <button
                       onClick={openCreateModal}
-                      className="flex items-center text-sky-800 hover:text-sky-900 transition-colors duration-200"
+                      className="flex items-center w-44  bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors duration-200"
                     >
                       <IoPersonAddOutline className="text-2xl mr-2" />
                       Create Participant

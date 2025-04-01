@@ -56,31 +56,27 @@ const TemplateSingleCard: React.FC<TemplateSingleCardProps> = ({
           <div key={template.id} className="my-2 space-y-4">
             {/* Nombre */}
             <div className="flex items-center gap-x-3">
-              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
-                <HiOutlineQrcode className="text-white text-lg" />
-              </div>
+              <HiOutlineQrcode className="text-sky-700 text-2xl" />
+
               <h4 className="text-gray-800 font-semibold text-lg">
-                Nombre: {template.name || '—'}
+                <strong>Nombre:</strong> {template.name || '—'}
               </h4>
             </div>
 
             {/* Descripción */}
             <div className="flex items-center gap-x-3">
-              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
-                <HiOutlineInformationCircle className="text-white text-lg" />
-              </div>
+              <HiOutlineInformationCircle className="text-sky-700 text-2xl" />
+
               <h4 className="text-gray-800 font-medium">
-                Descripción: {template.description || '—'}
+                <strong>Descripción:</strong> {template.description || '—'}
               </h4>
             </div>
           </div>
           {/* Número de Templates */}
           <div className="flex items-center gap-x-3">
-            <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
-              <HiOutlineUserGroup className="text-white text-lg" />
-            </div>
+            <HiOutlineUserGroup className="text-sky-700 text-2xl" />
             <h4 className="text-gray-800 font-semibold">
-              Número de Templates: {template.numberOfTemplates}
+              <strong>Número de Templates:</strong> {template.numberOfTemplates}
             </h4>
           </div>
         </Link>
@@ -90,7 +86,7 @@ const TemplateSingleCard: React.FC<TemplateSingleCardProps> = ({
           {/* Botón Editar */}
           <button
             onClick={handleEditClick}
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
             aria-label="Editar plantilla"
           >
             <HiOutlinePencil className="text-white text-2xl" />
@@ -99,7 +95,7 @@ const TemplateSingleCard: React.FC<TemplateSingleCardProps> = ({
           {/* Botón Eliminar */}
           <button
             onClick={handleDeleteClick}
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-rose-600 hover:bg-rose-500 transition duration-200"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-rose-600 hover:bg-rose-500 transition duration-200"
             aria-label="Eliminar plantilla"
           >
             <HiOutlineTrash className="text-white text-2xl" />

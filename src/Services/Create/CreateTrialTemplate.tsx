@@ -65,6 +65,7 @@ const CreateTrialTemplateModal: React.FC<CreateTrialTemplateModalProps> = ({
       ...(code && { code }),
       ...(annotation && { annotation }),
     };
+    console.log('Data to send:', dataToSend);
 
     const config = {
       headers: {

@@ -103,9 +103,7 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
           <div className="my-2 space-y-4">
             {/* Fecha */}
             <div className="flex items-center gap-x-3">
-              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
-                <FaRegCalendarCheck className="text-white text-lg" />
-              </div>
+              <FaRegCalendarCheck className="text-sky-700 text-2xl" />
               <h4 className="text-gray-800 font-medium">
                 <strong>Fecha:</strong> {formattedDate || '—'}
               </h4>
@@ -113,9 +111,7 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
 
             {/* Código */}
             <div className="flex items-center gap-x-3">
-              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
-                <HiOutlineQrcode className="text-white text-lg" />
-              </div>
+              <HiOutlineQrcode className="text-sky-700 text-2xl" />
               <h4 className="text-gray-800 font-medium">
                 <strong>Código:</strong> {trials.code || '—'}
               </h4>
@@ -123,9 +119,7 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
 
             {/* Descripción */}
             <div className="flex items-center gap-x-3">
-              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
-                <HiOutlineInformationCircle className="text-white text-lg" />
-              </div>
+              <HiOutlineInformationCircle className="text-sky-700 text-2xl" />
               <h4 className="text-gray-800 font-medium">
                 <strong>Descripción:</strong> {trials.description || '—'}
               </h4>
@@ -133,9 +127,7 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
 
             {/* Anotación */}
             <div className="flex items-center gap-x-3">
-              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
-                <HiOutlineAnnotation className="text-white text-lg" />
-              </div>
+              <HiOutlineAnnotation className="text-sky-700 text-2xl" />
               <h4 className="text-gray-800 font-medium">
                 <strong>Notas:</strong> {trials.annotation || '—'}
               </h4>
@@ -148,7 +140,7 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
           {/* Botón Editar */}
           <button
             onClick={handleEditClick}
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
+            className="w-8 h-8  flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
             aria-label="Editar experimento"
           >
             <HiOutlinePencil className="text-white text-2xl" />
@@ -157,7 +149,7 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
           {/* Botón Eliminar */}
           <button
             onClick={handleDeleteClick}
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-rose-600 hover:bg-rose-500 transition duration-200"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-rose-600 hover:bg-rose-500 transition duration-200"
             aria-label="Eliminar experimento"
           >
             <HiOutlineTrash className="text-white text-2xl" />

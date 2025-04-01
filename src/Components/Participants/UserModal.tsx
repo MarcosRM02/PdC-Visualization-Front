@@ -85,9 +85,7 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
           <div className="space-y-4">
             {/* Nombre */}
             <div className="flex items-center gap-x-3">
-              <div className="w-10 h-10 flex items-center justify-center rounded-full bg-sky-950">
-                <HiOutlineUser className="text-white text-xl" />
-              </div>
+              <HiOutlineUser className="text-sky-700 text-2xl" />
               <div>
                 <span className="text-slate-700 font-medium">Nombre:</span>
                 <span className="ml-2 text-slate-800 font-semibold text-2xl">
@@ -98,9 +96,7 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
 
             {/* Edad */}
             <div className="flex items-center gap-x-3">
-              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
-                <HiOutlineCake className="text-white text-lg" />
-              </div>
+              <HiOutlineCake className="text-sky-700 text-2xl" />
               <div>
                 <span className="text-slate-700 font-medium">Edad:</span>
                 <span className="ml-2 text-slate-800 font-medium">
@@ -111,9 +107,7 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
 
             {/* Altura */}
             <div className="flex items-center gap-x-3">
-              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
-                <FaRulerVertical className="text-white text-lg" />
-              </div>
+              <FaRulerVertical className="text-sky-700 text-2xl" />
               <div>
                 <span className="text-slate-700 font-medium">Altura:</span>
                 <span className="ml-2 text-slate-800 font-medium">
@@ -124,9 +118,7 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
 
             {/* Peso */}
             <div className="flex items-center gap-x-3">
-              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
-                <GiWeightScale className="text-white text-lg" />
-              </div>
+              <GiWeightScale className="text-sky-700 text-2xl" />
               <div>
                 <span className="text-slate-700 font-medium">Peso:</span>
                 <span className="ml-2 text-slate-800 font-medium">
@@ -137,9 +129,7 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
 
             {/* Longitud de Pie */}
             <div className="flex items-center gap-x-3">
-              <div className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900">
-                <GiFootprint className="text-white text-lg" />
-              </div>
+              <GiFootprint className="text-sky-700 text-2xl" />
               <div>
                 <span className="text-slate-700 font-medium">
                   Longitud de Pie:
@@ -155,7 +145,7 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
           <div className="flex justify-end items-center gap-x-4 mt-6">
             <button
               onClick={openEditModal}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200 group"
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200 group"
               aria-label="Editar datos personales"
             >
               <HiOutlinePencil className="text-white text-2xl group-hover:scale-110 transition-transform" />

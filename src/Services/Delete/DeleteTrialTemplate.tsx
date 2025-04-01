@@ -10,6 +10,7 @@ interface DeleteTrialTemplateModalProps {
   isOpen: boolean;
   onClose: () => void;
   onTrialDeleted: () => void; // Callback para notificar al padre
+  templateId: number; // ID de la plantilla a la que pertenece la prueba  
   trialId: number; // ID de la prueba a eliminar
 }
 
@@ -17,6 +18,7 @@ const DeleteTrialTemplate: React.FC<DeleteTrialTemplateModalProps> = ({
   isOpen,
   onClose,
   onTrialDeleted,
+  templateId,
   trialId,
 }) => {
   const [loading, setLoading] = useState(false);
@@ -36,7 +38,10 @@ const DeleteTrialTemplate: React.FC<DeleteTrialTemplateModalProps> = ({
     };
 
     try {
-      await axios.delete(`${apiUrl}/trialTemplates/delete/${trialId}`, config);
+      await axios.delete(
+        `${apiUrl}/trialTemplates/delete/${templateId}/${trialId}`,
+        config,
+      );
       setLoading(false);
       enqueueSnackbar('Template eliminada exitosamente', {
         variant: 'success',
