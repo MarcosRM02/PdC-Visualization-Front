@@ -23,9 +23,9 @@ const ShowWearables = () => {
     { label: 'Experimentos', path: '/' },
     {
       label: 'Participantes',
-      path: `/participants/by-experiment/${participantId}`,
+      path: `/participants/by-experiment/${experimentId}`,
     },
-    { label: 'Trials', path: `/trials/by-participant/${trialId}` },
+    { label: 'Trials', path: `/trials/by-participant/${participantId}` },
     {
       label: 'Wearables Data',
       path: `/swData/getData/${experimentId}/${participantId}/${swId}/${trialId}?${wearableQuery}`,
@@ -65,7 +65,9 @@ const ShowWearables = () => {
         <div className="flex justify-between items-center mb-6">
           <Breadcrumb items={breadcrumbItems} />
         </div>
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Wearables Data</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">
+          Wearables Data
+        </h1>
       </div>
       {/* Contenido Principal */}
 

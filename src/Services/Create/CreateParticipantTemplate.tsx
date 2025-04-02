@@ -88,7 +88,7 @@ const CreateParticipantTemplateModal: React.FC<
       };
 
       await axios.post(
-        `${apiUrl}/participantTemplates/create/${id}`,
+        `${apiUrl}/participantTemplates/create-new/${id}`,
         participantData,
         config,
       );

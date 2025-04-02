@@ -5,21 +5,28 @@ import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
 
-interface AddExistingParticipantsModalProps {
+interface AddExistingTemplatesModalProps {
   isOpen: boolean;
   onClose: () => void;
   onTrialCreated: () => void; // Callback para notificar al padre
 }
 
-const AddExistingParticipantsModal: React.FC<
-  AddExistingParticipantsModalProps
-> = ({ isOpen, onClose, onTrialCreated }) => {
+const AddExistingTemplatesModal: React.FC<AddExistingTemplatesModalProps> = ({
+  isOpen,
+  onClose,
+  onTrialCreated,
+}) => {
   const [swIds, setSWIds] = useState<
-    { id: number; code: string; personaldataid: number }[]
+    {
+      id: number;
+      name: string;
+      description: string;
+      numberOfTemplates: number;
+    }[]
   >([]);
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
-  const { id: experimentId } = useParams<{ id: string }>();
+  const { id: participantID } = useParams<{ id: string }>();
   const professionalId = localStorage.getItem('id');
   const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
@@ -31,7 +38,7 @@ const AddExistingParticipantsModal: React.FC<
       const fetchSWIds = async () => {
         try {
           const response = await axios.get(
-            `${apiUrl}/participantTemplates/by-professional/${professionalId}`,
+            `${apiUrl}/templates/by-professional/${professionalId}`,
             {
               headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -40,8 +47,10 @@ const AddExistingParticipantsModal: React.FC<
           );
           setSWIds(response.data);
         } catch (error) {
-          enqueueSnackbar('Error al obtener los SW IDs', { variant: 'error' });
-          console.error('Error fetching SW IDs:', error);
+          enqueueSnackbar('Error al obtener los Templates', {
+            variant: 'error',
+          });
+          console.error('Error fetching Templates: ', error);
         }
       };
 
@@ -51,21 +60,23 @@ const AddExistingParticipantsModal: React.FC<
 
   const handleSaveTrial = async () => {
     if (selectedSWIds.length === 0) {
-      enqueueSnackbar('Por favor, selecciona al menos un participante.', {
+      enqueueSnackbar('Por favor, selecciona al menos un Template.', {
         variant: 'warning',
       });
       return;
     }
 
-    const selectedParticipants = swIds
-      .filter((item) => selectedSWIds.includes(item.id))
-      .map((item) => ({
-        id: item.id,
-        code: item.code,
-        personaldataid: item.personaldataid,
-      }));
+    // const selectedParticipants = swIds
+    //   .filter((item) => selectedSWIds.includes(item.id))
+    //   .map((item) => ({
+    //     id: item.id,
+    //     // name: item.name,
+    //     // description: item.description,
+    //     // numberOfTemplates: item.numberOfTemplates,
+    //   }));
 
-    const dataToSend = selectedParticipants;
+    const dataToSend = { templateIds: selectedSWIds.map((id) => Number(id)) };
+    console.log('Data to send:', dataToSend);
     const config = {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -76,7 +87,7 @@ const AddExistingParticipantsModal: React.FC<
 
     try {
       await axios.post(
-        `${apiUrl}/participants/create-multiple/${professionalId}/${experimentId}`,
+        `${apiUrl}/trials/create-from-templates/${participantID}`,
         dataToSend,
         config,
       );
@@ -106,7 +117,7 @@ const AddExistingParticipantsModal: React.FC<
         {/* Cabecera del Modal */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Añadir Participantes
+            Añadir Templates
           </h2>
           <button onClick={handleClose} aria-label="Cerrar modal">
             <FaTimes className="text-red-600 hover:text-gray-800" />
@@ -122,37 +133,43 @@ const AddExistingParticipantsModal: React.FC<
           <div className="flex flex-col space-y-4">
             {/* Selección de SW */}
             <div className="mt-4 grid grid-cols-2 gap-4">
-              {swIds.map((sw) => (
-                <label
-                  key={sw.id}
-                  className="flex items-center space-x-2 p-2 rounded-md border bg-gray-50 hover:bg-blue-50 cursor-pointer transition-colors"
-                >
-                  <input
-                    type="checkbox"
-                    value={sw.id}
-                    checked={selectedSWIds.includes(sw.id)}
-                    onChange={(e) => {
-                      const value = Number(e.target.value);
-                      setSelectedSWIds((prev) =>
-                        prev.includes(value)
-                          ? prev.filter((id) => id !== value)
-                          : [...prev, value],
-                      );
-                    }}
-                    className="form-checkbox h-4 w-4 text-sky-600"
-                  />
-                  <span className="text-gray-700">
-                    <div>
-                      <strong>ID: </strong>
-                      {sw.id}
-                    </div>
-                    <div>
-                      <strong>Code: </strong>
-                      {sw.code}
-                    </div>
-                  </span>
-                </label>
-              ))}
+              {swIds
+                .filter((sw) => sw.numberOfTemplates >= 1) // Filtrar templates con numberOfTemplates >= 1
+                .map((sw) => (
+                  <label
+                    key={sw.id}
+                    className="flex items-center space-x-2 p-2 rounded-md border bg-gray-50 hover:bg-blue-50 cursor-pointer transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      value={sw.id}
+                      checked={selectedSWIds.includes(sw.id)}
+                      onChange={(e) => {
+                        const value = Number(e.target.value);
+                        setSelectedSWIds((prev) =>
+                          prev.includes(value)
+                            ? prev.filter((id) => id !== value)
+                            : [...prev, value],
+                        );
+                      }}
+                      className="form-checkbox h-4 w-4 text-sky-600"
+                    />
+                    <span className="text-gray-700">
+                      <div>
+                        <strong>ID: </strong>
+                        {sw.id}
+                      </div>
+                      <div>
+                        <strong>Nombre: </strong>
+                        {sw.name}
+                      </div>
+                      <div>
+                        <strong>Nº de Trials: </strong>
+                        {sw.numberOfTemplates}
+                      </div>
+                    </span>
+                  </label>
+                ))}
             </div>
 
             {/* Botón de Guardar */}
@@ -169,4 +186,4 @@ const AddExistingParticipantsModal: React.FC<
   );
 };
 
-export default AddExistingParticipantsModal;
+export default AddExistingTemplatesModal;

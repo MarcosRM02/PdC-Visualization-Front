@@ -1,5 +1,3 @@
-// src/Pages/Participants/ShowParticipant.tsx
-
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import axios from 'axios';
 import Spinner from '../../Components/CommonComponents/Spinner';

@@ -1,4 +1,3 @@
-// apiService.js
 import axios from 'axios';
 
 /**
@@ -34,3 +33,29 @@ const getIDFromAPI = async (participantId: any, swId: any) => {
 };
 
 export { getIDFromAPI };
+
+const getExperimentIdFromAPI = async (participantId: any) => {
+  const accessToken = localStorage.getItem('accessToken');
+  const apiUrl = import.meta.env.VITE_API_URL;
+
+  const config = {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  };
+  try {
+
+    const experimentId = await axios.get(
+      `${apiUrl}/participants/experiment-by-participant/${participantId}`,
+      config,
+    );
+
+    return { experimentId: experimentId.data};
+  } catch (error) {
+    console.error('Error fetching ID:', error);
+    throw error;
+  }
+}
+
+export { getExperimentIdFromAPI };
+

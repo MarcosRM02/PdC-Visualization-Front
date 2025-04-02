@@ -1,5 +1,3 @@
-// src/Services/Delete/DeleteTrial.tsx
-
 import React, { useState, useEffect } from 'react';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import axios from 'axios';

@@ -76,7 +76,7 @@ const TemplateSingleCard: React.FC<TemplateSingleCardProps> = ({
           <div className="flex items-center gap-x-3">
             <HiOutlineUserGroup className="text-sky-700 text-2xl" />
             <h4 className="text-gray-800 font-semibold">
-              <strong>Número de Templates:</strong> {template.numberOfTemplates}
+              <strong>Número de Trials:</strong> {template.numberOfTemplates}
             </h4>
           </div>
         </Link>
