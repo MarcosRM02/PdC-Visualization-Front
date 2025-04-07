@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaHome, FaFolderOpen, FaUserFriends } from 'react-icons/fa';
+import { FaHome, FaUserFriends } from 'react-icons/fa';
 import { RiGitRepositoryFill } from 'react-icons/ri';
 
 interface LeftBarProps {
@@ -24,16 +24,6 @@ const LeftBar: React.FC<LeftBarProps> = ({ selectedPanel, togglePanel }) => {
         }}
       >
         <FaHome />
-      </button>
-
-      {/* Botón Proyectos */}
-      <button
-        className={`my-2 p-2 hover:bg-gray-700 rounded 
-          ${selectedPanel === 'proyectos' ? 'bg-gray-700' : ''}
-        `}
-        onClick={() => togglePanel('proyectos')}
-      >
-        <FaFolderOpen />
       </button>
 
       {/* Botón Configuración */}
