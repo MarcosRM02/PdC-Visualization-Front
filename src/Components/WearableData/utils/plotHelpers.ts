@@ -1,3 +1,29 @@
+// Lo de ponerlo antes de los import esd para importarlo a nivel de módulo y que
+
+function calculateAccelConversion(): number {
+  /**
+   * (Rango completo * 9,81 (gravedad)) / 65536 (2^16)
+   */
+  const sensorConfig = 4;
+  const range = sensorConfig - -sensorConfig; // Rango de ±4g
+  const g = 9.81; // Gravedad en m/s²
+  const possibleValues = 65536; // 2^16
+  return (range * g) / possibleValues;
+}
+
+function calculateGyroConversion(): number {
+  /**
+   * Rango completo / 65536 (2^16)
+   */
+  const sensorConfig = 500; // ±500 °/s
+  const possibleValues = 65536; // 2^16
+  return sensorConfig / possibleValues;
+}
+
+// Se calculan una vez al importarse el módulo.
+const ACCEL_CONVERSION = calculateAccelConversion();
+const GYRO_CONVERSION = calculateGyroConversion();
+
 import { DataFrame, concat } from 'danfojs';
 import Plotly from 'plotly.js-dist-min';
 
@@ -99,6 +125,40 @@ function generateLayout(yRange?: [number, number]) {
       font: { family: 'Arial', size: 12, color: '#fff' },
       pad: { t: 10, b: 10 },
     },
+    colorway: [
+      '#e6194b',
+      '#3cb44b',
+      '#4363d8',
+      '#f58231',
+      '#ffe119',
+      '#bfef45',
+      '#42d4f4',
+      '#f032e6',
+      '#a9a9a9',
+      '#dcbeff',
+      '#fabed4',
+      '#ffd8b1',
+      '#fffac8',
+      '#aaffc3',
+      '#808000',
+      '#7cb9e8',
+      '#6a5acd',
+      '#b22222',
+      '#800000',
+      '#00ff00',
+      '#00ffff',
+      '#ff00ff',
+      '#800080',
+      '#ffa500',
+      '#008000',
+      '#ffc0cb',
+      '#00bfff',
+      '#4b0082',
+      '#ff6347',
+      '#ffd700',
+      '#6b8e23',
+    ],
+
     yaxis: {
       title: 'Valor',
       ...(yRange ? { range: yRange } : {}),
@@ -137,16 +197,44 @@ export function plotData(
     console.error('Elemento div inválido');
     return;
   }
+
   const frames = wearable.map((w: any) => new DataFrame(w.dataframe));
   const df = concat({ dfList: frames, axis: 1 });
+  // Se extraen los datos desde la fila 0 hasta minLength y solo las columnas indicadas
   // @ts-ignore
   let datos = df.iloc({ rows: [`0:${minLength}`], columns: columns });
+
+  // Determinar el factor de conversión según el título
+  let conversionFactor = 1;
+  if (title.includes('Acelerómetro')) {
+    conversionFactor = ACCEL_CONVERSION;
+  } else if (title.includes('Giroscopio')) {
+    conversionFactor = GYRO_CONVERSION;
+  }
+
+  // Convertir el rango de la gráfica si es necesario (para acelerómetro o giroscopio)
+  let convertedYRange = yRange;
+  if (yRange && Array.isArray(yRange) && yRange.length === 2) {
+    if (title.includes('Acelerómetro')) {
+      convertedYRange = [
+        yRange[0] * ACCEL_CONVERSION,
+        yRange[1] * ACCEL_CONVERSION,
+      ];
+    } else if (title.includes('Giroscopio')) {
+      convertedYRange = [
+        yRange[0] * GYRO_CONVERSION,
+        yRange[1] * GYRO_CONVERSION,
+      ];
+    }
+  }
+
   const traces = datos.columns.map((column: string) => ({
     x: Array.from(datos.index.values()).map(
       (index: any) => index / wearable[0].frequency,
     ),
+    // Se aplica la conversión a los datos según corresponda
     // @ts-ignore
-    y: datos[column].values,
+    y: datos[column].values.map((val: number) => val * conversionFactor),
     type: 'scattergl',
     mode: 'lines',
     name: column,
@@ -154,7 +242,13 @@ export function plotData(
       width: 2,
     },
   }));
-  const layout = generateLayout(yRange);
+
+  const layout = generateLayout(convertedYRange);
+  if (title.includes('Acelerómetro')) {
+    layout.yaxis.title = 'Valor de Aceleración (m/s²)';
+  } else if (title.includes('Giroscopio')) {
+    layout.yaxis.title = 'Valor de Velocidad Angular (°/s)';
+  }
   // Línea roja para indicar el tiempo actual
   // @ts-ignore
   layout.shapes = [
@@ -172,6 +266,7 @@ export function plotData(
       },
     },
   ];
+
   const config = {
     modeBarButtonsToShow: ['toImage'],
     modeBarButtonsToRemove: [
@@ -219,10 +314,8 @@ export function handleRelayout(eventData: any, triggeredBy: any, refs: any) {
   const graphRefs = Object.values(refs);
   graphRefs.forEach((ref: any) => {
     if (ref !== triggeredBy) {
-      // @ts-ignore
       if (ref.current) {
         try {
-          // @ts-ignore
           Plotly.relayout(ref.current, {
             'xaxis.range': [startIndex, endIndex],
           });

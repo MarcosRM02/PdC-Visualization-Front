@@ -12,6 +12,7 @@ import { descargarDatosVisibles } from './utils/dataDownload';
 import TimeProgressBar from './TimeProgressBar';
 import { VideoCameraIcon } from '@heroicons/react/24/solid';
 //import CustomLegendPlot from './loDeLaLeyenda_UsarloMasTarde';
+import FloatingWindow from './FloatingWindow';
 
 const WearablesData = ({
   wearables,
@@ -455,26 +456,16 @@ const WearablesData = ({
 
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <VideoSection
+      <FloatingWindow
         playerRef1={playerRef1}
-        playerRef2={playerRef2}
-        videoFile={videoSrc}
-        videoFile2={videoSrc2}
+        videoSrc={videoSrc}
         videoError={videoError}
         playbackRate={playbackRate}
         handleProgress={handleProgress}
         handleSeek={handleSeek}
-        onDuration1={(d) => setDuration1(d)}
-        onDuration2={(d) => setDuration2(d)}
-      />
-      {/* Barra de progreso global */}
-      <TimeProgressBar
-        currentTime={playTime}
-        duration={globalDuration}
-        onSeek={handleSeek}
-      />
-      <ControlPanel
-        playbackRate={playbackRate}
+        setDuration1={setDuration1}
+        playTime={playTime}
+        globalDuration={globalDuration}
         playbackRates={playbackRates}
         changePlaybackRate={changePlaybackRate}
         videoAvailable={videoAvailable}
@@ -486,19 +477,15 @@ const WearablesData = ({
         updateHz={updateHz}
         handleUpdateHzChange={handleUpdateHzChange}
         getRenderFps={getRenderFps}
-        descargarDatos={() =>
-          descargarDatosVisibles(
-            refs.leftPressureSensor,
-            refs.rightPressureSensor,
-            leftWearables,
-            rightWearables,
-            experimentId,
-            participantId,
-            trialId,
-            swId,
-          )
-        }
-      />
+        descargarDatosVisibles={descargarDatosVisibles}
+        refs={refs}
+        leftWearables={leftWearables}
+        rightWearables={rightWearables}
+        experimentId={experimentId}
+        participantId={participantId}
+        trialId={trialId}
+        swId={swId}
+      ></FloatingWindow>
       {/* <CustomLegendPlot /> */}
       {/* Sección de gráficos detallados */}
       <div className="mt-16 flex flex-col gap-8">
