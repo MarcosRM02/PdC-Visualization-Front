@@ -1,8 +1,11 @@
+// ControlPanel.tsx
 import React from 'react';
-import PlaybackButton from './Buttons/PlaybackButton';
-import ActionButton from './Buttons/ActionButton';
+import PlaybackRateDropdown from './PlaybackRateDropdown';
+import IconActionButton from './IconActionButton';
 import HeatmapControlPanel from './HZControlPannel';
 import InfoButton from './Buttons/InfoButton';
+import { FaPlay, FaPause, FaRedo } from 'react-icons/fa';
+import ActionButton from './Buttons/ActionButton';
 
 interface ControlPanelProps {
   playbackRate: number;
@@ -37,17 +40,14 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
 }) => {
   return (
     <div className="w-full mt-6 flex flex-col items-center">
-      {/* Botones para cambiar la velocidad */}
-      <div className="mt-6 flex justify-center space-x-4">
-        {playbackRates.map(({ label, rate }) => (
-          <PlaybackButton
-            key={rate}
-            label={label}
-            onClick={() => changePlaybackRate(rate)}
-            active={Math.abs(playbackRate - rate) < 0.001} // Usar tolerancia para precisión
-            disabled={!videoAvailable} // Pasar la propiedad disabled
-          />
-        ))}
+      {/* Botón desplegable para cambiar la velocidad */}
+      <div className="mt-6">
+        <PlaybackRateDropdown
+          playbackRate={playbackRate}
+          playbackRates={playbackRates}
+          changePlaybackRate={changePlaybackRate}
+          videoAvailable={videoAvailable}
+        />
       </div>
       <div className="flex justify-center mt-6 space-x-6 w-full">
         <HeatmapControlPanel
@@ -56,22 +56,25 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
           getRenderFps={getRenderFps}
         />
       </div>
-      {/* Botones de reproducción y reseteo */}
+      {/* Botones de reproducción y reseteo usando iconos */}
       <div className="flex justify-center mt-6 space-x-6 w-full">
-        <ActionButton
+        <IconActionButton
           onClick={handlePlay}
-          label={isPlaying ? 'Pause' : isPaused ? 'Resume' : 'Play'}
+          // Mostrar FaPause si el video está reproduciéndose, en caso contrario FaPlay
+          icon={isPlaying ? <FaPause /> : <FaPlay />}
           color={isPlaying ? 'orange' : 'green'}
         />
-        <ActionButton onClick={handleReset} label="Reset" color="red" />
+        <IconActionButton onClick={handleReset} icon={<FaRedo />} color="red" />
       </div>
       <div className="flex justify-center mt-12 space-x-6 items-center">
-        <ActionButton
+        <IconActionButton
           onClick={resetGraphs}
-          label="Resetear Gráficos"
+          // Aquí puedes mantener el botón con icono o seguir usando el ActionButton si prefieres texto
+          icon={<FaRedo />}
           color="red"
         />
         <div className="flex items-center space-x-2">
+          {/* Se mantiene la versión original del botón para descargar datos */}
           <ActionButton
             onClick={descargarDatos}
             label="Descargar Datos (ZIP)"
