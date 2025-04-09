@@ -5,11 +5,8 @@ import { DataFrame } from 'danfojs'; //concat tb estaba
 import Plotly from 'plotly.js-dist-min';
 import { throttle } from 'lodash';
 import { WearableDataProps } from '../../Types/Interfaces';
-import VideoSection from './VideoSection';
-import ControlPanel from './ControlPanel';
 import { handleRelayout, plotWearablesData } from './utils/plotHelpers';
 import { descargarDatosVisibles } from './utils/dataDownload';
-import TimeProgressBar from './TimeProgressBar';
 import { VideoCameraIcon } from '@heroicons/react/24/solid';
 //import CustomLegendPlot from './loDeLaLeyenda_UsarloMasTarde';
 import FloatingWindow from './FloatingWindow';
@@ -453,42 +450,56 @@ const WearablesData = ({
       window.removeEventListener('resize', handleResize);
     };
   }, [refs]);
+  const parentRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <FloatingWindow
-        playerRef1={playerRef1}
-        videoSrc={videoSrc}
-        videoError={videoError}
-        playbackRate={playbackRate}
-        handleProgress={handleProgress}
-        handleSeek={handleSeek}
-        setDuration1={setDuration1}
-        playTime={playTime}
-        globalDuration={globalDuration}
-        playbackRates={playbackRates}
-        changePlaybackRate={changePlaybackRate}
-        videoAvailable={videoAvailable}
-        handlePlay={handlePlay}
-        isPlaying={isPlaying}
-        isPaused={isPaused}
-        handleReset={handleReset}
-        resetGraphs={resetGraphs}
-        updateHz={updateHz}
-        handleUpdateHzChange={handleUpdateHzChange}
-        getRenderFps={getRenderFps}
-        descargarDatosVisibles={descargarDatosVisibles}
-        refs={refs}
-        leftWearables={leftWearables}
-        rightWearables={rightWearables}
-        experimentId={experimentId}
-        participantId={participantId}
-        trialId={trialId}
-        swId={swId}
-      ></FloatingWindow>
+    <div
+      ref={parentRef}
+      style={{
+        position: 'relative',
+        // width: '100%',
+        // height: '100vh',
+        overflow: 'visible',
+        flexDirection: 'column',
+      }}
+      className="min-h-screen bg-gray-100 p-6"
+    >
+      <div className="flex flex-col lg:flex-row items-center justify-between">
+        <FloatingWindow
+          playerRef1={playerRef1}
+          videoSrc={videoSrc}
+          videoError={videoError}
+          playbackRate={playbackRate}
+          handleProgress={handleProgress}
+          handleSeek={handleSeek}
+          setDuration1={setDuration1}
+          playTime={playTime}
+          globalDuration={globalDuration}
+          playbackRates={playbackRates}
+          changePlaybackRate={changePlaybackRate}
+          videoAvailable={videoAvailable}
+          handlePlay={handlePlay}
+          isPlaying={isPlaying}
+          isPaused={isPaused}
+          handleReset={handleReset}
+          resetGraphs={resetGraphs}
+          updateHz={updateHz}
+          handleUpdateHzChange={handleUpdateHzChange}
+          getRenderFps={getRenderFps}
+          descargarDatosVisibles={descargarDatosVisibles}
+          refs={refs}
+          leftWearables={leftWearables}
+          rightWearables={rightWearables}
+          experimentId={experimentId}
+          participantId={participantId}
+          trialId={trialId}
+          swId={swId}
+          parentRef={parentRef}
+        ></FloatingWindow>
+      </div>
       {/* <CustomLegendPlot /> */}
       {/* Sección de gráficos detallados */}
-      <div className="mt-16 flex flex-col gap-8">
+      <div className="mt-16 flex flex-col gap-8 ">
         <div className="mt-16 flex flex-col gap-8">
           {/* Contenedor para las gráficas de presión */}
           <div className="flex flex-col lg:flex-row items-center gap-8">

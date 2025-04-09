@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Rnd } from 'react-rnd';
 import VideoSection from './VideoSection';
 import TimeProgressBar from './TimeProgressBar';
@@ -37,6 +37,7 @@ interface FloatingWindowProps {
   participantId: number;
   trialId: number;
   swId: number;
+  parentRef: React.RefObject<HTMLDivElement>;
 }
 
 const FloatingWindow: React.FC<FloatingWindowProps> = ({
@@ -68,12 +69,15 @@ const FloatingWindow: React.FC<FloatingWindowProps> = ({
   participantId,
   trialId,
   swId,
+  parentRef,
 }) => {
   // Valores originales para la posición y tamaño
   const originalPosition = { x: 100, y: 100 };
-  const originalSize = { width: 800, height: 600 };
+  const originalSize = { width: 1000, height: 1100 };
 
   // Estado para alternar entre modo flotante y modo fijo
+  // isFloating === true → se puede mover/reescalar (sobrepuesto)
+  // isFloating === false → se fija y se integra en el flujo normal
   const [isFloating, setIsFloating] = useState(false);
 
   // Estado para controlar la visibilidad del botón (al pasar el mouse)
@@ -84,10 +88,18 @@ const FloatingWindow: React.FC<FloatingWindowProps> = ({
   const [size, setSize] = useState(originalSize);
 
   // Función para alternar el modo de la ventana.
-  // Al cambiar a modo fijo, se "resetea" la posición y el tamaño a los originales.
+  // Al cambiar a modo fijo, se reinicia la posición (se recalcule para estar más arriba)
   const toggleFloating = () => {
     if (isFloating) {
-      setPosition(originalPosition);
+      if (parentRef.current) {
+        const parentRect = parentRef.current.getBoundingClientRect();
+        // Reposicionar la ventana fija en la parte superior central (con un offset vertical)
+        const initialX = (parentRect.width - originalSize.width) / 2;
+        const initialY = 20; // Queda a 20px desde el tope
+        setPosition({ x: initialX, y: initialY });
+      } else {
+        setPosition(originalPosition);
+      }
       setSize(originalSize);
       setIsFloating(false);
     } else {
@@ -95,22 +107,43 @@ const FloatingWindow: React.FC<FloatingWindowProps> = ({
     }
   };
 
-  // Función para limitar el movimiento de la ventana flotante dentro de los límites de la página
+  useEffect(() => {
+    if (parentRef.current) {
+      const parentRect = parentRef.current.getBoundingClientRect();
+      const initialX = (parentRect.width - originalSize.width) / 2;
+      const initialY = 20;
+      setPosition({ x: initialX, y: initialY });
+    }
+  }, [parentRef, originalSize.width, originalSize.height]);
+
+  // Función para limitar el movimiento dentro del contenedor padre
   const limitPosition = (x: number, y: number) => {
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
-
-    // Limitar la posición X (no dejar que se mueva más allá del borde derecho o izquierdo)
-    const limitedX = Math.min(Math.max(x, 0), windowWidth - size.width);
-
-    // Limitar la posición Y (no dejar que se mueva más allá del borde inferior o superior)
-    const limitedY = Math.min(Math.max(y, 0), windowHeight - size.height);
-
-    // Asegurarse de que la ventana no se desplace por debajo de la pantalla
-    const limitedYWithBottom = Math.min(limitedY, windowHeight - size.height);
-
-    return { x: limitedX, y: limitedYWithBottom };
+    const parentEl = parentRef.current;
+    if (parentEl) {
+      const containerWidth = parentEl.clientWidth;
+      const containerHeight = parentEl.clientHeight;
+      const maxX =
+        containerWidth > size.width ? containerWidth - size.width : 0;
+      const maxY =
+        containerHeight > size.height ? containerHeight - size.height : 0;
+      const limitedX = Math.min(Math.max(x, 0), maxX);
+      const limitedY = Math.min(Math.max(y, 0), maxY);
+      return { x: limitedX, y: limitedY };
+    }
+    return { x, y };
   };
+
+  // Definimos el estilo del contenedor según el modo:
+  // Modo flotante: se posiciona de forma absoluta (sobrepuesto)
+  // Modo fijo: se integra en el flujo normal (posición relativa) para que empuje el contenido siguiente
+  const containerStyle = isFloating
+    ? { position: 'absolute', zIndex: 1000 }
+    : {
+        position: 'relative',
+        width: '100%',
+        zIndex: 1000,
+        marginBottom: '20px',
+      };
 
   // Contenido interno común (video y controles)
   const renderContent = () => (
@@ -124,7 +157,6 @@ const FloatingWindow: React.FC<FloatingWindowProps> = ({
         handleSeek={handleSeek}
         onDuration1={(d: number) => setDuration1(d)}
       />
-      {/* Barra de progreso global */}
       <TimeProgressBar
         currentTime={playTime}
         duration={globalDuration}
@@ -160,17 +192,17 @@ const FloatingWindow: React.FC<FloatingWindowProps> = ({
   );
 
   return (
-    // Se utiliza <Rnd> con posición absoluta para moverla libremente por la página.
     <Rnd
+      // Al usar Rnd en modo fijo (no flotante) eliminamos el posicionamiento absoluto para integrarlo en el layout
       position={position}
       size={size}
-      onDragStop={(e, d) => {
+      onDragStop={(_, d) => {
         if (isFloating) {
           const limitedPosition = limitPosition(d.x, d.y);
           setPosition(limitedPosition);
         }
       }}
-      onResizeStop={(e, direction, ref, delta, newPosition) => {
+      onResizeStop={(_, __, ref, ___, newPosition) => {
         if (isFloating) {
           setSize({
             width: parseInt(ref.style.width, 10),
@@ -181,24 +213,9 @@ const FloatingWindow: React.FC<FloatingWindowProps> = ({
         }
       }}
       disableDragging={!isFloating}
-      enableResizing={
-        isFloating
-          ? {
-              top: true,
-              right: true,
-              bottom: true,
-              left: true,
-              topRight: true,
-              bottomRight: true,
-              bottomLeft: true,
-              topLeft: true,
-            }
-          : false
-      }
-      style={{
-        position: 'absolute', // Permite mover la ventana libremente por la página
-        zIndex: 1000,
-      }}
+      enableResizing={isFloating}
+      //@ts-ignore
+      style={containerStyle}
     >
       <div
         onMouseEnter={() => setIsHovered(true)}
@@ -212,7 +229,6 @@ const FloatingWindow: React.FC<FloatingWindowProps> = ({
           flexDirection: 'column',
         }}
       >
-        {/* Cabecera fija para el botón */}
         <div
           style={{
             position: 'absolute',
@@ -244,7 +260,6 @@ const FloatingWindow: React.FC<FloatingWindowProps> = ({
             {isFloating ? <MdPushPin /> : <MdOpenWith />}
           </button>
         </div>
-        {/* Contenedor scrollable del contenido */}
         <div style={{ flex: 1, overflow: 'auto' }}>{renderContent()}</div>
       </div>
     </Rnd>
