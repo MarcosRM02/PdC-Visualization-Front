@@ -10,6 +10,12 @@ import { descargarDatosVisibles } from './utils/dataDownload';
 import { VideoCameraIcon } from '@heroicons/react/24/solid';
 //import CustomLegendPlot from './loDeLaLeyenda_UsarloMasTarde';
 import FloatingWindow from './FloatingWindow';
+import IconActionButton from './IconActionButton';
+import { FaSync } from 'react-icons/fa';
+import InfoButton from './Buttons/InfoButton';
+import { HiOutlineFolderDownload } from 'react-icons/hi';
+import ControlPanel from './ControlPanel';
+import TimeProgressBar from './TimeProgressBar';
 
 const WearablesData = ({
   wearables,
@@ -239,13 +245,18 @@ const WearablesData = ({
   };
 
   const playbackRates = [
+    { label: '2x', rate: 2 },
+    { label: '1.75x', rate: 1.75 },
+    { label: '1.5x', rate: 1.5 },
+    { label: '1.25x', rate: 1.25 },
+    { label: 'Normal', rate: 1 },
+    { label: '0.75x', rate: 0.75 },
+    { label: '0.5x', rate: 0.5 },
+    { label: '0.25x', rate: 0.25 },
     {
       label: `${(1 / leftWearables[0].frequency).toFixed(2)}x`,
       rate: 1 / leftWearables[0].frequency,
     },
-    { label: '0.25x', rate: 0.25 },
-    { label: '1x', rate: 1 },
-    { label: '2x', rate: 2 },
   ];
 
   const videoAvailable =
@@ -437,11 +448,22 @@ const WearablesData = ({
 
   useEffect(() => {
     const handleResize = () => {
-      Object.values(refs).forEach((ref: any) => {
-        if (ref.current) {
-          Plotly.Plots.resize(ref.current);
-        }
-      });
+      setTimeout(() => {
+        Object.values(refs).forEach((ref: any) => {
+          if (ref.current) {
+            // Redimensionamos la gráfica
+            Plotly.Plots.resize(ref.current);
+            // Forzamos un re-layout de la leyenda, definiendo explícitamente las propiedades relativas
+            Plotly.relayout(ref.current, {
+              //@ts-ignore
+              'legend.xref': 'paper',
+              'legend.yref': 'paper',
+              'legend.x': 0.5,
+              'legend.y': 1.05,
+            });
+          }
+        });
+      }, 100); // Un delay de 300ms (ajusta este valor si es necesario)
     };
 
     window.addEventListener('resize', handleResize);
@@ -450,6 +472,7 @@ const WearablesData = ({
       window.removeEventListener('resize', handleResize);
     };
   }, [refs]);
+
   const parentRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -462,9 +485,182 @@ const WearablesData = ({
         overflow: 'visible',
         flexDirection: 'column',
       }}
-      className="min-h-screen bg-gray-100 p-6"
+      className="min-h-screen bg-gray-100"
     >
-      <div className="flex flex-col lg:flex-row items-center justify-between">
+      {/* <CustomLegendPlot /> */}
+      {/* Sección de gráficos detallados */}
+      <div className="flex justify-center space-x-6 items-center mt-16">
+        <IconActionButton
+          onClick={resetGraphs}
+          icon={<FaSync />}
+          color="orange"
+          tooltip="Resetear Gráficas" // Aquí se define el mensaje del tooltip
+        />
+        <div className="flex items-center space-x-2">
+          <IconActionButton
+            onClick={() =>
+              descargarDatosVisibles(
+                refs.leftPressureSensor,
+                refs.rightPressureSensor,
+                leftWearables,
+                rightWearables,
+                experimentId,
+                participantId,
+                trialId,
+                swId,
+              )
+            }
+            icon={<HiOutlineFolderDownload />}
+            color="blue"
+            tooltip="Descargar Datos Visibles" // Otro ejemplo de tooltip
+          />
+          <InfoButton />
+        </div>
+      </div>
+      <div className="mt-16 flex flex-col gap-8">
+        {/* Contenedor para las gráficas de presión */}
+        <div className="flex flex-col lg:flex-row items-center gap-8">
+          <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
+            {leftWearables.map((_wearable, index) => (
+              <Fragment key={index}>
+                <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
+                  Sensor de Presión Izquierdo
+                </h2>
+                <div
+                  ref={refs.leftPressureSensor}
+                  id="leftPressureSensor"
+                  className="mb-6"
+                ></div>
+              </Fragment>
+            ))}
+          </div>
+          <div className="relative w-full max-w-md">
+            {videoSrc2 && !videoError ? (
+              <ReactPlayer
+                ref={playerRef2}
+                url={videoSrc2}
+                onProgress={handleProgress}
+                onSeek={handleSeek}
+                onDuration={(d) => setDuration2(d)}
+                width="100%"
+                height="auto"
+                controls={false}
+                className="rounded-lg"
+                playbackRate={playbackRate}
+                onError={() => {}}
+                progressInterval={(1 / 50) * 1000}
+                config={{
+                  file: {
+                    attributes: {
+                      controlsList: 'nodownload',
+                      disablePictureInPicture: true,
+                    },
+                  },
+                }}
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center w-full h-full bg-gray-800 text-white text-xl font-semibold rounded-lg">
+                <VideoCameraIcon className="h-12 w-12 mb-3" />
+                <span>No hay ningún mapa de calor disponible</span>
+              </div>
+            )}
+            <TimeProgressBar
+              currentTime={playTime}
+              duration={globalDuration}
+              onSeek={handleSeek}
+            />
+            <ControlPanel
+              playbackRate={playbackRate}
+              playbackRates={playbackRates}
+              changePlaybackRate={changePlaybackRate}
+              videoAvailable={videoAvailable}
+              handlePlay={handlePlay}
+              isPlaying={isPlaying}
+              isPaused={isPaused}
+              handleReset={handleReset}
+              resetGraphs={resetGraphs}
+              updateHz={updateHz}
+              handleUpdateHzChange={handleUpdateHzChange}
+              getRenderFps={getRenderFps}
+              descargarDatos={() =>
+                descargarDatosVisibles(
+                  refs.leftPressureSensor,
+                  refs.rightPressureSensor,
+                  leftWearables,
+                  rightWearables,
+                  experimentId,
+                  participantId,
+                  trialId,
+                  swId,
+                )
+              }
+            />
+          </div>
+          <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
+            {rightWearables.map((_wearable, index) => (
+              <Fragment key={index}>
+                <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
+                  Sensor de Presión Derecho
+                </h2>
+                <div
+                  ref={refs.rightPressureSensor}
+                  id="rightPressureSensor"
+                  className="mb-6"
+                ></div>
+              </Fragment>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Contenedor para las gráficas adicionales */}
+      <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
+          {leftWearables.map((_wearable, index) => (
+            <Fragment key={index}>
+              <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
+                Acelerómetro Izquierdo
+              </h2>
+              <div
+                ref={refs.leftAccelerometer}
+                id="leftAccelerometer"
+                className="mb-6"
+              ></div>
+              <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
+                Giroscopio Izquierdo
+              </h2>
+              <div
+                ref={refs.leftGyroscope}
+                id="leftGyroscope"
+                className="mb-6"
+              ></div>
+            </Fragment>
+          ))}
+        </div>
+        <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
+          {rightWearables.map((_wearable, index) => (
+            <Fragment key={index}>
+              <h2 className="text-xl font-semibold text-center text-gray-800 mb-4 mt-6">
+                Acelerómetro Derecho
+              </h2>
+              <div
+                ref={refs.rightAccelerometer}
+                id="rightAccelerometer"
+                className="mb-6"
+              ></div>
+              <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
+                Giroscopio Derecho
+              </h2>
+              <div
+                ref={refs.rightGyroscope}
+                id="rightGyroscope"
+                className="mb-6"
+              ></div>
+            </Fragment>
+          ))}
+        </div>
+      </div>
+      <div className="bg-gray-100 p-6 flex flex-col justify-center items-center">
         <FloatingWindow
           playerRef1={playerRef1}
           videoSrc={videoSrc}
@@ -495,123 +691,7 @@ const WearablesData = ({
           trialId={trialId}
           swId={swId}
           parentRef={parentRef}
-        ></FloatingWindow>
-      </div>
-      {/* <CustomLegendPlot /> */}
-      {/* Sección de gráficos detallados */}
-      <div className="mt-16 flex flex-col gap-8 ">
-        <div className="mt-16 flex flex-col gap-8">
-          {/* Contenedor para las gráficas de presión */}
-          <div className="flex flex-col lg:flex-row items-center gap-8">
-            <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
-              {leftWearables.map((_wearable, index) => (
-                <Fragment key={index}>
-                  <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                    Sensor de Presión Izquierdo
-                  </h2>
-                  <div
-                    ref={refs.leftPressureSensor}
-                    id="leftPressureSensor"
-                    className="mb-6"
-                  ></div>
-                </Fragment>
-              ))}
-            </div>
-            <div className="relative w-full max-w-md">
-              {videoSrc2 && !videoError ? (
-                <ReactPlayer
-                  ref={playerRef2}
-                  url={videoSrc2}
-                  onProgress={handleProgress}
-                  onSeek={handleSeek}
-                  onDuration={(d) => setDuration2(d)}
-                  width="100%"
-                  height="auto"
-                  controls={false}
-                  className="rounded-lg"
-                  playbackRate={playbackRate}
-                  onError={() => {}}
-                  progressInterval={(1 / 50) * 1000}
-                  config={{
-                    file: {
-                      attributes: {
-                        controlsList: 'nodownload',
-                        disablePictureInPicture: true,
-                      },
-                    },
-                  }}
-                />
-              ) : (
-                <div className="flex flex-col items-center justify-center w-full h-full bg-gray-800 text-white text-xl font-semibold rounded-lg">
-                  <VideoCameraIcon className="h-12 w-12 mb-3" />
-                  <span>No hay ningún mapa de calor disponible</span>
-                </div>
-              )}
-            </div>
-            <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
-              {rightWearables.map((_wearable, index) => (
-                <Fragment key={index}>
-                  <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                    Sensor de Presión Derecho
-                  </h2>
-                  <div
-                    ref={refs.rightPressureSensor}
-                    id="rightPressureSensor"
-                    className="mb-6"
-                  ></div>
-                </Fragment>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Contenedor para las gráficas adicionales */}
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
-            {leftWearables.map((_wearable, index) => (
-              <Fragment key={index}>
-                <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                  Acelerómetro Izquierdo
-                </h2>
-                <div
-                  ref={refs.leftAccelerometer}
-                  id="leftAccelerometer"
-                  className="mb-6"
-                ></div>
-                <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                  Giroscopio Izquierdo
-                </h2>
-                <div
-                  ref={refs.leftGyroscope}
-                  id="leftGyroscope"
-                  className="mb-6"
-                ></div>
-              </Fragment>
-            ))}
-          </div>
-          <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
-            {rightWearables.map((_wearable, index) => (
-              <Fragment key={index}>
-                <h2 className="text-xl font-semibold text-center text-gray-800 mb-4 mt-6">
-                  Acelerómetro Derecho
-                </h2>
-                <div
-                  ref={refs.rightAccelerometer}
-                  id="rightAccelerometer"
-                  className="mb-6"
-                ></div>
-                <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                  Giroscopio Derecho
-                </h2>
-                <div
-                  ref={refs.rightGyroscope}
-                  id="rightGyroscope"
-                  className="mb-6"
-                ></div>
-              </Fragment>
-            ))}
-          </div>
-        </div>
+        />
       </div>
     </div>
   );

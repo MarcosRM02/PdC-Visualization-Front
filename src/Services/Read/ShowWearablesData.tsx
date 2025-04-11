@@ -62,16 +62,14 @@ const ShowWearables = () => {
       {/* Área fija: cabecera, filtros y botones */}
       <div className="p-6">
         {/* Título Principal */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center ">
           <Breadcrumb items={breadcrumbItems} />
         </div>
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">
-          Wearables Data
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-800">Wearables Data</h1>
       </div>
       {/* Contenido Principal */}
 
-      <div className="flex-1 overflow-auto min-h-0 bg-white p-4 pb-24">
+      <div className="flex-1 overflow-auto min-h-0 bg-white">
         {loading ? (
           <div className="flex justify-center items-center mt-20">
             <Spinner />

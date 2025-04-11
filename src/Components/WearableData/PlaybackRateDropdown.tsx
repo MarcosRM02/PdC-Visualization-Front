@@ -1,12 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaTachometerAlt } from 'react-icons/fa'; // Icono para representar la velocidad
 import PlaybackButton from './Buttons/PlaybackButton';
+import { MdOutlineShutterSpeed } from 'react-icons/md';
+import HzControlPanel from './HZControlPannel';
 
 interface PlaybackRateDropdownProps {
   playbackRate: number;
   playbackRates: { label: string; rate: number }[];
   changePlaybackRate: (rate: number) => void;
   videoAvailable: boolean;
+  updateHz: number;
+  onUpdateHzChange: (newHz: number) => void;
+  getRenderFps: () => { leftFps: number; rightFps: number };
 }
 
 const PlaybackRateDropdown: React.FC<PlaybackRateDropdownProps> = ({
@@ -14,16 +18,19 @@ const PlaybackRateDropdown: React.FC<PlaybackRateDropdownProps> = ({
   playbackRates,
   changePlaybackRate,
   videoAvailable,
+  updateHz,
+  onUpdateHzChange,
+  getRenderFps,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Alternar la apertura del desplegable
+  // Alterna la apertura/cierre del dropdown
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
   };
 
-  // Cerrar el desplegable al hacer clic fuera
+  // Cierra el dropdown si se hace clic fuera de éste
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -34,25 +41,30 @@ const PlaybackRateDropdown: React.FC<PlaybackRateDropdownProps> = ({
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   return (
-    <div className="relative" ref={dropdownRef}>
-      {/* Botón principal: icono representativo de la velocidad */}
+    <div className="relative inline-block" ref={dropdownRef}>
+      {/* Botón principal con estilo similar al de IconActionButton */}
       <button
         onClick={toggleDropdown}
-        className="flex items-center justify-center p-2 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
+        className="ffont-bold py-3 px-8 rounded shadow-lg hover:shadow-xl transition duration-200 text-xl flex items-center justify-center "
         title="Cambiar Velocidad"
       >
-        <FaTachometerAlt size={24} />
+        <MdOutlineShutterSpeed size={24} color="blue" />
       </button>
-      {/* Menú desplegable con las velocidades */}
+      {/* Menú desplegable con scroll vertical en caso de exceso de elementos */}
       {isOpen && (
-        <div className="absolute mt-2 right-0 bg-white border border-gray-300 rounded shadow-lg z-10">
-          <div className="flex flex-col">
+        <div className="absolute bottom-full mb-2 right-0 bg-white border border-gray-300 rounded shadow-lg z-10 p-2 max-h-60 overflow-y-auto">
+          <div className="flex flex-col space-y-2">
+            {/* Componente del panel de control de Hz */}
+            <HzControlPanel
+              updateHz={updateHz}
+              onUpdateHzChange={onUpdateHzChange}
+              getRenderFps={getRenderFps}
+            />
+            {/* Lista de botones para cambiar la velocidad */}
             {playbackRates.map(({ label, rate }) => (
               <PlaybackButton
                 key={rate}

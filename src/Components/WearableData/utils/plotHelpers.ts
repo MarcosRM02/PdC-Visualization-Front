@@ -113,18 +113,35 @@ function generateLayout(yRange?: [number, number]) {
     autosize: true,
     responsive: true,
     showlegend: true,
+    // legend: {
+    //   orientation: 'h',
+    //   x: 0.5,
+    //   y: 1.05,
+    //   xanchor: 'center',
+    //   yanchor: 'bottom',
+    // xref: 'paper',
+    // yref: 'paper',
+    //   bgcolor: '#fcba03',
+    //   bordercolor: '#444',
+    //   borderwidth: 1,
+    //   font: { family: 'Arial', size: 12, color: '#fff' },
+    //   pad: { t: 10, b: 10 },
+    // },
     legend: {
       orientation: 'h',
       x: 0.5,
       y: 1.05,
       xanchor: 'center',
       yanchor: 'bottom',
-      bgcolor: '#fcba03',
-      bordercolor: '#444',
+      xref: 'paper',
+      yref: 'paper',
+      bgcolor: '#dbeafe', // Azul claro (Tailwind blue-100)
+      bordercolor: '#93c5fd', // Azul para el borde (Tailwind blue-300)
       borderwidth: 1,
-      font: { family: 'Arial', size: 12, color: '#fff' },
+      font: { family: 'Arial', size: 12, color: '#000' }, // Texto en negro para buen contraste
       pad: { t: 10, b: 10 },
     },
+
     colorway: [
       '#e6194b',
       '#3cb44b',
@@ -266,7 +283,6 @@ export function plotData(
       },
     },
   ];
-
   const config = {
     modeBarButtonsToShow: ['toImage'],
     modeBarButtonsToRemove: [
@@ -292,12 +308,23 @@ export function plotData(
     ],
     displaylogo: false,
     displayModeBar: true,
+    modeBarButtonsToAdd: [
+      {
+        name: 'Reactivar Leyenda',
+        icon: Plotly.Icons.autoscale, // Puedes usar otro icono si lo prefieres
+        click: function (gd: any) {
+          // Establece "visible" en true para todas las trazas
+          // @ts-ignore
+          Plotly.restyle(gd, 'visible', true);
+        },
+      },
+    ],
     toImageButtonOptions: {
       filename: title,
     },
   };
   // @ts-ignore
-  Plotly.newPlot(divId, traces, layout, config);
+  Plotly.react(divId, traces, layout, config);
 }
 
 export function handleRelayout(eventData: any, triggeredBy: any, refs: any) {

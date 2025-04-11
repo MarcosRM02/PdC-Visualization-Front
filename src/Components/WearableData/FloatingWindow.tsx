@@ -1,9 +1,12 @@
+// FloatingWindow.tsx
 import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 import { Rnd } from 'react-rnd';
 import VideoSection from './VideoSection';
 import TimeProgressBar from './TimeProgressBar';
 import ControlPanel from './ControlPanel';
 import { MdOpenWith, MdPushPin } from 'react-icons/md';
+import { CSSProperties } from 'react';
 
 interface FloatingWindowProps {
   playerRef1: React.RefObject<any>;
@@ -73,11 +76,11 @@ const FloatingWindow: React.FC<FloatingWindowProps> = ({
 }) => {
   // Valores originales para la posición y tamaño
   const originalPosition = { x: 100, y: 100 };
-  const originalSize = { width: 1000, height: 1100 };
+  const originalSize = { width: 1200, height: 900 };
 
   // Estado para alternar entre modo flotante y modo fijo
-  // isFloating === true → se puede mover/reescalar (sobrepuesto)
-  // isFloating === false → se fija y se integra en el flujo normal
+  // isFloating === true → se puede mover/reescalar (modo flotante)
+  // isFloating === false → se integra en el flujo normal (modo fijo)
   const [isFloating, setIsFloating] = useState(false);
 
   // Estado para controlar la visibilidad del botón (al pasar el mouse)
@@ -88,14 +91,14 @@ const FloatingWindow: React.FC<FloatingWindowProps> = ({
   const [size, setSize] = useState(originalSize);
 
   // Función para alternar el modo de la ventana.
-  // Al cambiar a modo fijo, se reinicia la posición (se recalcule para estar más arriba)
+  // Al cambiar a modo fijo se recalcula la posición según el padre.
   const toggleFloating = () => {
     if (isFloating) {
+      // Modo flotante → Modo fijo: Se restablecen posición y tamaño originales
       if (parentRef.current) {
         const parentRect = parentRef.current.getBoundingClientRect();
-        // Reposicionar la ventana fija en la parte superior central (con un offset vertical)
         const initialX = (parentRect.width - originalSize.width) / 2;
-        const initialY = 20; // Queda a 20px desde el tope
+        const initialY = 20; // A 20px desde el tope
         setPosition({ x: initialX, y: initialY });
       } else {
         setPosition(originalPosition);
@@ -103,10 +106,16 @@ const FloatingWindow: React.FC<FloatingWindowProps> = ({
       setSize(originalSize);
       setIsFloating(false);
     } else {
+      // Modo fijo → Modo flotante: Se reduce el tamaño a la mitad
+      setSize({
+        width: originalSize.width / 2,
+        height: originalSize.height / 2,
+      });
       setIsFloating(true);
     }
   };
 
+  // Al montar se posiciona la ventana fija centrada en el contenedor padre
   useEffect(() => {
     if (parentRef.current) {
       const parentRect = parentRef.current.getBoundingClientRect();
@@ -116,36 +125,16 @@ const FloatingWindow: React.FC<FloatingWindowProps> = ({
     }
   }, [parentRef, originalSize.width, originalSize.height]);
 
-  // Función para limitar el movimiento dentro del contenedor padre
-  const limitPosition = (x: number, y: number) => {
-    const parentEl = parentRef.current;
-    if (parentEl) {
-      const containerWidth = parentEl.clientWidth;
-      const containerHeight = parentEl.clientHeight;
-      const maxX =
-        containerWidth > size.width ? containerWidth - size.width : 0;
-      const maxY =
-        containerHeight > size.height ? containerHeight - size.height : 0;
-      const limitedX = Math.min(Math.max(x, 0), maxX);
-      const limitedY = Math.min(Math.max(y, 0), maxY);
-      return { x: limitedX, y: limitedY };
-    }
-    return { x, y };
-  };
-
-  // Definimos el estilo del contenedor según el modo:
-  // Modo flotante: se posiciona de forma absoluta (sobrepuesto)
-  // Modo fijo: se integra en el flujo normal (posición relativa) para que empuje el contenido siguiente
-  const containerStyle = isFloating
+  const containerStyle: CSSProperties = isFloating
     ? { position: 'absolute', zIndex: 1000 }
     : {
         position: 'relative',
         width: '100%',
-        zIndex: 1000,
         marginBottom: '20px',
+        zIndex: 1000,
       };
 
-  // Contenido interno común (video y controles)
+  // Contenido interno (video y controles)
   const renderContent = () => (
     <>
       <VideoSection
@@ -191,32 +180,46 @@ const FloatingWindow: React.FC<FloatingWindowProps> = ({
     </>
   );
 
-  return (
-    <Rnd
-      // Al usar Rnd en modo fijo (no flotante) eliminamos el posicionamiento absoluto para integrarlo en el layout
-      position={position}
-      size={size}
-      onDragStop={(_, d) => {
-        if (isFloating) {
-          const limitedPosition = limitPosition(d.x, d.y);
-          setPosition(limitedPosition);
+  // Propiedades para react-rnd
+  const rndProps = {
+    position: position,
+    size: size,
+    // Solo en modo flotante se habilitan drag y resize
+    onDragStop: isFloating
+      ? (_: any, d: { x: number; y: number }) => {
+          setPosition({ x: d.x, y: d.y });
         }
-      }}
-      onResizeStop={(_, __, ref, ___, newPosition) => {
-        if (isFloating) {
+      : undefined,
+    onResizeStop: isFloating
+      ? (
+          _: any,
+          __: any,
+          ref: HTMLElement,
+          ___: any,
+          newPos: { x: number; y: number },
+        ) => {
           setSize({
             width: parseInt(ref.style.width, 10),
             height: parseInt(ref.style.height, 10),
           });
-          const limitedPosition = limitPosition(newPosition.x, newPosition.y);
-          setPosition(limitedPosition);
+          setPosition({ x: newPos.x, y: newPos.y });
         }
-      }}
-      disableDragging={!isFloating}
-      enableResizing={isFloating}
-      //@ts-ignore
-      style={containerStyle}
-    >
+      : undefined,
+    disableDragging: !isFloating,
+    enableResizing: isFloating,
+    // Evitamos que se reduzca demasiado
+    minWidth: 300,
+    minHeight: 200,
+    // Constrainamos el movimiento:
+    // Si está flotante usamos los límites de la ventana,
+    // de lo contrario, se integra en el layout del padre.
+    bounds: isFloating ? 'window' : undefined,
+    style: containerStyle,
+  };
+
+  // Renderizado condicional: si está flotante, usamos un portal
+  const rndComponent = (
+    <Rnd {...rndProps}>
       <div
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -264,6 +267,13 @@ const FloatingWindow: React.FC<FloatingWindowProps> = ({
       </div>
     </Rnd>
   );
+
+  if (isFloating) {
+    // Cuando la ventana es flotante, la renderizamos en un portal que la saca del flujo del layout
+    return ReactDOM.createPortal(rndComponent, document.body);
+  }
+
+  return rndComponent;
 };
 
 export default FloatingWindow;

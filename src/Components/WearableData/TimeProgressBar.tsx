@@ -17,7 +17,7 @@ const TimeProgressBar: React.FC<TimeProgressBarProps> = ({
   };
 
   return (
-    <div className="w-full my-4">
+    <div className="w-full ">
       <input
         type="range"
         min={0}

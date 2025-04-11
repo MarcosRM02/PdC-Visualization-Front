@@ -13,6 +13,10 @@ const HeatmapControlPanel = ({
 }: HeatmapControlPanelProps) => {
   const [_, setFps] = useState(0); // Estado para el FPS combinado
 
+  // Valor normal (por ejemplo 50) y límite superior (x2 normal, es decir 100)
+  const normalHz = 50;
+  const maxHz = normalHz * 2;
+
   // Actualizar el FPS cada segundo
   useEffect(() => {
     const interval = setInterval(() => {
@@ -23,23 +27,24 @@ const HeatmapControlPanel = ({
     return () => clearInterval(interval);
   }, [getRenderFps]);
 
+  // Calcula el multiplicador
+  const multiplier = (updateHz / normalHz).toFixed(2);
+
   return (
     <div className="mt-4">
       <div className="mt-2 flex items-center space-x-2">
-        <label htmlFor="updateHz" className="text-lg font-medium">
-          Video Rate (Hz):
-        </label>
         <input
           id="updateHz"
-          type="number"
+          type="range"
           min="1"
-          max="1000"
+          max={maxHz}
           value={updateHz}
           onChange={(e) =>
             onUpdateHzChange(Math.max(1, parseInt(e.target.value) || 1))
           }
-          className="border p-1 w-20"
+          className="w-40" // Puedes ajustar el ancho del slider según necesites
         />
+        <span>{`x${multiplier}`}</span>
       </div>
     </div>
   );
