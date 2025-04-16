@@ -14,7 +14,7 @@ const InfoButton: React.FC = () => {
       >
         <AiOutlineInfoCircle className="w-5 h-5" />
       </button>
-      <Tooltip id="info-tooltip" place="top" />
+      <Tooltip id="info-tooltip" style={{ zIndex: 9999 }} place="top" />
     </div>
   );
 };

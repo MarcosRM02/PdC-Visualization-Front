@@ -478,18 +478,11 @@ const WearablesData = ({
   return (
     <div
       ref={parentRef}
-      style={{
-        position: 'relative',
-        // width: '100%',
-        // height: '100vh',
-        overflow: 'visible',
-        flexDirection: 'column',
-      }}
-      className="min-h-screen bg-gray-100"
+      className="relative overflow-visible flex flex-col bg-gray-100"
     >
       {/* <CustomLegendPlot /> */}
       {/* Sección de gráficos detallados */}
-      <div className="flex justify-center space-x-6 items-center mt-16">
+      <div className="flex justify-center space-x-6 items-center">
         <IconActionButton
           onClick={resetGraphs}
           icon={<FaSync />}
@@ -517,9 +510,9 @@ const WearablesData = ({
           <InfoButton />
         </div>
       </div>
-      <div className="mt-16 flex flex-col gap-8">
+      <div className="mt-4 flex flex-col gap-8">
         {/* Contenedor para las gráficas de presión */}
-        <div className="flex flex-col lg:flex-row items-center gap-8">
+        <div className="flex flex-col lg:flex-row items-start">
           <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
             {leftWearables.map((_wearable, index) => (
               <Fragment key={index}>
@@ -529,12 +522,11 @@ const WearablesData = ({
                 <div
                   ref={refs.leftPressureSensor}
                   id="leftPressureSensor"
-                  className="mb-6"
                 ></div>
               </Fragment>
             ))}
           </div>
-          <div className="relative w-full max-w-md">
+          <div className="relative w-full max-w-md rounded-lg overflow-hidden">
             {videoSrc2 && !videoError ? (
               <ReactPlayer
                 ref={playerRef2}
@@ -605,7 +597,6 @@ const WearablesData = ({
                 <div
                   ref={refs.rightPressureSensor}
                   id="rightPressureSensor"
-                  className="mb-6"
                 ></div>
               </Fragment>
             ))}
@@ -614,7 +605,7 @@ const WearablesData = ({
       </div>
 
       {/* Contenedor para las gráficas adicionales */}
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div className="flex flex-col lg:flex-row">
         <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
           {leftWearables.map((_wearable, index) => (
             <Fragment key={index}>
@@ -640,7 +631,7 @@ const WearablesData = ({
         <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
           {rightWearables.map((_wearable, index) => (
             <Fragment key={index}>
-              <h2 className="text-xl font-semibold text-center text-gray-800 mb-4 mt-6">
+              <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
                 Acelerómetro Derecho
               </h2>
               <div
@@ -660,7 +651,7 @@ const WearablesData = ({
           ))}
         </div>
       </div>
-      <div className="bg-gray-100 p-6 flex flex-col justify-center items-center">
+      <div className="relative mt-5">
         <FloatingWindow
           playerRef1={playerRef1}
           videoSrc={videoSrc}

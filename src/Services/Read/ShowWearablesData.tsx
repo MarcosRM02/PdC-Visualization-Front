@@ -60,13 +60,13 @@ const ShowWearables = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
       {/* Área fija: cabecera, filtros y botones */}
-      <div className="p-6">
-        {/* Título Principal */}
-        <div className="flex justify-between items-center ">
-          <Breadcrumb items={breadcrumbItems} />
-        </div>
-        <h1 className="text-3xl font-bold text-gray-800">Wearables Data</h1>
+      {/* <div> */}
+      {/* Título Principal */}
+      <div className="flex justify-between items-center ">
+        <Breadcrumb items={breadcrumbItems} />
       </div>
+      {/* <h1 className="text-3xl font-bold text-gray-800">Wearables Data</h1> */}
+      {/* </div> */}
       {/* Contenido Principal */}
 
       <div className="flex-1 overflow-auto min-h-0 bg-white">

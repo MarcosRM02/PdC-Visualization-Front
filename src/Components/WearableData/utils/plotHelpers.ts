@@ -283,6 +283,7 @@ export function plotData(
       },
     },
   ];
+
   const config = {
     modeBarButtonsToShow: ['toImage'],
     modeBarButtonsToRemove: [
@@ -310,11 +311,18 @@ export function plotData(
     displayModeBar: true,
     modeBarButtonsToAdd: [
       {
-        name: 'Reactivar Leyenda',
-        icon: Plotly.Icons.autoscale, // Puedes usar otro icono si lo prefieres
+        name: 'Apagar Leyenda',
+        icon: Plotly.Icons.eraseshape,
         click: function (gd: any) {
-          // Establece "visible" en true para todas las trazas
-          // @ts-ignore
+          //@ts-ignore
+          Plotly.restyle(gd, 'visible', 'legendonly');
+        },
+      },
+      {
+        name: 'Reactivar Leyenda',
+        icon: Plotly.Icons.undo,
+        click: function (gd: any) {
+          //@ts-ignore
           Plotly.restyle(gd, 'visible', true);
         },
       },
