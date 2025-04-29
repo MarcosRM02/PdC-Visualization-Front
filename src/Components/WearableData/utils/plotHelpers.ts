@@ -229,17 +229,19 @@ export function plotData(
       ];
     }
   }
-
-  const traces = datos.columns.map((column: string) => ({
+  let axisLabels: string[] = [];
+  if (title.includes('Acelerómetro') || title.includes('Giroscopio')) {
+    axisLabels = ['X', 'Y', 'Z'];
+  }
+  const traces = datos.columns.map((column: string, index: number) => ({
     x: Array.from(datos.index.values()).map(
       (index: any) => index / wearable[0].frequency,
     ),
-    // Se aplica la conversión a los datos según corresponda
     // @ts-ignore
     y: datos[column].values.map((val: number) => val * conversionFactor),
     type: 'scattergl',
     mode: 'lines',
-    name: column,
+    name: axisLabels[index] ?? String(column),
     line: {
       width: 2,
     },
