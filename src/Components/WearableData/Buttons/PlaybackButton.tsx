@@ -1,13 +1,7 @@
 import React from 'react';
+import { IPlaybackButtonProps } from '../../../Interfaces/DataPanel';
 
-interface PlaybackButtonProps {
-  label: string;
-  onClick: () => void;
-  active?: boolean;
-  disabled?: boolean;
-}
-
-const PlaybackButton: React.FC<PlaybackButtonProps> = ({
+const PlaybackButton: React.FC<IPlaybackButtonProps> = ({
   label,
   onClick,
   active,

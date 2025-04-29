@@ -1,5 +1,3 @@
-// src/Pages/Participants/ShowParticipant.tsx
-
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Spinner from '../../Components/CommonComponents/Spinner';
@@ -10,16 +8,12 @@ import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import 'react-datepicker/dist/react-datepicker.css';
 import CreateParticipantTemplateModal from '../Create/CreateParticipantTemplate'; // Importa el modal de creación
+import { IParticipant } from '../../Interfaces/Participants';
 
-interface Participant {
-  id: number;
-  code: string;
-  personaldataid: number;
-}
 const ShowParticipant = () => {
-  const [participants, setParticipants] = useState<Participant[]>([]);
+  const [participants, setParticipants] = useState<IParticipant[]>([]);
   const [filteredParticipants, setFilteredParticipants] = useState<
-    Participant[]
+    IParticipant[]
   >([]);
   const [loading, setLoading] = useState(false);
   const [searchCode, setSearchCode] = useState('');
@@ -48,7 +42,7 @@ const ShowParticipant = () => {
         `${apiUrl}/participantTemplates/by-professional/${id}`,
         config,
       );
-      let participantsData: Participant[] = response.data;
+      let participantsData: IParticipant[] = response.data;
 
       // Ordenar los participantes por ID de manera ascendente
       participantsData.sort((a, b) => a.id - b.id);
@@ -183,7 +177,7 @@ const ShowParticipant = () => {
         <CreateParticipantTemplateModal
           isOpen={isCreateModalOpen}
           onClose={closeCreateModal}
-          onParticipantCreated={handleParticipantEdited} // Pasar el callback
+          onCreated={handleParticipantEdited} // Pasar el callback
         />
       </div>
     </div>

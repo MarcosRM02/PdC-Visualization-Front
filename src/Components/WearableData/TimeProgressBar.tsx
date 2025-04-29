@@ -1,12 +1,7 @@
 import React from 'react';
+import { ITimeProgressBarProps } from '../../Interfaces/DataPanel';
 
-interface TimeProgressBarProps {
-  currentTime: number;
-  duration: number;
-  onSeek: (time: number) => void;
-}
-
-const TimeProgressBar: React.FC<TimeProgressBarProps> = ({
+const TimeProgressBar: React.FC<ITimeProgressBarProps> = ({
   currentTime,
   duration,
   onSeek,

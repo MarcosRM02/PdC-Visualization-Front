@@ -1,18 +1,9 @@
 import React from 'react';
 import ReactPlayer from 'react-player';
 import { VideoCameraIcon } from '@heroicons/react/24/solid';
+import { IVideoSectionProps } from '../../Interfaces/DataPanel';
 
-interface VideoSectionProps {
-  playerRef1: React.RefObject<ReactPlayer>;
-  videoFile: string;
-  videoError: boolean;
-  playbackRate: number;
-  handleProgress: (state: { playedSeconds: number }) => void;
-  handleSeek: (newTime: number) => void;
-  onDuration1: (duration: number) => void;
-}
-
-const VideoSection: React.FC<VideoSectionProps> = ({
+const VideoSection: React.FC<IVideoSectionProps> = ({
   playerRef1,
   videoFile,
   videoError,

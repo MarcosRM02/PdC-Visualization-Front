@@ -5,17 +5,12 @@ import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
 import { NumericFormat } from 'react-number-format';
 import { useParams } from 'react-router-dom';
+import { ICreateModalProps } from '../../Interfaces/Services';
 
-interface CreateParticipantModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onParticipantCreated: () => void; // Callback para notificar al padre
-}
-
-const CreateParticipantModal: React.FC<CreateParticipantModalProps> = ({
+const CreateParticipantModal: React.FC<ICreateModalProps> = ({
   isOpen,
   onClose,
-  onParticipantCreated,
+  onCreated,
 }) => {
   const [height, setHeight] = useState<number | undefined>(undefined);
   const [weight, setWeight] = useState<number | undefined>(undefined);
@@ -103,7 +98,7 @@ const CreateParticipantModal: React.FC<CreateParticipantModalProps> = ({
         variant: 'success',
       });
       onClose();
-      onParticipantCreated(); // Notificar al componente padre
+      onCreated(); // Notificar al componente padre
 
       // Limpiar campos
       setCode('');

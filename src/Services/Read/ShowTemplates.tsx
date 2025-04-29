@@ -9,7 +9,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useSnackbar } from 'notistack';
 import CreateTemplateModal from '../Create/CreateTemplate';
 import Breadcrumb from '../../Components/CommonComponents/Breadcrumb';
-import { BreadcrumbItem } from '../../Types/Interfaces';
+import { IBreadcrumbItem } from '../../Interfaces/BreadcrumbInterfaces';
 
 const ShowTemplates = () => {
   const [sWDatas, setSWDatas] = useState<any[]>([]);
@@ -29,7 +29,7 @@ const ShowTemplates = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
   const { enqueueSnackbar } = useSnackbar();
 
-  const breadcrumbItems: BreadcrumbItem[] = [
+  const breadcrumbItems: IBreadcrumbItem[] = [
     { label: 'Templates', path: `/templates/by-professional/${id}` },
   ];
 
@@ -177,7 +177,7 @@ const ShowTemplates = () => {
           <CreateTemplateModal
             isOpen={isCreateModalOpen}
             onClose={() => setIsCreateModalOpen(false)}
-            onTrialCreated={handleTrialCreated}
+            onCreated={handleTrialCreated}
           />
         )}
       </div>

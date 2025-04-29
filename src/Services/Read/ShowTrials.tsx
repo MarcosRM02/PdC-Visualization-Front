@@ -10,7 +10,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useSnackbar } from 'notistack';
 import CreateTrialModal from '../../Services/Create/CreateTrial'; // Importar el modal
 import Breadcrumb from '../../Components/CommonComponents/Breadcrumb';
-import { BreadcrumbItem } from '../../Types/Interfaces';
+import { IBreadcrumbItem } from '../../Interfaces/BreadcrumbInterfaces';
 import AddExistingTemplatesModal from '../Create/AddExistingTemplates';
 import { RiContactsBookUploadLine } from 'react-icons/ri';
 import { LuFilePlus } from 'react-icons/lu';
@@ -40,7 +40,7 @@ const ShowTrials = () => {
   });
   const [refresh, setRefresh] = useState(false);
 
-  const breadcrumbItems: BreadcrumbItem[] = [
+  const breadcrumbItems: IBreadcrumbItem[] = [
     { label: 'Experimentos', path: '/' },
     {
       label: 'Participantes',
@@ -306,14 +306,14 @@ const ShowTrials = () => {
         <AddExistingTemplatesModal
           isOpen={isAddModalOpen}
           onClose={closeAddModal}
-          onTrialCreated={handleTrialEdited} // Pasar el callback
+          onCreated={handleTrialEdited} // Pasar el callback
         />
         {/* Modal de Creación */}
         {isCreateModalOpen && (
           <CreateTrialModal
             isOpen={isCreateModalOpen}
             onClose={() => setIsCreateModalOpen(false)}
-            onTrialCreated={handleTrialCreated}
+            onCreated={handleTrialCreated}
           />
         )}
       </div>

@@ -3,24 +3,9 @@ import PlaybackRateDropdown from './PlaybackRateDropdown';
 import IconActionButton from './IconActionButton';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import { VscDebugRestart } from 'react-icons/vsc';
+import { IControlPanelProps } from '../../Interfaces/DataPanel';
 
-interface ControlPanelProps {
-  playbackRate: number;
-  playbackRates: { label: string; rate: number }[];
-  changePlaybackRate: (rate: number) => void;
-  videoAvailable: boolean;
-  handlePlay: () => void;
-  isPlaying: boolean;
-  isPaused: boolean;
-  handleReset: () => void;
-  resetGraphs: () => void;
-  updateHz: number;
-  handleUpdateHzChange: (newHz: number) => void;
-  getRenderFps: () => { leftFps: number; rightFps: number };
-  descargarDatos: () => void;
-}
-
-const ControlPanel: React.FC<ControlPanelProps> = ({
+const ControlPanel: React.FC<IControlPanelProps> = ({
   playbackRate,
   playbackRates,
   changePlaybackRate,

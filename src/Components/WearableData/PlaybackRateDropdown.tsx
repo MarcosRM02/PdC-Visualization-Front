@@ -2,18 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import PlaybackButton from './Buttons/PlaybackButton';
 import { MdOutlineShutterSpeed } from 'react-icons/md';
 import HzControlPanel from './HZControlPannel';
+import { IPlaybackRateDropdownProps } from '../../Interfaces/DataPanel';
 
-interface PlaybackRateDropdownProps {
-  playbackRate: number;
-  playbackRates: { label: string; rate: number }[];
-  changePlaybackRate: (rate: number) => void;
-  videoAvailable: boolean;
-  updateHz: number;
-  onUpdateHzChange: (newHz: number) => void;
-  getRenderFps: () => { leftFps: number; rightFps: number };
-}
-
-const PlaybackRateDropdown: React.FC<PlaybackRateDropdownProps> = ({
+const PlaybackRateDropdown: React.FC<IPlaybackRateDropdownProps> = ({
   playbackRate,
   playbackRates,
   changePlaybackRate,

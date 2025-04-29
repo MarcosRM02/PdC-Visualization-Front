@@ -1,5 +1,3 @@
-// src/Components/Participants/CreateParticipantModal.tsx
-
 import React, { useEffect, useState } from 'react';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import axios from 'axios';
@@ -7,16 +5,13 @@ import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
 import { NumericFormat } from 'react-number-format';
 import { useParams } from 'react-router-dom';
+import { ICreateModalProps } from '../../Interfaces/Services';
 
-interface CreateParticipantTemplateModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onParticipantCreated: () => void; // Callback para notificar al padre
-}
-
-const CreateParticipantTemplateModal: React.FC<
-  CreateParticipantTemplateModalProps
-> = ({ isOpen, onClose, onParticipantCreated }) => {
+const CreateParticipantTemplateModal: React.FC<ICreateModalProps> = ({
+  isOpen,
+  onClose,
+  onCreated,
+}) => {
   const [height, setHeight] = useState<number | undefined>(undefined);
   const [weight, setWeight] = useState<number | undefined>(undefined);
   const [footLength, setFootLength] = useState<number | undefined>(undefined);
@@ -66,17 +61,6 @@ const CreateParticipantTemplateModal: React.FC<
       // Verifica que la respuesta contenga el ID de personalData
       let newPersonalDataId = response1.data;
 
-      // if (typeof response1.data === 'object') {
-      //   newPersonalDataId =
-      //     response1.data.id ||
-      //     response1.data.ID ||
-      //     response1.data.personalDataId;
-      // } else if (typeof response1.data === 'number') {
-      //   newPersonalDataId = response1.data;
-      // }
-
-      console.log('Nuevo personalData ID:', newPersonalDataId);
-
       if (!newPersonalDataId) {
         throw new Error('No se obtuvo el ID de personalData en la respuesta.');
       }
@@ -98,7 +82,7 @@ const CreateParticipantTemplateModal: React.FC<
         variant: 'success',
       });
       onClose();
-      onParticipantCreated(); // Notificar al componente padre
+      onCreated(); // Notificar al componente padre
 
       // Limpiar campos
       setCode('');

@@ -1,4 +1,3 @@
-// UserModal.tsx
 import React, { useState, useEffect } from 'react';
 import {
   HiOutlineXCircle,
@@ -9,13 +8,9 @@ import {
 import { GiFootprint, GiWeightScale } from 'react-icons/gi';
 import { FaRulerVertical } from 'react-icons/fa';
 import EditPersonalDataTemplateModal from '../../Services/Update/EditPersonalDataTemplate';
+import { IUserModalProps } from '../../Interfaces/Interfaces';
 
-interface UserModalProps {
-  user: any;
-  onClose: () => void;
-}
-
-const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
+const UserModal: React.FC<IUserModalProps> = ({ user, onClose }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(user);
 
@@ -40,7 +35,7 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center">
         <div className="bg-white rounded-lg p-6 shadow-lg">
-          <p className="text-gray-700">No personal data available.</p>
+          <p className="text-gray-700">No hay datos personales disponibles</p>
           <button
             onClick={onClose}
             className="mt-4 px-4 py-2 bg-rose-600 text-white rounded hover:bg-rose-700 transition-colors"
@@ -162,8 +157,8 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
       <EditPersonalDataTemplateModal
         isOpen={isEditModalOpen}
         onClose={closeEditModal}
-        personalDataId={currentUser.id}
-        onPersonalDataEdited={handlePersonalDataEdited}
+        id={currentUser.id}
+        onEdited={handlePersonalDataEdited}
       />
     </>
   );

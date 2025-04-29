@@ -1,23 +1,15 @@
-// src/Services/Delete/DeleteExperiment.tsx
-
 import React, { useState, useEffect } from 'react';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
+import { IDeleteModalProps } from '../../Interfaces/Services';
 
-interface DeleteExperimentModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onExperimentDeleted: () => void; // Callback para notificar al padre
-  experimentId: number; // ID del experimento a eliminar
-}
-
-const DeleteExperimentModal: React.FC<DeleteExperimentModalProps> = ({
+const DeleteExperimentModal: React.FC<IDeleteModalProps> = ({
   isOpen,
   onClose,
-  onExperimentDeleted,
-  experimentId,
+  onDeleted,
+  id,
 }) => {
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -27,7 +19,7 @@ const DeleteExperimentModal: React.FC<DeleteExperimentModalProps> = ({
 
   const handleDeleteExperiment = async () => {
     setLoading(true);
-    console.log(`Attempting to delete experiment with ID: ${experimentId}`);
+    console.log(`Attempting to delete experiment with ID: ${id}`);
 
     const config = {
       headers: {
@@ -36,15 +28,12 @@ const DeleteExperimentModal: React.FC<DeleteExperimentModalProps> = ({
     };
 
     try {
-      await axios.delete(
-        `${apiUrl}/experiments/delete/${experimentId}`,
-        config,
-      );
+      await axios.delete(`${apiUrl}/experiments/delete/${id}`, config);
       setLoading(false);
       enqueueSnackbar('Experimento eliminado exitosamente', {
         variant: 'success',
       });
-      onExperimentDeleted(); // Notificar al componente padre
+      onDeleted(); // Notificar al componente padre
       onClose();
     } catch (error) {
       setLoading(false);

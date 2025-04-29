@@ -1,22 +1,15 @@
-// src/Components/Experiments/CreateExperimentModal.tsx
-
 import React, { useEffect, useState } from 'react';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
+import { ICreateModalProps } from '../../Interfaces/Services';
 
-interface CreateExperimentModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onExperimentCreated: () => void; // Callback para notificar al padre
-}
-
-const CreateExperimentModal: React.FC<CreateExperimentModalProps> = ({
+const CreateExperimentModal: React.FC<ICreateModalProps> = ({
   isOpen,
   onClose,
-  onExperimentCreated,
+  onCreated,
 }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -55,7 +48,7 @@ const CreateExperimentModal: React.FC<CreateExperimentModalProps> = ({
         variant: 'success',
       });
       onClose();
-      onExperimentCreated(); // Notificar al componente padre
+      onCreated(); // Notificar al componente padre
       // Limpiar campos
       setName('');
       setDescription('');

@@ -10,7 +10,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useSnackbar } from 'notistack';
 import CreateTrialTemplateModal from '../Create/CreateTrialTemplate';
 import Breadcrumb from '../../Components/CommonComponents/Breadcrumb';
-import { BreadcrumbItem } from '../../Types/Interfaces';
+import { IBreadcrumbItem } from '../../Interfaces/BreadcrumbInterfaces';
 
 const ShowTrialsTemplates = () => {
   const [sWDatas, setSWDatas] = useState<any[]>([]);
@@ -46,7 +46,7 @@ const ShowTrialsTemplates = () => {
     setRefreshTrigger((prev) => !prev);
   }, [enqueueSnackbar]);
 
-  const breadcrumbItems: BreadcrumbItem[] = [
+  const breadcrumbItems: IBreadcrumbItem[] = [
     {
       label: 'Templates',
       path: `/templates/by-professional/${professionalId}`,
@@ -68,10 +68,6 @@ const ShowTrialsTemplates = () => {
           config,
         );
         let trialsData = response.data;
-
-        // // Ordenar los trials por ID de manera ascendente
-        // trialsData.sort((a: any, b: any) => a.id - b.id);
-
         // Ordenar los trials por fecha de manera ascendente
         trialsData.sort((a: any, b: any) => {
           const dateA = new Date(a.date);
@@ -227,7 +223,7 @@ const ShowTrialsTemplates = () => {
           <CreateTrialTemplateModal
             isOpen={isCreateModalOpen}
             onClose={() => setIsCreateModalOpen(false)}
-            onTrialCreated={handleTrialCreated}
+            onCreated={handleTrialCreated}
           />
         )}
       </div>

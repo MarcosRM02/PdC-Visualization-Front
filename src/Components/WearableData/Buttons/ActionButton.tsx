@@ -1,12 +1,7 @@
 import React from 'react';
+import { IActionButtonProps } from '../../../Interfaces/DataPanel';
 
-interface ActionButtonProps {
-  onClick: () => void;
-  label: string;
-  color?: 'blue' | 'red' | 'green' | 'orange';
-}
-
-const ActionButton: React.FC<ActionButtonProps> = ({
+const ActionButton: React.FC<IActionButtonProps> = ({
   onClick,
   label,
   color = 'blue',

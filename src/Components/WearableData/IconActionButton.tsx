@@ -1,13 +1,7 @@
 import React from 'react';
+import { IIconActionButtonProps } from '../../Interfaces/DataPanel';
 
-interface IconActionButtonProps {
-  onClick: () => void;
-  icon: React.ReactNode;
-  color?: 'blue' | 'red' | 'green' | 'orange';
-  tooltip?: string;
-}
-
-const IconActionButton: React.FC<IconActionButtonProps> = ({
+const IconActionButton: React.FC<IIconActionButtonProps> = ({
   onClick,
   icon,
   color,

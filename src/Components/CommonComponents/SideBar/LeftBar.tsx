@@ -1,14 +1,9 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaHome, FaUserFriends } from 'react-icons/fa';
 import { RiGitRepositoryFill } from 'react-icons/ri';
+import { ILeftBarProps } from '../../../Interfaces/SideBar';
 
-interface LeftBarProps {
-  selectedPanel: string | null;
-  togglePanel: (panelId: string) => void;
-}
-
-const LeftBar: React.FC<LeftBarProps> = ({ selectedPanel, togglePanel }) => {
+const LeftBar: React.FC<ILeftBarProps> = ({ selectedPanel, togglePanel }) => {
   const navigate = useNavigate();
   const professionalId = localStorage.getItem('id');
   return (
@@ -20,7 +15,7 @@ const LeftBar: React.FC<LeftBarProps> = ({ selectedPanel, togglePanel }) => {
         `}
         onClick={() => {
           togglePanel('home');
-          navigate(`/experiments/by-professional/${professionalId}`); // Ajusta la ruta según tu necesidad
+          navigate(`/experiments/by-professional/${professionalId}`);
         }}
       >
         <FaHome />
@@ -33,20 +28,18 @@ const LeftBar: React.FC<LeftBarProps> = ({ selectedPanel, togglePanel }) => {
         `}
         onClick={() => {
           togglePanel('allParticipants');
-          navigate(`/participantTemplates/by-professional/${professionalId}`); // Ajusta la ruta según tu necesidad
+          navigate(`/participantTemplates/by-professional/${professionalId}`);
         }}
       >
         <FaUserFriends />
       </button>
-      {/* Botón           ${selectedPanel === 'templates' ? 'bg-gray-700' : ''}
-       */}
       <button
         className={`my-2 p-2 hover:bg-gray-700 rounded 
           ${selectedPanel === 'templates' ? 'bg-gray-700' : ''}
         `}
         onClick={() => {
           togglePanel('templates');
-          navigate(`/templates/by-professional/${professionalId}`); // Ajusta la ruta según tu necesidad
+          navigate(`/templates/by-professional/${professionalId}`);
         }}
       >
         <RiGitRepositoryFill />

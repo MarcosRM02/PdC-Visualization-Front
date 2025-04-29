@@ -3,25 +3,14 @@ import Spinner from '../../Components/CommonComponents/Spinner';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
+import { IEditModalProps } from '../../Interfaces/Services';
+import { ITemplate } from '../../Interfaces/Trials';
 
-interface EditTrialTemplateModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  templateId: number;
-  onTrialEdited: () => void; // Callback para notificar al padre
-}
-
-// Definir una interfaz para los datos del trial
-interface TemplateData {
-  name: string;
-  description?: string | null;
-}
-
-const EditTrialTemplate: React.FC<EditTrialTemplateModalProps> = ({
+const EditTrialTemplate: React.FC<IEditModalProps> = ({
   isOpen,
   onClose,
-  templateId,
-  onTrialEdited,
+  onEdited,
+  id,
 }) => {
   const [name, setName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
@@ -42,10 +31,7 @@ const EditTrialTemplate: React.FC<EditTrialTemplateModalProps> = ({
       };
       setLoading(true);
       try {
-        const response = await axios.get(
-          `${apiUrl}/templates/${templateId}`,
-          config,
-        );
+        const response = await axios.get(`${apiUrl}/templates/${id}`, config);
         setName(response.data.name);
         setDescription(response.data.description || '');
       } catch (error) {
@@ -59,7 +45,7 @@ const EditTrialTemplate: React.FC<EditTrialTemplateModalProps> = ({
     };
 
     fetchTrial();
-  }, [isOpen, templateId, accessToken, apiUrl, enqueueSnackbar]);
+  }, [isOpen, id, accessToken, apiUrl, enqueueSnackbar]);
 
   const handleEditTemplate = async () => {
     // Validaciones básicas
@@ -70,7 +56,7 @@ const EditTrialTemplate: React.FC<EditTrialTemplateModalProps> = ({
       return;
     }
 
-    const data: TemplateData = {
+    const data: ITemplate = {
       name: name.trim(),
       description: description.trim() !== '' ? description.trim() : null,
     };
@@ -82,12 +68,12 @@ const EditTrialTemplate: React.FC<EditTrialTemplateModalProps> = ({
     };
     setLoading(true);
     try {
-      await axios.put(`${apiUrl}/templates/edit/${templateId}`, data, config);
+      await axios.put(`${apiUrl}/templates/edit/${id}`, data, config);
       enqueueSnackbar('Template editado exitosamente', {
         variant: 'success',
       });
       onClose();
-      onTrialEdited(); // Notificar al componente padre
+      onEdited(); // Notificar al componente padre
     } catch (error) {
       enqueueSnackbar('Error al editar el Template.', { variant: 'error' });
       console.error('Error editing Template:', error);

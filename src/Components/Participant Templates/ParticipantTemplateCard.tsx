@@ -1,19 +1,7 @@
-import React from 'react';
 import ParticipantTemplateSingleCard from './ParticipantTemplateSingleCard';
+import { IParticipantCardProp } from '../../Interfaces/Participants';
 
-interface IParticipant {
-  id: number;
-  code: string;
-  personaldataid: number;
-}
-
-export interface IParticipantProp {
-  participants: IParticipant[];
-  onParticipantDeleted: () => void;
-  onParticipantEdited: () => void; // Añadir esta línea
-}
-
-const ParticipantTemplateCard: React.FC<IParticipantProp> = ({
+const ParticipantTemplateCard: React.FC<IParticipantCardProp> = ({
   participants = [],
   onParticipantDeleted,
   onParticipantEdited,
@@ -24,8 +12,8 @@ const ParticipantTemplateCard: React.FC<IParticipantProp> = ({
         <ParticipantTemplateSingleCard
           key={item.id}
           participants={item}
-          onParticipantDeleted={onParticipantDeleted} // Pasar el callback
-          onParticipantEdited={onParticipantEdited} // Pasar el nuevo callback
+          onParticipantDeleted={onParticipantDeleted}
+          onParticipantEdited={onParticipantEdited}
         />
       ))}
     </div>

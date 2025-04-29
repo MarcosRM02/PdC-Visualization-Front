@@ -9,15 +9,9 @@ import {
 import { FaRegCalendarCheck } from 'react-icons/fa';
 import EditTrialTemplateModal from '../../Services/Update/EditTrialTemplate';
 import DeleteTrialTemplate from '../../Services/Delete/DeleteTrialTemplate';
-import { useParams } from 'react-router-dom';
+import { ITrialSingleCardProps } from '../../Interfaces/Trials';
 
-interface TrialSingleCardProps {
-  trials: any;
-  onTrialEdited: () => void;
-  onTrialDeleted: () => void;
-}
-
-const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
+const TrialSingleCard: React.FC<ITrialSingleCardProps> = ({
   trials,
   onTrialEdited,
   onTrialDeleted,
@@ -38,8 +32,6 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
     };
     return date.toLocaleDateString('es-ES', options);
   };
-
-  const tempolateId = useParams<{ id: string }>();
 
   const formattedDate = formatDate(trials.date);
 
@@ -127,17 +119,16 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
       <EditTrialTemplateModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        trialTemplateId={trials.id}
-        onTrialEdited={handleTrialEdited}
+        id={trials.id}
+        onEdited={handleTrialEdited}
       />
 
       {/* Modal de Eliminación */}
       <DeleteTrialTemplate
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
-        onTrialDeleted={handleTrialDeleted}
-        templateId={Number(tempolateId.id)}
-        trialId={trials.id}
+        onDeleted={handleTrialDeleted}
+        id={trials.id}
       />
     </>
   );

@@ -1,4 +1,3 @@
-// TemplateSingleCard.tsx
 import React, { useState } from 'react';
 import {
   HiOutlineQrcode,
@@ -10,15 +9,10 @@ import {
 import EditTemplateModal from '../../Services/Update/EditTemplate';
 import DeleteTemplate from '../../Services/Delete/DeleteTemplate';
 import { Link } from 'react-router-dom';
+import { ITrialSingleCardProps } from '../../Interfaces/Trials';
 
-interface TemplateSingleCardProps {
-  template: any;
-  onTrialEdited: () => void;
-  onTrialDeleted: () => void;
-}
-
-const TemplateSingleCard: React.FC<TemplateSingleCardProps> = ({
-  template,
+const TemplateSingleCard: React.FC<ITrialSingleCardProps> = ({
+  trials: template,
   onTrialEdited,
   onTrialDeleted,
 }) => {
@@ -75,7 +69,7 @@ const TemplateSingleCard: React.FC<TemplateSingleCardProps> = ({
           {/* Número de Templates */}
           <div className="flex items-center gap-x-3">
             <HiOutlineUserGroup className="text-sky-700 text-2xl" />
-            <h4 className="text-gray-800 font-semibold">
+            <h4 className="text-gray-800 font-medium">
               <strong>Número de Trials:</strong> {template.numberOfTemplates}
             </h4>
           </div>
@@ -107,16 +101,16 @@ const TemplateSingleCard: React.FC<TemplateSingleCardProps> = ({
       <EditTemplateModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        templateId={template.id}
-        onTrialEdited={handleTrialEdited}
+        id={template.id}
+        onEdited={handleTrialEdited}
       />
 
       {/* Modal de eliminación */}
       <DeleteTemplate
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
-        onTrialDeleted={handleTrialDeleted}
-        templateId={template.id}
+        onDeleted={handleTrialDeleted}
+        id={template.id}
       />
     </>
   );

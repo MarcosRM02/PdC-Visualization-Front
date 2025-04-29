@@ -1,23 +1,15 @@
-// src/Services/Delete/DeleteTrial.tsx
-
 import React, { useState, useEffect } from 'react';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
+import { IDeleteModalProps } from '../../Interfaces/Services';
 
-interface DeleteTemplateModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onTrialDeleted: () => void; // Callback para notificar al padre
-  templateId: number; // ID de la prueba a eliminar
-}
-
-const DeleteTemplate: React.FC<DeleteTemplateModalProps> = ({
+const DeleteTemplate: React.FC<IDeleteModalProps> = ({
   isOpen,
   onClose,
-  onTrialDeleted,
-  templateId,
+  onDeleted,
+  id,
 }) => {
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -27,8 +19,6 @@ const DeleteTemplate: React.FC<DeleteTemplateModalProps> = ({
 
   const handleDeleteTrial = async () => {
     setLoading(true);
-    console.log(`Attempting to delete trial with ID: ${templateId}`);
-
     const config = {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -36,13 +26,12 @@ const DeleteTemplate: React.FC<DeleteTemplateModalProps> = ({
     };
 
     try {
-      await axios.delete(`${apiUrl}/templates/delete/${templateId}`, config);
+      await axios.delete(`${apiUrl}/templates/delete/${id}`, config);
       setLoading(false);
       enqueueSnackbar('Template eliminada exitosamente', {
         variant: 'success',
       });
-      console.log('Trial deleted successfully. Calling callback.');
-      onTrialDeleted(); // Notificar al componente padre
+      onDeleted(); // Notificar al componente padre
       onClose();
     } catch (error) {
       setLoading(false);

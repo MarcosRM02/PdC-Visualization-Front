@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUserEdit } from 'react-icons/fa';
 import { MdLogout } from 'react-icons/md';
@@ -10,7 +10,7 @@ const UserMenu: React.FC = () => {
   // Para detectar clics fuera del menú y cerrarlo
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Estado para controlar si la imagen dio error
+  // Estado para controlar si la imagen da error
   const [hasImageError, setHasImageError] = useState(false);
 
   // Lógica de logout
@@ -34,7 +34,7 @@ const UserMenu: React.FC = () => {
     };
   }, []);
 
-  // Ejemplo de función para “Editar usuario”
+  // Ejemplo de función para “Editar usuario”, TODO: implementar
   const handleEditUser = () => {
     navigate('/usuario/editar');
   };

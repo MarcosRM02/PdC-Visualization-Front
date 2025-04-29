@@ -4,17 +4,12 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
+import { ICreateModalProps } from '../../Interfaces/Services';
 
-interface CreateTemplateModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onTrialCreated: () => void; // Callback para notificar al padre
-}
-
-const CreateTemplateModal: React.FC<CreateTemplateModalProps> = ({
+const CreateTemplateModal: React.FC<ICreateModalProps> = ({
   isOpen,
   onClose,
-  onTrialCreated,
+  onCreated,
 }) => {
   const [description, setDescription] = useState('');
   const [name, setName] = useState('');
@@ -50,7 +45,7 @@ const CreateTemplateModal: React.FC<CreateTemplateModalProps> = ({
       setLoading(false);
       enqueueSnackbar('Template creada exitosamente', { variant: 'success' });
       onClose();
-      onTrialCreated(); // Notificar al componente padre
+      onCreated(); // Notificar al componente padre
       // Limpiar campos
       setDescription('');
       setName('');

@@ -1,16 +1,8 @@
-// src/Components/Experiments/ExperimentCard.tsx
-
 import React from 'react';
 import ExperimentSingleCard from './ExperimentSingleCard';
-import { IExperiment } from '../../Types/Interfaces';
+import { IExperimentCardProps } from '../../Interfaces/Experiments';
 
-interface ExperimentCardProps {
-  experiments: IExperiment[];
-  onExperimentDeleted: () => void;
-  onExperimentEdited: () => void;
-}
-
-const ExperimentCard: React.FC<ExperimentCardProps> = ({
+const ExperimentCard: React.FC<IExperimentCardProps> = ({
   experiments,
   onExperimentDeleted,
   onExperimentEdited,

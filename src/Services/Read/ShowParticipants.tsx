@@ -11,21 +11,14 @@ import CreateParticipantModal from '../../Services/Create/CreateParticipant'; //
 import AddExistingParticipantsModal from '../Create/AddExistingParticipants';
 import { IoPersonAddOutline } from 'react-icons/io5';
 import { BsPersonCheck } from 'react-icons/bs';
-
 import Breadcrumb from '../../Components/CommonComponents/Breadcrumb';
-import { BreadcrumbItem } from '../../Types/Interfaces';
+import { IBreadcrumbItem } from '../../Interfaces/BreadcrumbInterfaces';
+import { IParticipant } from '../../Interfaces/Participants';
 
-interface Participant {
-  id: number;
-  code: string;
-  personalData?: {
-    id: number;
-  };
-}
 const ShowParticipant = () => {
-  const [participants, setParticipants] = useState<Participant[]>([]);
+  const [participants, setParticipants] = useState<IParticipant[]>([]);
   const [filteredParticipants, setFilteredParticipants] = useState<
-    Participant[]
+    IParticipant[]
   >([]);
   const [loading, setLoading] = useState(false);
   const [searchCode, setSearchCode] = useState('');
@@ -44,7 +37,7 @@ const ShowParticipant = () => {
   // Para detectar clics fuera del menú y cerrarlo
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const breadcrumbItems: BreadcrumbItem[] = [
+  const breadcrumbItems: IBreadcrumbItem[] = [
     { label: 'Experimentos', path: '/' },
     { label: 'Participantes', path: `/participants/by-experiment/${id}` },
   ];
@@ -63,7 +56,7 @@ const ShowParticipant = () => {
         `${apiUrl}/participants/by-experiment/${id}`,
         config,
       );
-      let participantsData: Participant[] = response.data;
+      let participantsData: IParticipant[] = response.data;
 
       // Ordenar los participantes por ID de manera ascendente
       participantsData.sort((a, b) => a.id - b.id);
@@ -239,13 +232,13 @@ const ShowParticipant = () => {
         <AddExistingParticipantsModal
           isOpen={isAddModalOpen}
           onClose={closeAddModal}
-          onTrialCreated={handleParticipantEdited} // Pasar el callback
+          onCreated={handleParticipantEdited} // Pasar el callback
         />
         {/* Modal de Crear Participante */}
         <CreateParticipantModal
           isOpen={isCreateModalOpen}
           onClose={closeCreateModal}
-          onParticipantCreated={handleParticipantEdited} // Pasar el callback
+          onCreated={handleParticipantEdited} // Pasar el callback
         />
       </div>
     </div>

@@ -1,4 +1,3 @@
-// ExperimentSingleCard.tsx
 import React, { useState } from 'react';
 import {
   HiOutlineUser,
@@ -12,24 +11,9 @@ import { FaRegCalendarAlt, FaRegCalendarCheck } from 'react-icons/fa';
 import DeleteExperimentModal from '../../Services/Delete/DeleteExperiment';
 import EditExperimentModal from '../../Services/Update/EditExperiment';
 import { Link } from 'react-router-dom';
+import { IExperimentSingleCardProps } from '../../Interfaces/Experiments';
 
-interface Experiment {
-  id: number;
-  name: string;
-  description: string;
-  startDate: string;
-  finishDate?: string;
-  notes?: string;
-  numberOfParticipants: number;
-}
-
-interface ExperimentSingleCardProps {
-  experiment: Experiment;
-  onExperimentDeleted: () => void;
-  onExperimentEdited: () => void;
-}
-
-const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
+const ExperimentSingleCard: React.FC<IExperimentSingleCardProps> = ({
   experiment,
   onExperimentDeleted,
   onExperimentEdited,
@@ -62,13 +46,11 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
   };
 
   const handleExperimentDeleted = () => {
-    console.log(`Experiment with ID: ${experiment.id} deleted.`);
     setDeleteModalOpen(false);
     onExperimentDeleted();
   };
 
   const handleExperimentEdited = () => {
-    console.log(`Experiment with ID: ${experiment.id} edited.`);
     setEditModalOpen(false);
     onExperimentEdited();
   };
@@ -83,7 +65,7 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
       <div className="border border-slate-200 bg-white rounded-lg px-6 py-5 m-4 relative shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out cursor-pointer">
         <Link to={detailsUrl} rel="noopener noreferrer">
           <div className="space-y-4">
-            {/* Nombre – destacado */}
+            {/* Nombre*/}
             <div className="flex items-center gap-x-3">
               <HiOutlineUser className="text-sky-700 text-2xl" />
               <h4 className="text-gray-800 font-semibold text-2xl">
@@ -165,15 +147,15 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
       <DeleteExperimentModal
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        onExperimentDeleted={handleExperimentDeleted}
-        experimentId={experiment.id}
+        onDeleted={handleExperimentDeleted}
+        id={experiment.id}
       />
 
       <EditExperimentModal
         isOpen={isEditModalOpen}
         onClose={() => setEditModalOpen(false)}
-        experimentId={experiment.id}
-        onExperimentEdited={handleExperimentEdited}
+        id={experiment.id}
+        onEdited={handleExperimentEdited}
       />
     </>
   );

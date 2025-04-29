@@ -11,14 +11,9 @@ import { getIDFromAPI } from '../../Services/Read/CreateWearablesURL';
 import EditTrialModal from '../../Services/Update/EditTrial';
 import DeleteTrialModal from '../../Services/Delete/DeleteTrial';
 import { Link } from 'react-router-dom';
+import { ITrialSingleCardProps } from '../../Interfaces/Trials';
 
-interface TrialSingleCardProps {
-  trials: any;
-  onTrialEdited: () => void;
-  onTrialDeleted: () => void;
-}
-
-const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
+const TrialSingleCard: React.FC<ITrialSingleCardProps> = ({
   trials,
   onTrialEdited,
   onTrialDeleted,
@@ -31,7 +26,6 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
   const participantId = trials.participant.id;
   const swId = trials.sw.id;
 
-  const [loading, _] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [refresh, setRefresh] = useState(false);
@@ -141,7 +135,7 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
           <button
             onClick={handleEditClick}
             className="w-8 h-8  flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
-            aria-label="Editar experimento"
+            aria-label="Editar trial"
           >
             <HiOutlinePencil className="text-white text-2xl" />
           </button>
@@ -150,19 +144,12 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
           <button
             onClick={handleDeleteClick}
             className="w-8 h-8 flex items-center justify-center rounded-full bg-rose-600 hover:bg-rose-500 transition duration-200"
-            aria-label="Eliminar experimento"
+            aria-label="Eliminar trial"
           >
             <HiOutlineTrash className="text-white text-2xl" />
           </button>
         </div>
       </div>
-
-      {/* Loading State */}
-      {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-slate-800 bg-opacity-50 rounded-lg">
-          <div className="text-white text-lg">Cargando...</div>
-        </div>
-      )}
 
       {/* Error State */}
       {error && (
@@ -175,16 +162,16 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
       <EditTrialModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        trialId={trials.id}
-        onTrialEdited={handleTrialEdited}
+        id={trials.id}
+        onEdited={handleTrialEdited}
       />
 
       {/* Delete Trial Modal */}
       <DeleteTrialModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
-        onTrialDeleted={handleTrialDeleted}
-        trialId={trials.id}
+        onDeleted={handleTrialDeleted}
+        id={trials.id}
       />
     </>
   );

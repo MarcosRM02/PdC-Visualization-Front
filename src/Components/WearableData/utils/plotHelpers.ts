@@ -1,5 +1,4 @@
 // Lo de ponerlo antes de los import esd para importarlo a nivel de módulo y que
-
 function calculateAccelConversion(): number {
   /**
    * (Rango completo * 9,81 (gravedad)) / 65536 (2^16)
@@ -113,20 +112,6 @@ function generateLayout(yRange?: [number, number]) {
     autosize: true,
     responsive: true,
     showlegend: true,
-    // legend: {
-    //   orientation: 'h',
-    //   x: 0.5,
-    //   y: 1.05,
-    //   xanchor: 'center',
-    //   yanchor: 'bottom',
-    // xref: 'paper',
-    // yref: 'paper',
-    //   bgcolor: '#fcba03',
-    //   bordercolor: '#444',
-    //   borderwidth: 1,
-    //   font: { family: 'Arial', size: 12, color: '#fff' },
-    //   pad: { t: 10, b: 10 },
-    // },
     legend: {
       orientation: 'h',
       x: 0.5,

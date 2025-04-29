@@ -1,14 +1,13 @@
 import { useRef, useEffect, useState, Fragment, useCallback } from 'react';
 import ReactPlayer from 'react-player';
 import axios from 'axios';
-import { DataFrame } from 'danfojs'; //concat tb estaba
+import { DataFrame } from 'danfojs';
 import Plotly from 'plotly.js-dist-min';
 import { throttle } from 'lodash';
-import { WearableDataProps } from '../../Types/Interfaces';
+import { IWearableDataProps } from '../../Interfaces/DataPanel';
 import { handleRelayout, plotWearablesData } from './utils/plotHelpers';
 import { descargarDatosVisibles } from './utils/dataDownload';
 import { VideoCameraIcon } from '@heroicons/react/24/solid';
-//import CustomLegendPlot from './loDeLaLeyenda_UsarloMasTarde';
 import FloatingWindow from './FloatingWindow';
 import IconActionButton from './IconActionButton';
 import { FaSync } from 'react-icons/fa';
@@ -23,7 +22,7 @@ const WearablesData = ({
   experimentId,
   swId,
   participantId,
-}: WearableDataProps) => {
+}: IWearableDataProps) => {
   // Refs para los videos
   const playerRef1 = useRef<ReactPlayer | null>(null);
   const playerRef2 = useRef<ReactPlayer | null>(null);
@@ -463,7 +462,7 @@ const WearablesData = ({
             });
           }
         });
-      }, 100); // Un delay de 300ms (ajusta este valor si es necesario)
+      }, 100); // Un delay de 100ms
     };
 
     window.addEventListener('resize', handleResize);
@@ -480,7 +479,6 @@ const WearablesData = ({
       ref={parentRef}
       className="relative overflow-visible flex flex-col bg-gray-100"
     >
-      {/* <CustomLegendPlot /> */}
       {/* Sección de gráficos detallados */}
       <div className="flex justify-center space-x-6 items-center">
         <IconActionButton
@@ -505,7 +503,7 @@ const WearablesData = ({
             }
             icon={<HiOutlineFolderDownload />}
             color="blue"
-            tooltip="Descargar Datos Visibles" // Otro ejemplo de tooltip
+            tooltip="Descargar Datos Visibles"
           />
           <InfoButton />
         </div>

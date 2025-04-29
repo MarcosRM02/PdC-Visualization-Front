@@ -1,9 +1,7 @@
-// Breadcrumb.tsx
-import React from 'react';
-import { BreadcrumbProps } from '../../Types/Interfaces';
+import { IBreadcrumbProps } from '../../Interfaces/BreadcrumbInterfaces';
 import { Link } from 'react-router-dom';
 
-const Breadcrumb: React.FC<BreadcrumbProps> = ({ items }) => {
+const Breadcrumb: React.FC<IBreadcrumbProps> = ({ items }) => {
   return (
     <nav aria-label="breadcrumb" className="mb-6">
       <ol className="flex items-center space-x-2">

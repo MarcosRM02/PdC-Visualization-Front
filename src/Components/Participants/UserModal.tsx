@@ -8,13 +8,9 @@ import {
 import { GiFootprint, GiWeightScale } from 'react-icons/gi';
 import { FaRulerVertical } from 'react-icons/fa';
 import EditPersonalDataModal from '../../Services/Update/EditPersonalData';
+import { IUserModalProps } from '../../Interfaces/Interfaces';
 
-interface UserModalProps {
-  user: any;
-  onClose: () => void;
-}
-
-const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
+const UserModal: React.FC<IUserModalProps> = ({ user, onClose }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(user);
 
@@ -158,8 +154,8 @@ const UserModal: React.FC<UserModalProps> = ({ user, onClose }) => {
       <EditPersonalDataModal
         isOpen={isEditModalOpen}
         onClose={closeEditModal}
-        personalDataId={currentUser.id}
-        onPersonalDataEdited={handlePersonalDataEdited}
+        id={currentUser.id}
+        onEdited={handlePersonalDataEdited}
       />
     </>
   );

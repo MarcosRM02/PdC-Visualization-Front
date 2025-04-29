@@ -1,23 +1,15 @@
-// src/Components/Participants/EditParticipantModal.tsx
-
 import React, { useState, useEffect } from 'react';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
+import { IEditModalProps } from '../../Interfaces/Services';
 
-interface EditParticipantModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  participantId: number;
-  onParticipantEdited: () => void; // Callback para notificar al padre
-}
-
-const EditParticipantModal: React.FC<EditParticipantModalProps> = ({
+const EditParticipantModal: React.FC<IEditModalProps> = ({
   isOpen,
   onClose,
-  participantId,
-  onParticipantEdited,
+  onEdited,
+  id,
 }) => {
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -40,7 +32,7 @@ const EditParticipantModal: React.FC<EditParticipantModalProps> = ({
       setLoading(true);
       try {
         const response = await axios.get(
-          `${apiUrl}/participants/${participantId}`,
+          `${apiUrl}/participants/${id}`,
           config,
         );
         setCode(response.data.code);
@@ -56,7 +48,7 @@ const EditParticipantModal: React.FC<EditParticipantModalProps> = ({
     };
 
     fetchParticipant();
-  }, [isOpen, participantId, accessToken, apiUrl, enqueueSnackbar]);
+  }, [isOpen, id, accessToken, apiUrl, enqueueSnackbar]);
 
   const handleEditParticipant = async () => {
     if (!code.trim()) {
@@ -76,17 +68,13 @@ const EditParticipantModal: React.FC<EditParticipantModalProps> = ({
 
     setLoading(true);
     try {
-      await axios.put(
-        `${apiUrl}/participants/edit/${participantId}`,
-        data,
-        config,
-      );
+      await axios.put(`${apiUrl}/participants/edit/${id}`, data, config);
       setLoading(false);
       enqueueSnackbar('Participante editado exitosamente.', {
         variant: 'success',
       });
       onClose();
-      onParticipantEdited(); // Notificar al componente padre
+      onEdited(); // Notificar al componente padre
     } catch (err) {
       setLoading(false);
       enqueueSnackbar('Error al editar el participante.', { variant: 'error' });

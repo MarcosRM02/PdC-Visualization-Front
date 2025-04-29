@@ -1,23 +1,15 @@
-// src/Components/Participants/DeleteParticipantModal.tsx
-
 import React, { useState, useEffect } from 'react';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
+import { IDeleteModalProps } from '../../Interfaces/Services';
 
-interface DeleteParticipantModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onParticipantDeleted: () => void; // Callback para notificar al padre
-  participantId: number; // ID del participante a eliminar
-}
-
-const DeleteParticipantModal: React.FC<DeleteParticipantModalProps> = ({
+const DeleteParticipantModal: React.FC<IDeleteModalProps> = ({
   isOpen,
   onClose,
-  onParticipantDeleted,
-  participantId,
+  onDeleted,
+  id,
 }) => {
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -27,8 +19,6 @@ const DeleteParticipantModal: React.FC<DeleteParticipantModalProps> = ({
 
   const handleDeleteParticipant = async () => {
     setLoading(true);
-    console.log(`Attempting to delete participant with ID: ${participantId}`);
-
     const config = {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -36,16 +26,12 @@ const DeleteParticipantModal: React.FC<DeleteParticipantModalProps> = ({
     };
 
     try {
-      await axios.delete(
-        `${apiUrl}/participants/delete/${participantId}`,
-        config,
-      );
+      await axios.delete(`${apiUrl}/participants/delete/${id}`, config);
       setLoading(false);
       enqueueSnackbar('Participante eliminado exitosamente.', {
         variant: 'success',
       });
-      console.log('Participant deleted successfully. Calling callback.');
-      onParticipantDeleted(); // Notificar al componente padre
+      onDeleted(); // Notificar al componente padre
       onClose();
     } catch (error) {
       setLoading(false);

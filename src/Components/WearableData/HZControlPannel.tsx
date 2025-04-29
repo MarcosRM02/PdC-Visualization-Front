@@ -1,19 +1,14 @@
 import { useState, useEffect } from 'react';
-
-interface HeatmapControlPanelProps {
-  updateHz: number;
-  onUpdateHzChange: (newHz: number) => void;
-  getRenderFps: () => { leftFps: number; rightFps: number }; // Función para obtener FPS
-}
+import { IHeatmapControlPanelProps } from '../../Interfaces/DataPanel';
 
 const HeatmapControlPanel = ({
   updateHz,
   onUpdateHzChange,
   getRenderFps,
-}: HeatmapControlPanelProps) => {
+}: IHeatmapControlPanelProps) => {
   const [_, setFps] = useState(0); // Estado para el FPS combinado
 
-  // Valor normal (por ejemplo 50) y límite superior (x2 normal, es decir 100)
+  // Valor normal (50) y límite superior (x2 normal, es decir 100)
   const normalHz = 50;
   const maxHz = normalHz * 2;
 
@@ -42,7 +37,7 @@ const HeatmapControlPanel = ({
           onChange={(e) =>
             onUpdateHzChange(Math.max(1, parseInt(e.target.value) || 1))
           }
-          className="w-40" // Puedes ajustar el ancho del slider según necesites
+          className="w-40"
         />
         <span>{`x${multiplier}`}</span>
       </div>

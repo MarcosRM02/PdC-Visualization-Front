@@ -1,4 +1,3 @@
-// ParticipantSingleCard.tsx
 import React, { useState, useEffect } from 'react';
 import {
   HiOutlineIdentification,
@@ -11,22 +10,9 @@ import EditParticipantModal from '../../Services/Update/EditParticipant';
 import DeleteParticipantModal from '../../Services/Delete/DeleteParticipant';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { IParticipantSingleCardProps } from '../../Interfaces/Participants';
 
-interface Participant {
-  id: number;
-  code: string;
-  personalData?: {
-    id: number;
-  };
-}
-
-interface ParticipantSingleCardProps {
-  participants: Participant;
-  onParticipantDeleted: () => void;
-  onParticipantEdited: () => void;
-}
-
-const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
+const ParticipantSingleCard: React.FC<IParticipantSingleCardProps> = ({
   participants,
   onParticipantDeleted,
   onParticipantEdited,
@@ -63,7 +49,7 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
   };
 
   useEffect(() => {
-    if (showModal && participants.personalData?.id) {
+    if (showModal && participants.personalDataId) {
       const config = {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -71,7 +57,7 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
       };
       setLoading(true);
       axios
-        .get(`${apiUrl}/personalData/${participants.personalData.id}`, config)
+        .get(`${apiUrl}/personalData/${participants.personalDataId}`, config)
         .then((response) => {
           setModalData(response.data);
           setLoading(false);
@@ -82,7 +68,7 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
           setLoading(false);
         });
     }
-  }, [showModal, participants.personalData?.id, accessToken, apiUrl]);
+  }, [showModal, participants.personalDataId, accessToken, apiUrl]);
 
   const formattedCode = participants.code || '—';
   const detailsUrl = `/trials/by-participant/${participants.id}`;
@@ -146,16 +132,16 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
       <EditParticipantModal
         isOpen={isEditModalOpen}
         onClose={() => setEditModalOpen(false)}
-        participantId={participants.id}
-        onParticipantEdited={handleParticipantEdited}
+        id={participants.id}
+        onEdited={handleParticipantEdited}
       />
 
       {/* Modal de eliminación */}
       <DeleteParticipantModal
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        participantId={participants.id}
-        onParticipantDeleted={handleParticipantDeleted}
+        id={participants.id}
+        onDeleted={handleParticipantDeleted}
       />
 
       {/* Estado de carga */}

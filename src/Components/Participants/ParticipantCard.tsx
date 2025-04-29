@@ -1,10 +1,8 @@
-// src/Components/Participants/ParticipantCard.tsx
-
 import React from 'react';
 import ParticipantSingleCard from './ParticipantSingleCard';
-import { IParticipantProp } from '../../Types/Interfaces';
+import { IParticipantCardProp } from '../../Interfaces/Participants';
 
-const ParticipantCard: React.FC<IParticipantProp> = ({
+const ParticipantCard: React.FC<IParticipantCardProp> = ({
   participants = [],
   onParticipantDeleted,
   onParticipantEdited,

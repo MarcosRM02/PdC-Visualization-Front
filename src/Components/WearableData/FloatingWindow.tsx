@@ -1,47 +1,12 @@
-// FloatingWindow.tsx
 import React, { useEffect, useState, CSSProperties } from 'react';
 import { Rnd } from 'react-rnd';
 import VideoSection from './VideoSection';
 import TimeProgressBar from './TimeProgressBar';
 import ControlPanel from './ControlPanel';
 import { MdOpenWith, MdPushPin } from 'react-icons/md';
+import { IFloatingWindowProps } from '../../Interfaces/DataPanel';
 
-interface FloatingWindowProps {
-  playerRef1: React.RefObject<any>;
-  videoSrc: string;
-  videoError: any;
-  playbackRate: number;
-  handleProgress: (progress: any) => void;
-  handleSeek: (time: number) => void;
-  setDuration1: (duration: number) => void;
-  playTime: number;
-  globalDuration: number;
-  playbackRates: any;
-  changePlaybackRate: (rate: number) => void;
-  videoAvailable: boolean;
-  handlePlay: () => void;
-  isPlaying: boolean;
-  isPaused: boolean;
-  handleReset: () => void;
-  resetGraphs: () => void;
-  updateHz: number;
-  handleUpdateHzChange: (value: number) => void;
-  getRenderFps: any;
-  descargarDatosVisibles: any;
-  refs: {
-    leftPressureSensor: any;
-    rightPressureSensor: any;
-  };
-  leftWearables: any;
-  rightWearables: any;
-  experimentId: number;
-  participantId: number;
-  trialId: number;
-  swId: number;
-  parentRef: React.RefObject<HTMLDivElement>;
-}
-
-const FloatingWindow: React.FC<FloatingWindowProps> = ({
+const FloatingWindow: React.FC<IFloatingWindowProps> = ({
   playerRef1,
   videoSrc,
   videoError,
@@ -119,8 +84,7 @@ const FloatingWindow: React.FC<FloatingWindowProps> = ({
     }
   };
 
-  // Usamos position absolute para evitar que el componente modifique el layout de la página.
-  // Cambia el containerStyle para que dependa del estado isFloating:
+  // Position absolute para evitar que el componente modifique el layout de la página.
   const containerStyle: CSSProperties = {
     position: isFloating ? 'absolute' : 'static',
     zIndex: 1000,

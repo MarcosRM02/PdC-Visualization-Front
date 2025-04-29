@@ -4,17 +4,14 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
+import { ICreateModalProps } from '../../Interfaces/Services';
 
-interface AddExistingParticipantsModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onTrialCreated: () => void; // Callback para notificar al padre
-}
-
-const AddExistingParticipantsModal: React.FC<
-  AddExistingParticipantsModalProps
-> = ({ isOpen, onClose, onTrialCreated }) => {
-  const [swIds, setSWIds] = useState<
+const AddExistingParticipantsModal: React.FC<ICreateModalProps> = ({
+  isOpen,
+  onClose,
+  onCreated,
+}) => {
+  const [ids, setIds] = useState<
     { id: number; code: string; personaldataid: number }[]
   >([]);
   const [loading, setLoading] = useState(false);
@@ -38,7 +35,7 @@ const AddExistingParticipantsModal: React.FC<
               },
             },
           );
-          setSWIds(response.data);
+          setIds(response.data);
         } catch (error) {
           enqueueSnackbar('Error al obtener los SW IDs', { variant: 'error' });
           console.error('Error fetching SW IDs:', error);
@@ -57,7 +54,7 @@ const AddExistingParticipantsModal: React.FC<
       return;
     }
 
-    const selectedParticipants = swIds
+    const selectedParticipants = ids
       .filter((item) => selectedSWIds.includes(item.id))
       .map((item) => ({
         id: item.id,
@@ -85,7 +82,7 @@ const AddExistingParticipantsModal: React.FC<
       // Limpia los checkboxes seleccionados
       setSelectedSWIds([]);
       onClose();
-      onTrialCreated(); // Notificar al componente padre
+      onCreated(); // Notificar al componente padre
     } catch (error) {
       setLoading(false);
       enqueueSnackbar('Error al crear la prueba', { variant: 'error' });
@@ -122,7 +119,7 @@ const AddExistingParticipantsModal: React.FC<
           <div className="flex flex-col space-y-4">
             {/* Selección de SW */}
             <div className="mt-4 grid grid-cols-2 gap-4">
-              {swIds.map((sw) => (
+              {ids.map((sw) => (
                 <label
                   key={sw.id}
                   className="flex items-center space-x-2 p-2 rounded-md border bg-gray-50 hover:bg-blue-50 cursor-pointer transition-colors"
@@ -142,10 +139,6 @@ const AddExistingParticipantsModal: React.FC<
                     className="form-checkbox h-4 w-4 text-sky-600"
                   />
                   <span className="text-gray-700">
-                    <div>
-                      <strong>ID: </strong>
-                      {sw.id}
-                    </div>
                     <div>
                       <strong>Code: </strong>
                       {sw.code}

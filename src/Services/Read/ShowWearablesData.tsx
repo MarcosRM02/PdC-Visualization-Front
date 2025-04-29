@@ -2,13 +2,13 @@ import { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { useParams, useSearchParams } from 'react-router-dom';
 import Spinner from '../../Components/CommonComponents/Spinner';
-import { WearableData } from '../../Types/Interfaces';
+import { IWearableData } from '../../Interfaces/DataPanel';
 import WearablesData from '../../Components/WearableData/WearableData';
 import Breadcrumb from '../../Components/CommonComponents/Breadcrumb';
-import { BreadcrumbItem } from '../../Types/Interfaces';
+import { IBreadcrumbItem } from '../../Interfaces/BreadcrumbInterfaces';
 
 const ShowWearables = () => {
-  const [wearables, setWearables] = useState<WearableData[]>([]);
+  const [wearables, setWearables] = useState<IWearableData[]>([]);
   const [loading, setLoading] = useState(false);
   const { experimentId, participantId, swId, trialId } = useParams();
   const [searchParams] = useSearchParams();
@@ -19,7 +19,7 @@ const ShowWearables = () => {
       .join('&');
   }, [wearableIds]);
   const apiUrl = import.meta.env.VITE_API_URL;
-  const breadcrumbItems: BreadcrumbItem[] = [
+  const breadcrumbItems: IBreadcrumbItem[] = [
     { label: 'Experimentos', path: '/' },
     {
       label: 'Participantes',
@@ -59,16 +59,9 @@ const ShowWearables = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
-      {/* Área fija: cabecera, filtros y botones */}
-      {/* <div> */}
-      {/* Título Principal */}
       <div className="flex justify-between items-center ">
         <Breadcrumb items={breadcrumbItems} />
       </div>
-      {/* <h1 className="text-3xl font-bold text-gray-800">Wearables Data</h1> */}
-      {/* </div> */}
-      {/* Contenido Principal */}
-
       <div className="flex-1 overflow-auto min-h-0 bg-white">
         {loading ? (
           <div className="flex justify-center items-center mt-20">
@@ -77,10 +70,10 @@ const ShowWearables = () => {
         ) : wearables.length > 0 ? (
           <WearablesData
             wearables={wearables}
-            experimentId={parseInt(experimentId || '0')}
-            trialId={parseInt(trialId || '0')}
-            participantId={parseInt(participantId || '0')}
-            swId={parseInt(swId || '0')}
+            experimentId={parseInt(experimentId || '-1')}
+            trialId={parseInt(trialId || '-1')}
+            participantId={parseInt(participantId || '-1')}
+            swId={parseInt(swId || '-1')}
           />
         ) : (
           <div className="flex flex-col items-center justify-center mt-20">

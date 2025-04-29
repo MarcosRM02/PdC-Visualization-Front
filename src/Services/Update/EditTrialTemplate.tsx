@@ -3,27 +3,14 @@ import Spinner from '../../Components/CommonComponents/Spinner';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
+import { IEditModalProps } from '../../Interfaces/Services';
+import { ITrial } from '../../Interfaces/Trials';
 
-interface EditTrialTemplateModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  trialTemplateId: number;
-  onTrialEdited: () => void; // Callback para notificar al padre
-}
-
-// Definir una interfaz para los datos del trial
-interface TrialData {
-  code?: string | null;
-  date?: string | null;
-  description?: string | null;
-  annotation?: string | null;
-}
-
-const EditTrialTemplate: React.FC<EditTrialTemplateModalProps> = ({
+const EditTrialTemplate: React.FC<IEditModalProps> = ({
   isOpen,
   onClose,
-  trialTemplateId,
-  onTrialEdited,
+  onEdited,
+  id,
 }) => {
   const [code, setCode] = useState<string>('');
   const [date, setDate] = useState<string>('');
@@ -47,7 +34,7 @@ const EditTrialTemplate: React.FC<EditTrialTemplateModalProps> = ({
       setLoading(true);
       try {
         const response = await axios.get(
-          `${apiUrl}/trialTemplates/${trialTemplateId}`,
+          `${apiUrl}/trialTemplates/${id}`,
           config,
         );
         setCode(response.data.code || '');
@@ -65,11 +52,11 @@ const EditTrialTemplate: React.FC<EditTrialTemplateModalProps> = ({
     };
 
     fetchTrial();
-  }, [isOpen, trialTemplateId, accessToken, apiUrl, enqueueSnackbar]);
+  }, [isOpen, id, accessToken, apiUrl, enqueueSnackbar]);
 
   const handleEditTrial = async () => {
     // Construir los datos a enviar, estableciendo a null si están vacíos
-    const data: TrialData = {
+    const data: ITrial = {
       code: code.trim() !== '' ? code.trim() : null,
       date: date !== '' ? date : null,
       description: description.trim() !== '' ? description.trim() : null,
@@ -83,16 +70,12 @@ const EditTrialTemplate: React.FC<EditTrialTemplateModalProps> = ({
     };
     setLoading(true);
     try {
-      await axios.put(
-        `${apiUrl}/trialTemplates/edit/${trialTemplateId}`,
-        data,
-        config,
-      );
+      await axios.put(`${apiUrl}/trialTemplates/edit/${id}`, data, config);
       enqueueSnackbar('Trial editado exitosamente', {
         variant: 'success',
       });
       onClose();
-      onTrialEdited(); // Notificar al componente padre
+      onEdited(); // Notificar al componente padre
       // Limpiar campos después de una edición exitosa
       setCode('');
       setDate('');

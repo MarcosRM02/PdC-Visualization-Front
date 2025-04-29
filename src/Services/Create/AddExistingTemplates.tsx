@@ -4,17 +4,12 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
+import { ICreateModalProps } from '../../Interfaces/Services';
 
-interface AddExistingTemplatesModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onTrialCreated: () => void; // Callback para notificar al padre
-}
-
-const AddExistingTemplatesModal: React.FC<AddExistingTemplatesModalProps> = ({
+const AddExistingTemplatesModal: React.FC<ICreateModalProps> = ({
   isOpen,
   onClose,
-  onTrialCreated,
+  onCreated,
 }) => {
   const [swIds, setSWIds] = useState<
     {
@@ -65,16 +60,6 @@ const AddExistingTemplatesModal: React.FC<AddExistingTemplatesModalProps> = ({
       });
       return;
     }
-
-    // const selectedParticipants = swIds
-    //   .filter((item) => selectedSWIds.includes(item.id))
-    //   .map((item) => ({
-    //     id: item.id,
-    //     // name: item.name,
-    //     // description: item.description,
-    //     // numberOfTemplates: item.numberOfTemplates,
-    //   }));
-
     const dataToSend = { templateIds: selectedSWIds.map((id) => Number(id)) };
     console.log('Data to send:', dataToSend);
     const config = {
@@ -96,7 +81,7 @@ const AddExistingTemplatesModal: React.FC<AddExistingTemplatesModalProps> = ({
       // Limpia los checkboxes seleccionados
       setSelectedSWIds([]);
       onClose();
-      onTrialCreated(); // Notificar al componente padre
+      onCreated(); // Notificar al componente padre
     } catch (error) {
       setLoading(false);
       enqueueSnackbar('Error al crear la prueba', { variant: 'error' });
@@ -155,10 +140,6 @@ const AddExistingTemplatesModal: React.FC<AddExistingTemplatesModalProps> = ({
                       className="form-checkbox h-4 w-4 text-sky-600"
                     />
                     <span className="text-gray-700">
-                      <div>
-                        <strong>ID: </strong>
-                        {sw.id}
-                      </div>
                       <div>
                         <strong>Nombre: </strong>
                         {sw.name}

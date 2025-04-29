@@ -10,26 +10,17 @@ import EditExperimentModal from '../Update/EditExperiment';
 import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import ExperimentCard from '../../Components/Experiments/ExperimentCard';
-
 import Breadcrumb from '../../Components/CommonComponents/Breadcrumb';
-import { BreadcrumbItem } from '../../Types/Interfaces';
+import { IBreadcrumbItem } from '../../Interfaces/BreadcrumbInterfaces';
+import { IExperiment } from '../../Interfaces/Experiments';
 
-const breadcrumbItems: BreadcrumbItem[] = [
+const breadcrumbItems: IBreadcrumbItem[] = [
   { label: 'Experimentos', path: '/' },
 ];
 
-interface Experiment {
-  id: number;
-  name: string;
-  description: string;
-  numberOfParticipants: number;
-  startDate: string;
-  finishDate: string;
-}
-
 const ShowExperiment = () => {
-  const [experiments, setExperiments] = useState<Experiment[]>([]);
-  const [filteredExperiments, setFilteredExperiments] = useState<Experiment[]>(
+  const [experiments, setExperiments] = useState<IExperiment[]>([]);
+  const [filteredExperiments, setFilteredExperiments] = useState<IExperiment[]>(
     [],
   );
   const [loading, setLoading] = useState(false);
@@ -238,15 +229,15 @@ const ShowExperiment = () => {
       <CreateExperimentModal
         isOpen={isCreateModalOpen}
         onClose={closeCreateModal}
-        onExperimentCreated={handleExperimentChanged}
+        onCreated={handleExperimentChanged}
       />
 
       {selectedExperimentId !== null && (
         <EditExperimentModal
           isOpen={isEditModalOpen}
           onClose={closeEditModal}
-          experimentId={selectedExperimentId}
-          onExperimentEdited={handleExperimentChanged}
+          id={selectedExperimentId}
+          onEdited={handleExperimentChanged}
         />
       )}
     </div>
