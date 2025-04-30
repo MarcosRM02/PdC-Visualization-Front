@@ -549,9 +549,9 @@ const WearablesData = ({
                 }}
               />
             ) : (
-              <div className="flex flex-col items-center justify-center w-full h-full bg-gray-800 text-white text-xl font-semibold rounded-lg">
+              <div className="flex flex-col items-center justify-center w-full h-[500px] bg-gray-800 text-white text-xl font-semibold rounded-lg">
                 <VideoCameraIcon className="h-12 w-12 mb-3" />
-                <span>No hay ningún mapa de calor disponible</span>
+                <span>El Mapa de Calor se está generando</span>
               </div>
             )}
             <TimeProgressBar
@@ -649,39 +649,41 @@ const WearablesData = ({
           ))}
         </div>
       </div>
-      <div className="relative mt-5">
-        <FloatingWindow
-          playerRef1={playerRef1}
-          videoSrc={videoSrc}
-          videoError={videoError}
-          playbackRate={playbackRate}
-          handleProgress={handleProgress}
-          handleSeek={handleSeek}
-          setDuration1={setDuration1}
-          playTime={playTime}
-          globalDuration={globalDuration}
-          playbackRates={playbackRates}
-          changePlaybackRate={changePlaybackRate}
-          videoAvailable={videoAvailable}
-          handlePlay={handlePlay}
-          isPlaying={isPlaying}
-          isPaused={isPaused}
-          handleReset={handleReset}
-          resetGraphs={resetGraphs}
-          updateHz={updateHz}
-          handleUpdateHzChange={handleUpdateHzChange}
-          getRenderFps={getRenderFps}
-          descargarDatosVisibles={descargarDatosVisibles}
-          refs={refs}
-          leftWearables={leftWearables}
-          rightWearables={rightWearables}
-          experimentId={experimentId}
-          participantId={participantId}
-          trialId={trialId}
-          swId={swId}
-          parentRef={parentRef}
-        />
-      </div>
+      {videoSrc && (
+        <div className="relative mt-5">
+          <FloatingWindow
+            playerRef1={playerRef1}
+            videoSrc={videoSrc}
+            videoError={videoError}
+            playbackRate={playbackRate}
+            handleProgress={handleProgress}
+            handleSeek={handleSeek}
+            setDuration1={setDuration1}
+            playTime={playTime}
+            globalDuration={globalDuration}
+            playbackRates={playbackRates}
+            changePlaybackRate={changePlaybackRate}
+            videoAvailable={videoAvailable}
+            handlePlay={handlePlay}
+            isPlaying={isPlaying}
+            isPaused={isPaused}
+            handleReset={handleReset}
+            resetGraphs={resetGraphs}
+            updateHz={updateHz}
+            handleUpdateHzChange={handleUpdateHzChange}
+            getRenderFps={getRenderFps}
+            descargarDatosVisibles={descargarDatosVisibles}
+            refs={refs}
+            leftWearables={leftWearables}
+            rightWearables={rightWearables}
+            experimentId={experimentId}
+            participantId={participantId}
+            trialId={trialId}
+            swId={swId}
+            parentRef={parentRef}
+          />
+        </div>
+      )}
     </div>
   );
 };

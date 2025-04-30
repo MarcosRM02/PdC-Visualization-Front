@@ -40,7 +40,7 @@ const PlaybackRateDropdown: React.FC<IPlaybackRateDropdownProps> = ({
       {/* Botón principal con estilo similar al de IconActionButton */}
       <button
         onClick={toggleDropdown}
-        className="ffont-bold py-3 px-8 rounded shadow-lg hover:shadow-xl transition duration-200 text-xl flex items-center justify-center "
+        className="ffont-bold py-3 px-8 rounded shadow-lg hover:shadow-xl transition duration-200 text-xl flex items-center justify-center  h-[40px] "
         title="Cambiar Velocidad"
       >
         <MdOutlineShutterSpeed size={24} color="blue" />

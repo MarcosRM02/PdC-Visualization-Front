@@ -18,7 +18,7 @@ const ControlPanel: React.FC<IControlPanelProps> = ({
   getRenderFps,
 }) => {
   return (
-    <div className="w-full mb-12 flex items-center justify-center">
+    <div className="w-full mb-2 flex items-center justify-center">
       <IconActionButton
         onClick={handlePlay}
         icon={isPlaying ? <FaPause /> : <FaPlay />}

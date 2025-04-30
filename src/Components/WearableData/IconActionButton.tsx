@@ -21,7 +21,7 @@ const IconActionButton: React.FC<IIconActionButtonProps> = ({
             : color === 'orange'
             ? 'text-orange-500'
             : ''
-        }`}
+        }  h-[40px]`}
       >
         {icon}
       </button>
