@@ -14,10 +14,6 @@ import Breadcrumb from '../../Components/CommonComponents/Breadcrumb';
 import { IBreadcrumbItem } from '../../Interfaces/BreadcrumbInterfaces';
 import { IExperiment } from '../../Interfaces/Experiments';
 
-const breadcrumbItems: IBreadcrumbItem[] = [
-  { label: 'Experimentos', path: '/' },
-];
-
 const ShowExperiment = () => {
   const [experiments, setExperiments] = useState<IExperiment[]>([]);
   const [filteredExperiments, setFilteredExperiments] = useState<IExperiment[]>(
@@ -43,6 +39,13 @@ const ShowExperiment = () => {
   >(null);
 
   const { enqueueSnackbar } = useSnackbar();
+
+  const breadcrumbItems: IBreadcrumbItem[] = [
+    {
+      label: 'Experimentos',
+      path: `/experiments/by-professional/${id}`,
+    },
+  ];
 
   const fetchExperiments = useCallback(async () => {
     if (!id) return;

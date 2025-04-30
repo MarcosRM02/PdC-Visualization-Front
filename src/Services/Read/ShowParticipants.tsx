@@ -26,6 +26,7 @@ const ShowParticipant = () => {
 
   const { id } = useParams<{ id: string }>(); // ID del experimento
   const accessToken = localStorage.getItem('accessToken');
+  const professionalId = localStorage.getItem('id');
   const apiUrl = import.meta.env.VITE_API_URL;
 
   const { enqueueSnackbar } = useSnackbar();
@@ -38,7 +39,10 @@ const ShowParticipant = () => {
   const menuRef = useRef<HTMLDivElement>(null);
 
   const breadcrumbItems: IBreadcrumbItem[] = [
-    { label: 'Experimentos', path: '/' },
+    {
+      label: 'Experimentos',
+      path: `/experiments/by-professional/${professionalId}`,
+    },
     { label: 'Participantes', path: `/participants/by-experiment/${id}` },
   ];
 
