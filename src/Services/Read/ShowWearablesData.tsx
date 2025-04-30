@@ -13,6 +13,7 @@ const ShowWearables = () => {
   const { experimentId, participantId, swId, trialId } = useParams();
   const [searchParams] = useSearchParams();
   const wearableIds = searchParams.getAll('wearableIds');
+  const professionalId = localStorage.getItem('id');
   const wearableQuery = useMemo(() => {
     return wearableIds
       .map((id) => `wearableIds=${encodeURIComponent(id)}`)
@@ -20,7 +21,10 @@ const ShowWearables = () => {
   }, [wearableIds]);
   const apiUrl = import.meta.env.VITE_API_URL;
   const breadcrumbItems: IBreadcrumbItem[] = [
-    { label: 'Experimentos', path: '/' },
+    {
+      label: 'Experimentos',
+      path: `/experiments/by-professional/${professionalId}`,
+    },
     {
       label: 'Participantes',
       path: `/participants/by-experiment/${experimentId}`,

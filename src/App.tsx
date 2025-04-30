@@ -36,7 +36,7 @@ const App = () => {
               onClose={function (): void {
                 throw new Error('Function not implemented.');
               }}
-              onExperimentCreated={function (): void {
+              onCreated={function (): void {
                 throw new Error('Function not implemented.');
               }}
             />
@@ -50,8 +50,8 @@ const App = () => {
               onClose={function (): void {
                 throw new Error('Function not implemented.');
               }}
-              experimentId={0}
-              onExperimentEdited={function (): void {
+              id={-1}
+              onEdited={function (): void {
                 throw new Error('Function not implemented.');
               }}
             />
@@ -65,10 +65,10 @@ const App = () => {
               onClose={function (): void {
                 throw new Error('Function not implemented.');
               }}
-              onExperimentDeleted={function (): void {
+              onDeleted={function (): void {
                 throw new Error('Function not implemented.');
               }}
-              experimentId={0}
+              id={-1}
             />
           }
         />
@@ -89,7 +89,7 @@ const App = () => {
               onClose={function (): void {
                 throw new Error('Function not implemented.');
               }}
-              onParticipantCreated={function (): void {
+              onCreated={function (): void {
                 throw new Error('Function not implemented.');
               }}
             />
@@ -103,8 +103,8 @@ const App = () => {
               onClose={function (): void {
                 throw new Error('Function not implemented.');
               }}
-              participantId={0}
-              onParticipantEdited={function (): void {
+              id={-1}
+              onEdited={function (): void {
                 throw new Error('Function not implemented.');
               }}
             />
@@ -118,10 +118,10 @@ const App = () => {
               onClose={function (): void {
                 throw new Error('Function not implemented.');
               }}
-              onParticipantDeleted={function (): void {
+              onDeleted={function (): void {
                 throw new Error('Function not implemented.');
               }}
-              participantId={0}
+              id={-1}
             />
           }
         />
@@ -134,8 +134,8 @@ const App = () => {
               onClose={function (): void {
                 throw new Error('Function not implemented.');
               }}
-              personalDataId={''}
-              onPersonalDataEdited={function (): void {
+              id={-1}
+              onEdited={function (): void {
                 throw new Error('Function not implemented.');
               }}
             />
@@ -158,7 +158,7 @@ const App = () => {
               onClose={function (): void {
                 throw new Error('Function not implemented.');
               }}
-              onTrialCreated={function (): void {
+              onCreated={function (): void {
                 throw new Error('Function not implemented.');
               }}
             />
@@ -172,8 +172,8 @@ const App = () => {
               onClose={function (): void {
                 throw new Error('Function not implemented.');
               }}
-              trialId={0}
-              onTrialEdited={function (): void {
+              id={-1}
+              onEdited={function (): void {
                 throw new Error('Function not implemented.');
               }}
             />
@@ -187,10 +187,10 @@ const App = () => {
               onClose={function (): void {
                 throw new Error('Function not implemented.');
               }}
-              onTrialDeleted={function (): void {
+              onDeleted={function (): void {
                 throw new Error('Function not implemented.');
               }}
-              trialId={0}
+              id={-1}
             />
           }
         />
@@ -217,7 +217,7 @@ const App = () => {
               onClose={function (): void {
                 throw new Error('Function not implemented.');
               }}
-              onTrialCreated={function (): void {
+              onCreated={function (): void {
                 throw new Error('Function not implemented.');
               }}
             />
@@ -237,8 +237,8 @@ const App = () => {
             onClose={function (): void {
               throw new Error('Function not implemented.');
             }}
-            participantId={0}
-            onParticipantEdited={function (): void {
+            id={-1}
+            onEdited={function (): void {
               throw new Error('Function not implemented.');
             }}
           />
@@ -252,10 +252,10 @@ const App = () => {
             onClose={function (): void {
               throw new Error('Function not implemented.');
             }}
-            onParticipantDeleted={function (): void {
+            onDeleted={function (): void {
               throw new Error('Function not implemented.');
             }}
-            participantId={0}
+            id={-1}
           />
         }
       />
@@ -268,8 +268,8 @@ const App = () => {
             onClose={function (): void {
               throw new Error('Function not implemented.');
             }}
-            personalDataId={''}
-            onPersonalDataEdited={function (): void {
+            id={-1}
+            onEdited={function (): void {
               throw new Error('Function not implemented.');
             }}
           />
@@ -288,7 +288,7 @@ const App = () => {
             onClose={function (): void {
               throw new Error('Function not implemented.');
             }}
-            onTrialCreated={function (): void {
+            onCreated={function (): void {
               throw new Error('Function not implemented.');
             }}
           />
@@ -302,8 +302,8 @@ const App = () => {
             onClose={function (): void {
               throw new Error('Function not implemented.');
             }}
-            personalDataId={''}
-            onPersonalDataEdited={function (): void {
+            id={-1}
+            onEdited={function (): void {
               throw new Error('Function not implemented.');
             }}
           />
