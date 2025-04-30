@@ -1,17 +1,16 @@
 import { useState, useEffect } from 'react';
-
-interface HeatmapControlPanelProps {
-  updateHz: number;
-  onUpdateHzChange: (newHz: number) => void;
-  getRenderFps: () => { leftFps: number; rightFps: number }; // Función para obtener FPS
-}
+import { IHeatmapControlPanelProps } from '../../Interfaces/DataPanel';
 
 const HeatmapControlPanel = ({
   updateHz,
   onUpdateHzChange,
   getRenderFps,
-}: HeatmapControlPanelProps) => {
-  const [fps, setFps] = useState(0); // Estado para el FPS combinado
+}: IHeatmapControlPanelProps) => {
+  const [_, setFps] = useState(0); // Estado para el FPS combinado
+
+  // Valor normal (50) y límite superior (x2 normal, es decir 100)
+  const normalHz = 50;
+  const maxHz = normalHz * 2;
 
   // Actualizar el FPS cada segundo
   useEffect(() => {
@@ -23,24 +22,24 @@ const HeatmapControlPanel = ({
     return () => clearInterval(interval);
   }, [getRenderFps]);
 
+  // Calcula el multiplicador
+  const multiplier = (updateHz / normalHz).toFixed(2);
+
   return (
     <div className="mt-4">
-      <div className="text-lg font-bold">Render FPS: {fps}</div>
       <div className="mt-2 flex items-center space-x-2">
-        <label htmlFor="updateHz" className="text-lg font-medium">
-          Update Rate (Hz):
-        </label>
         <input
           id="updateHz"
-          type="number"
+          type="range"
           min="1"
-          max="1000"
+          max={maxHz}
           value={updateHz}
           onChange={(e) =>
             onUpdateHzChange(Math.max(1, parseInt(e.target.value) || 1))
           }
-          className="border p-1 w-20"
+          className="w-40"
         />
+        <span>{`x${multiplier}`}</span>
       </div>
     </div>
   );

@@ -1,23 +1,15 @@
-// src/Components/Experiments/EditExperimentModal.tsx
-
 import React, { useState, useEffect } from 'react';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
+import { IEditModalProps } from '../../Interfaces/Services';
 
-interface EditExperimentModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  experimentId: number;
-  onExperimentEdited: () => void; // Callback para notificar al padre
-}
-
-const EditExperimentModal: React.FC<EditExperimentModalProps> = ({
+const EditExperimentModal: React.FC<IEditModalProps> = ({
   isOpen,
   onClose,
-  experimentId,
-  onExperimentEdited,
+  onEdited,
+  id,
 }) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -41,10 +33,7 @@ const EditExperimentModal: React.FC<EditExperimentModalProps> = ({
       };
       setLoading(true);
       try {
-        const response = await axios.get(
-          `${apiUrl}/experiments/${experimentId}`,
-          config,
-        );
+        const response = await axios.get(`${apiUrl}/experiments/${id}`, config);
         setName(response.data.name);
         setDescription(response.data.description);
         const formattedStartDate = new Date(response.data.startDate)
@@ -72,7 +61,7 @@ const EditExperimentModal: React.FC<EditExperimentModalProps> = ({
     };
 
     fetchExperiment();
-  }, [isOpen, experimentId, accessToken, apiUrl, enqueueSnackbar]);
+  }, [isOpen, id, accessToken, apiUrl, enqueueSnackbar]);
 
   const handleEditExperiment = async () => {
     // Validaciones básicas
@@ -100,17 +89,13 @@ const EditExperimentModal: React.FC<EditExperimentModalProps> = ({
     };
     setLoading(true);
     try {
-      await axios.put(
-        `${apiUrl}/experiments/edit/${experimentId}`,
-        data,
-        config,
-      );
+      await axios.put(`${apiUrl}/experiments/edit/${id}`, data, config);
       setLoading(false);
       enqueueSnackbar('Experimento editado exitosamente', {
         variant: 'success',
       });
       onClose();
-      onExperimentEdited(); // Notificar al componente padre
+      onEdited(); // Notificar al componente padre
     } catch (error) {
       setLoading(false);
       enqueueSnackbar('Error al editar el experimento.', { variant: 'error' });

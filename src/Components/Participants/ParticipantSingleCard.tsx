@@ -1,39 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import {
-  HiOutlineQrcode,
+  HiOutlineIdentification,
   HiOutlineEye,
   HiOutlinePencil,
   HiOutlineTrash,
 } from 'react-icons/hi';
-import { useNavigate } from 'react-router-dom';
 import UserModal from './UserModal';
 import EditParticipantModal from '../../Services/Update/EditParticipant';
 import DeleteParticipantModal from '../../Services/Delete/DeleteParticipant';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+import { IParticipantSingleCardProps } from '../../Interfaces/Participants';
 
-interface Participant {
-  id: number;
-  code: string;
-  personalData?: {
-    id: number;
-    // Other relevant fields
-  };
-  // Other relevant fields
-}
-
-interface ParticipantSingleCardProps {
-  participants: Participant;
-  onParticipantDeleted: () => void;
-  onParticipantEdited: () => void;
-}
-
-const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
+const ParticipantSingleCard: React.FC<IParticipantSingleCardProps> = ({
   participants,
   onParticipantDeleted,
   onParticipantEdited,
 }) => {
-  const navigate = useNavigate();
-
   const [showModal, setShowModal] = useState(false);
   const [modalData, setModalData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -66,7 +49,7 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
   };
 
   useEffect(() => {
-    if (showModal && participants.personalData?.id) {
+    if (showModal && participants.personalDataId) {
       const config = {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -74,7 +57,7 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
       };
       setLoading(true);
       axios
-        .get(`${apiUrl}/personalData/${participants.personalData.id}`, config)
+        .get(`${apiUrl}/personalData/${participants.personalDataId}`, config)
         .then((response) => {
           setModalData(response.data);
           setLoading(false);
@@ -85,89 +68,90 @@ const ParticipantSingleCard: React.FC<ParticipantSingleCardProps> = ({
           setLoading(false);
         });
     }
-  }, [showModal, participants.personalData?.id, accessToken, apiUrl]);
+  }, [showModal, participants.personalDataId, accessToken, apiUrl]);
 
   const formattedCode = participants.code || '—';
+  const detailsUrl = `/trials/by-participant/${participants.id}`;
 
   return (
     <>
-      <div
-        onClick={() => navigate(`/trials/by-participant/${participants.id}`)}
-        className="border border-slate-200 bg-white rounded-lg px-6 py-5 m-4 relative shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out cursor-pointer"
-      >
-        <div key={participants.id} className="my-2 space-y-4">
-          {/* Code */}
-          <div className="flex items-center gap-x-3">
-            <HiOutlineQrcode className="text-emerald-600 text-2xl" />
-            <h4 className="text-slate-800 font-medium">
-              Código: {formattedCode}
-            </h4>
-          </div>
-        </div>
+      <div className="border border-slate-200 bg-white rounded-lg px-6 py-5 m-4 relative shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out cursor-pointer">
+        <Link to={detailsUrl} rel="noopener noreferrer">
+          <div key={participants.id} className="my-2 space-y-4">
+            {/* Código */}
+            <div className="flex items-center gap-x-3">
+              <HiOutlineIdentification className="text-sky-700 text-2xl" />
 
-        {/* Action Buttons */}
-        <div className="flex justify-end items-center gap-x-4 mt-6">
-          {/* Show Details Button */}
+              <h4 className="text-gray-800 font-semibold">
+                <strong>Código:</strong> {formattedCode}
+              </h4>
+            </div>
+          </div>
+        </Link>
+
+        {/* Botones de acción */}
+        <div className="flex justify-end items-center gap-x-4 mt-4">
+          {/* Mostrar Detalles */}
           <button
             onClick={(e) => {
               e.stopPropagation();
               setShowModal(true);
             }}
-            className="bg-teal-500 text-white p-2 rounded-md hover:bg-teal-600 transition-colors duration-200 group"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-teal-600 hover:bg-emerald-500 transition duration-200"
             aria-label="Mostrar detalles"
           >
-            <HiOutlineEye className="text-lg group-hover:scale-110 transition-transform" />
+            <HiOutlineEye className="text-white text-2xl" />
           </button>
 
-          {/* Edit Button */}
+          {/* Editar */}
           <button
             onClick={handleEditClick}
-            className="bg-emerald-500 text-white p-2 rounded-md hover:bg-emerald-600 transition-colors duration-200 group"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
             aria-label="Editar participante"
           >
-            <HiOutlinePencil className="text-lg group-hover:scale-110 transition-transform" />
+            <HiOutlinePencil className="text-white text-2xl" />
           </button>
 
-          {/* Delete Button */}
+          {/* Eliminar */}
           <button
             onClick={handleDeleteClick}
-            className="bg-rose-500 text-white p-2 rounded-md hover:bg-rose-600 transition-colors duration-200 group"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-rose-600 hover:bg-rose-500 transition duration-200"
             aria-label="Eliminar participante"
           >
-            <HiOutlineTrash className="text-lg group-hover:scale-110 transition-transform" />
+            <HiOutlineTrash className="text-white text-2xl" />
           </button>
         </div>
+
+        {/* Modal de detalles */}
+        {showModal && (
+          <UserModal user={modalData} onClose={() => setShowModal(false)} />
+        )}
       </div>
 
-      {/* User Details Modal */}
-      {showModal && (
-        <UserModal user={modalData} onClose={() => setShowModal(false)} />
-      )}
-
-      {/* Edit Participant Modal */}
+      {/* Modal de edición */}
       <EditParticipantModal
         isOpen={isEditModalOpen}
         onClose={() => setEditModalOpen(false)}
-        participantId={participants.id}
-        onParticipantEdited={handleParticipantEdited}
+        id={participants.id}
+        onEdited={handleParticipantEdited}
       />
 
-      {/* Delete Participant Modal */}
+      {/* Modal de eliminación */}
       <DeleteParticipantModal
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        participantId={participants.id}
-        onParticipantDeleted={handleParticipantDeleted}
+        id={participants.id}
+        onDeleted={handleParticipantDeleted}
       />
 
-      {/* Loading State */}
+      {/* Estado de carga */}
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-slate-800 bg-opacity-50 rounded-lg">
           <div className="text-white text-lg">Cargando...</div>
         </div>
       )}
 
-      {/* Error State */}
+      {/* Estado de error */}
       {error && (
         <div className="absolute inset-0 flex items-center justify-center bg-rose-800 bg-opacity-50 rounded-lg">
           <div className="text-white text-lg">{error}</div>

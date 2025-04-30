@@ -1,22 +1,15 @@
-// src/Components/Trials/CreateTrialModal.tsx
-
 import React, { useEffect, useState } from 'react';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
+import { ICreateModalProps } from '../../Interfaces/Services';
 
-interface CreateTrialModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onTrialCreated: () => void; // Callback para notificar al padre
-}
-
-const CreateTrialModal: React.FC<CreateTrialModalProps> = ({
+const CreateTrialModal: React.FC<ICreateModalProps> = ({
   isOpen,
   onClose,
-  onTrialCreated,
+  onCreated,
 }) => {
   const [description, setDescription] = useState('');
   const [annotation, setAnnotation] = useState('');
@@ -81,7 +74,7 @@ const CreateTrialModal: React.FC<CreateTrialModalProps> = ({
       setLoading(false);
       enqueueSnackbar('Prueba creada exitosamente', { variant: 'success' });
       onClose();
-      onTrialCreated(); // Notificar al componente padre
+      onCreated(); // Notificar al componente padre
       // Limpiar campos
       setDescription('');
       setAnnotation('');

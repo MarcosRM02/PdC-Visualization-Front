@@ -1,5 +1,3 @@
-// src/Components/Participants/CreateParticipantModal.tsx
-
 import React, { useEffect, useState } from 'react';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import axios from 'axios';
@@ -7,17 +5,12 @@ import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
 import { NumericFormat } from 'react-number-format';
 import { useParams } from 'react-router-dom';
+import { ICreateModalProps } from '../../Interfaces/Services';
 
-interface CreateParticipantModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onParticipantCreated: () => void; // Callback para notificar al padre
-}
-
-const CreateParticipantModal: React.FC<CreateParticipantModalProps> = ({
+const CreateParticipantModal: React.FC<ICreateModalProps> = ({
   isOpen,
   onClose,
-  onParticipantCreated,
+  onCreated,
 }) => {
   const [height, setHeight] = useState<number | undefined>(undefined);
   const [weight, setWeight] = useState<number | undefined>(undefined);
@@ -29,6 +22,7 @@ const CreateParticipantModal: React.FC<CreateParticipantModalProps> = ({
 
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams<{ id: string }>(); // ID del experimento
+  const professionalId = localStorage.getItem('id');
   const accessToken = localStorage.getItem('accessToken');
   const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -88,23 +82,23 @@ const CreateParticipantModal: React.FC<CreateParticipantModalProps> = ({
       // Segunda solicitud POST para crear el participante utilizando el ID del experimento
       const participantData = {
         code,
-        personalDataId: newPersonalDataId,
+        personaldataid: newPersonalDataId,
       };
 
       console.log('Datos del participante a crear:', participantData);
 
       await axios.post(
-        `${apiUrl}/participants/create/${id}`,
+        `${apiUrl}/participants/create/${professionalId}/${id}`,
         participantData,
         config,
       );
-
+      console.log('Participante creado con éxito ', response1.data);
       setLoading(false);
       enqueueSnackbar('Participant Created successfully', {
         variant: 'success',
       });
       onClose();
-      onParticipantCreated(); // Notificar al componente padre
+      onCreated(); // Notificar al componente padre
 
       // Limpiar campos
       setCode('');

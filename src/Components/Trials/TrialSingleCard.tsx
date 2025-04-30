@@ -1,26 +1,19 @@
-// src/Components/Trials/TrialSingleCard.tsx
-
 import React, { useState, useEffect } from 'react';
 import {
   HiOutlineQrcode,
   HiOutlinePencil,
   HiOutlineTrash,
-  HiOutlineCalendar,
-  HiOutlineClipboardList,
   HiOutlineAnnotation,
+  HiOutlineInformationCircle,
 } from 'react-icons/hi';
-import { useNavigate } from 'react-router-dom';
+import { FaRegCalendarCheck } from 'react-icons/fa';
 import { getIDFromAPI } from '../../Services/Read/CreateWearablesURL';
 import EditTrialModal from '../../Services/Update/EditTrial';
 import DeleteTrialModal from '../../Services/Delete/DeleteTrial';
+import { Link } from 'react-router-dom';
+import { ITrialSingleCardProps } from '../../Interfaces/Trials';
 
-interface TrialSingleCardProps {
-  trials: any;
-  onTrialEdited: () => void;
-  onTrialDeleted: () => void;
-}
-
-const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
+const TrialSingleCard: React.FC<ITrialSingleCardProps> = ({
   trials,
   onTrialEdited,
   onTrialDeleted,
@@ -33,13 +26,9 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
   const participantId = trials.participant.id;
   const swId = trials.sw.id;
 
-  const [loading, _] = useState(false);
-
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [refresh, setRefresh] = useState(false);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,15 +54,11 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
     .join('&');
   const detailsUrl = `${detailsBasePath}?${wearableQuery}`;
 
-  // Función para formatear la fecha y validar su validez
+  // Formateo de fecha
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
-
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) {
-      return '';
-    }
-
+    if (isNaN(date.getTime())) return '';
     const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'long',
@@ -107,94 +92,86 @@ const TrialSingleCard: React.FC<TrialSingleCardProps> = ({
 
   return (
     <>
-      <div
-        onClick={() => navigate(detailsUrl)}
-        className="border border-slate-200 bg-white rounded-lg px-6 py-5 m-4 relative shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out cursor-pointer"
-      >
-        <div key={trials.id} className="my-2 space-y-4">
-          {/* Fecha */}
-          <div className="flex items-center gap-x-3">
-            <HiOutlineCalendar className="text-emerald-600 text-2xl" />
-            <h4 className="text-slate-800 font-medium">
-              Fecha: {formattedDate || '—'}
-            </h4>
-          </div>
+      <div className="border border-slate-200 bg-white rounded-lg px-6 py-5 m-4 relative shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out cursor-pointer">
+        <Link to={detailsUrl} rel="noopener noreferrer">
+          <div className="my-2 space-y-4">
+            {/* Fecha */}
+            <div className="flex items-center gap-x-3">
+              <FaRegCalendarCheck className="text-sky-700 text-2xl" />
+              <h4 className="text-gray-800 font-medium">
+                <strong>Fecha:</strong> {formattedDate || '—'}
+              </h4>
+            </div>
 
-          {/* Código */}
-          <div className="flex items-center gap-x-3">
-            <HiOutlineQrcode className="text-emerald-600 text-2xl" />
-            <h4 className="text-slate-800 font-medium">
-              Código: {trials.code || '—'}
-            </h4>
-          </div>
+            {/* Código */}
+            <div className="flex items-center gap-x-3">
+              <HiOutlineQrcode className="text-sky-700 text-2xl" />
+              <h4 className="text-gray-800 font-medium">
+                <strong>Código:</strong> {trials.code || '—'}
+              </h4>
+            </div>
 
-          {/* Descripción */}
-          <div className="flex items-center gap-x-3">
-            <HiOutlineClipboardList className="text-slate-600 text-2xl" />
-            <h4 className="text-slate-800 font-medium">
-              Descripción: {trials.description || '—'}
-            </h4>
-          </div>
+            {/* Descripción */}
+            <div className="flex items-center gap-x-3">
+              <HiOutlineInformationCircle className="text-sky-700 text-2xl" />
+              <h4 className="text-gray-800 font-medium">
+                <strong>Descripción:</strong> {trials.description || '—'}
+              </h4>
+            </div>
 
-          {/* Anotación */}
-          <div className="flex items-center gap-x-3">
-            <HiOutlineAnnotation className="text-slate-600 text-2xl" />
-            <h4 className="text-slate-800 font-medium">
-              Anotación: {trials.annotation || '—'}
-            </h4>
+            {/* Anotación */}
+            <div className="flex items-center gap-x-3">
+              <HiOutlineAnnotation className="text-sky-700 text-2xl" />
+              <h4 className="text-gray-800 font-medium">
+                <strong>Notas:</strong> {trials.annotation || '—'}
+              </h4>
+            </div>
           </div>
-        </div>
+        </Link>
 
-        {/* Action Buttons */}
-        <div className="flex justify-end items-center gap-x-4 mt-6">
-          {/* Edit Button */}
+        {/* Botones de acción */}
+        <div className="flex justify-end items-center gap-x-4 mt-2">
+          {/* Botón Editar */}
           <button
             onClick={handleEditClick}
-            className="bg-emerald-500 text-white p-2 rounded-md hover:bg-emerald-600 transition-colors duration-200 group"
-            aria-label="Editar prueba"
+            className="w-8 h-8  flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
+            aria-label="Editar trial"
           >
-            <HiOutlinePencil className="text-lg group-hover:scale-110 transition-transform" />
+            <HiOutlinePencil className="text-white text-2xl" />
           </button>
 
-          {/* Delete Button */}
+          {/* Botón Eliminar */}
           <button
             onClick={handleDeleteClick}
-            className="bg-rose-500 text-white p-2 rounded-md hover:bg-rose-600 transition-colors duration-200 group"
-            aria-label="Eliminar prueba"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-rose-600 hover:bg-rose-500 transition duration-200"
+            aria-label="Eliminar trial"
           >
-            <HiOutlineTrash className="text-lg group-hover:scale-110 transition-transform" />
+            <HiOutlineTrash className="text-white text-2xl" />
           </button>
         </div>
-
-        {/* Loading State */}
-        {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-800 bg-opacity-50 rounded-lg">
-            <div className="text-white text-lg">Cargando...</div>
-          </div>
-        )}
-
-        {/* Error State */}
-        {error && (
-          <div className="absolute inset-0 flex items-center justify-center bg-rose-800 bg-opacity-50 rounded-lg">
-            <div className="text-white text-lg">{error}</div>
-          </div>
-        )}
       </div>
+
+      {/* Error State */}
+      {error && (
+        <div className="absolute inset-0 flex items-center justify-center bg-rose-800 bg-opacity-50 rounded-lg">
+          <div className="text-white text-lg">{error}</div>
+        </div>
+      )}
 
       {/* Edit Trial Modal */}
       <EditTrialModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        trialId={trials.id}
-        onTrialEdited={handleTrialEdited}
+        id={trials.id}
+        onEdited={handleTrialEdited}
       />
 
       {/* Delete Trial Modal */}
       <DeleteTrialModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
-        onTrialDeleted={handleTrialDeleted}
-        trialId={trials.id}
+        onDeleted={handleTrialDeleted}
+        id={trials.id}
       />
     </>
   );

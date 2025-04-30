@@ -1,23 +1,15 @@
-// src/Services/Delete/DeleteTrial.tsx
-
 import React, { useState, useEffect } from 'react';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
+import { IDeleteModalProps } from '../../Interfaces/Services';
 
-interface DeleteTrialModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onTrialDeleted: () => void; // Callback para notificar al padre
-  trialId: number; // ID de la prueba a eliminar
-}
-
-const DeleteTrialModal: React.FC<DeleteTrialModalProps> = ({
+const DeleteTrialModal: React.FC<IDeleteModalProps> = ({
   isOpen,
   onClose,
-  onTrialDeleted,
-  trialId,
+  onDeleted,
+  id,
 }) => {
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -27,7 +19,7 @@ const DeleteTrialModal: React.FC<DeleteTrialModalProps> = ({
 
   const handleDeleteTrial = async () => {
     setLoading(true);
-    console.log(`Attempting to delete trial with ID: ${trialId}`);
+    console.log(`Attempting to delete trial with ID: ${id}`);
 
     const config = {
       headers: {
@@ -36,13 +28,13 @@ const DeleteTrialModal: React.FC<DeleteTrialModalProps> = ({
     };
 
     try {
-      await axios.delete(`${apiUrl}/trials/delete/${trialId}`, config);
+      await axios.delete(`${apiUrl}/trials/delete/${id}`, config);
       setLoading(false);
       enqueueSnackbar('Prueba eliminada exitosamente', {
         variant: 'success',
       });
       console.log('Trial deleted successfully. Calling callback.');
-      onTrialDeleted(); // Notificar al componente padre
+      onDeleted(); // Notificar al componente padre
       onClose();
     } catch (error) {
       setLoading(false);

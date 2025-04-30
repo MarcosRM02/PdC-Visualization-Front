@@ -1,3 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*Estilos para los botones de las gráficas de plotly*/
+.modebar {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Ajusta los grupos */
+.modebar-group,
+.modebar-btn-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Ajusta los botones de los grupos */
+.modebar-btn {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 24px !important;
+    height: 24px !important;
+    line-height: 1 !important;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,24 +1,16 @@
-// src/Components/Participants/EditPersonalDataModal.tsx
-
 import React, { useEffect, useState } from 'react';
 import Spinner from '../../Components/CommonComponents/Spinner';
 import axios from 'axios';
 import { useSnackbar } from 'notistack';
 import { FaTimes } from 'react-icons/fa';
 import { NumericFormat } from 'react-number-format';
+import { IEditModalProps } from '../../Interfaces/Services';
 
-interface EditPersonalDataModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  personalDataId: string; // ID de personalData a editar
-  onPersonalDataEdited: (updatedUser: any) => void; // Callback con el usuario actualizado
-}
-
-const EditPersonalDataModal: React.FC<EditPersonalDataModalProps> = ({
+const EditPersonalDataModal: React.FC<IEditModalProps> = ({
   isOpen,
   onClose,
-  personalDataId,
-  onPersonalDataEdited,
+  onEdited,
+  id,
 }) => {
   const [height, setHeight] = useState<number | undefined>(undefined);
   const [weight, setWeight] = useState<number | undefined>(undefined);
@@ -51,7 +43,7 @@ const EditPersonalDataModal: React.FC<EditPersonalDataModalProps> = ({
     setLoading(true);
     try {
       const response = await axios.put(
-        `${apiUrl}/personalData/edit/${personalDataId}`,
+        `${apiUrl}/personalData/edit/${id}`,
         data,
         config,
       );
@@ -63,7 +55,7 @@ const EditPersonalDataModal: React.FC<EditPersonalDataModalProps> = ({
 
       // Obtener los datos actualizados desde la respuesta
       const updatedUser = response.data;
-      onPersonalDataEdited(updatedUser); // Pasar los datos actualizados al componente padre
+      onEdited(updatedUser); // Pasar los datos actualizados al componente padre
     } catch (error: any) {
       setLoading(false);
       if (
@@ -82,7 +74,7 @@ const EditPersonalDataModal: React.FC<EditPersonalDataModalProps> = ({
   };
 
   useEffect(() => {
-    if (isOpen && personalDataId) {
+    if (isOpen && id) {
       const fetchPersonalData = async () => {
         const config = {
           headers: {
@@ -92,7 +84,7 @@ const EditPersonalDataModal: React.FC<EditPersonalDataModalProps> = ({
         setLoading(true);
         try {
           const response = await axios.get(
-            `${apiUrl}/personalData/${personalDataId}`,
+            `${apiUrl}/personalData/${id}`,
             config,
           );
           setName(response.data.name || '');
@@ -124,7 +116,7 @@ const EditPersonalDataModal: React.FC<EditPersonalDataModalProps> = ({
 
       fetchPersonalData();
     }
-  }, [isOpen, personalDataId, accessToken, apiUrl, enqueueSnackbar]);
+  }, [isOpen, id, accessToken, apiUrl, enqueueSnackbar]);
 
   useEffect(() => {
     if (!isOpen) {

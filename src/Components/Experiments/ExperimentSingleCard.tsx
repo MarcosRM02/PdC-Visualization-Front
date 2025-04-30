@@ -2,51 +2,31 @@ import React, { useState } from 'react';
 import {
   HiOutlineUser,
   HiOutlineInformationCircle,
-  HiOutlineCalendar,
-  HiOutlineDocumentText,
   HiOutlineUserGroup,
   HiOutlinePencil,
   HiOutlineTrash,
+  HiOutlineAnnotation,
 } from 'react-icons/hi';
-import { useNavigate } from 'react-router-dom';
+import { FaRegCalendarAlt, FaRegCalendarCheck } from 'react-icons/fa';
 import DeleteExperimentModal from '../../Services/Delete/DeleteExperiment';
 import EditExperimentModal from '../../Services/Update/EditExperiment';
+import { Link } from 'react-router-dom';
+import { IExperimentSingleCardProps } from '../../Interfaces/Experiments';
 
-// Interface for Experiment
-interface Experiment {
-  id: number;
-  name: string;
-  description: string;
-  startDate: string;
-  finishDate?: string;
-  notes?: string;
-  numberOfParticipants: number;
-}
-
-interface ExperimentSingleCardProps {
-  experiment: Experiment;
-  onExperimentDeleted: () => void;
-  onExperimentEdited: () => void;
-}
-
-const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
+const ExperimentSingleCard: React.FC<IExperimentSingleCardProps> = ({
   experiment,
   onExperimentDeleted,
   onExperimentEdited,
 }) => {
-  const navigate = useNavigate();
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
 
-  // Date formatting function
   const formatDate = (dateString: string): string => {
     if (!dateString) return '';
-
     const date = new Date(dateString);
     if (isNaN(date.getTime())) {
       return '';
     }
-
     const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'long',
@@ -66,17 +46,11 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
   };
 
   const handleExperimentDeleted = () => {
-    console.log(
-      `Experiment with ID: ${experiment.id} deleted. Notifying parent.`,
-    );
     setDeleteModalOpen(false);
     onExperimentDeleted();
   };
 
   const handleExperimentEdited = () => {
-    console.log(
-      `Experiment with ID: ${experiment.id} edited. Notifying parent.`,
-    );
     setEditModalOpen(false);
     onExperimentEdited();
   };
@@ -84,98 +58,104 @@ const ExperimentSingleCard: React.FC<ExperimentSingleCardProps> = ({
   const formattedStartDate = formatDate(experiment.startDate);
   const formattedFinishDate = formatDate(experiment.finishDate || '');
 
+  const detailsUrl = `/participants/by-experiment/${experiment.id}`;
+
   return (
     <>
-      <div
-        onClick={() => navigate(`/participants/by-experiment/${experiment.id}`)}
-        className="border border-slate-200 bg-white rounded-lg px-6 py-5 m-4 relative shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out cursor-pointer"
-      >
-        <div className="space-y-4">
-          {/* Name */}
-          <div className="flex items-center gap-x-3">
-            <HiOutlineUser className="text-emerald-600 text-2xl" />
-            <h4 className="text-slate-800 font-semibold">
-              Nombre: {experiment.name}
-            </h4>
-          </div>
+      <div className="border border-slate-200 bg-white rounded-lg px-6 py-5 m-4 relative shadow-sm hover:shadow-md transition-shadow duration-300 ease-in-out cursor-pointer">
+        <Link to={detailsUrl} rel="noopener noreferrer">
+          <div className="space-y-4">
+            {/* Nombre*/}
+            <div className="flex items-center gap-x-3">
+              <HiOutlineUser className="text-sky-700 text-2xl" />
+              <h4 className="text-gray-800 font-semibold text-2xl">
+                {experiment.name}
+              </h4>
+            </div>
 
-          {/* Description */}
-          <div className="flex items-center gap-x-3">
-            <HiOutlineInformationCircle className="text-indigo-600 text-2xl" />
-            <h4 className="text-slate-800 font-medium">
-              Descripción: {experiment.description || '—'}
-            </h4>
-          </div>
+            {/* Descripción */}
+            <div className="flex items-center gap-x-3">
+              <HiOutlineInformationCircle className="text-sky-700 text-2xl" />
 
-          {/* Start Date */}
-          <div className="flex items-center gap-x-3">
-            <HiOutlineCalendar className="text-teal-600 text-2xl" />
-            <h4 className="text-slate-800 font-medium">
-              Fecha de Inicio: {formattedStartDate || '—'}
-            </h4>
-          </div>
+              <h4 className="text-gray-800 font-medium">
+                <strong>Descripción:</strong> {experiment.description || '—'}
+              </h4>
+            </div>
 
-          {/* Finish Date */}
-          <div className="flex items-center gap-x-3">
-            <HiOutlineCalendar className="text-cyan-600 text-2xl" />
-            <h4 className="text-slate-800 font-medium">
-              Fecha de Finalización: {formattedFinishDate || '—'}
-            </h4>
-          </div>
+            {/* Fecha de Inicio */}
+            <div className="flex items-center gap-x-3">
+              <FaRegCalendarAlt className="text-sky-700 text-2xl" />
 
-          {/* Notes */}
-          <div className="flex items-center gap-x-3">
-            <HiOutlineDocumentText className="text-violet-600 text-2xl" />
-            <h4 className="text-slate-800 font-medium">
-              Notas: {experiment.notes || '—'}
-            </h4>
-          </div>
+              <h4 className="text-gray-800 font-medium">
+                <strong>Fecha de Inicio:</strong> {formattedStartDate || '—'}
+              </h4>
+            </div>
 
-          {/* Number of Participants */}
-          <div className="flex items-center gap-x-3">
-            <HiOutlineUserGroup className="text-sky-600 text-2xl" />
-            <h4 className="text-slate-800 font-semibold">
-              Número de Participantes: {experiment.numberOfParticipants}
-            </h4>
-          </div>
-        </div>
+            {/* Fecha de Finalización */}
+            <div className="flex items-center gap-x-3">
+              <FaRegCalendarCheck className="text-sky-700 text-2xl" />
 
-        {/* Action Buttons */}
-        <div className="flex justify-end items-center gap-x-4 mt-6">
-          {/* Edit Button */}
+              <h4 className="text-gray-800 font-medium">
+                <strong>Fecha de Finalización:</strong>{' '}
+                {formattedFinishDate || '—'}
+              </h4>
+            </div>
+
+            {/* Notas */}
+            <div className="flex items-center gap-x-3">
+              <HiOutlineAnnotation className="text-sky-700 text-2xl" />
+
+              <h4 className="text-gray-800 font-medium">
+                <strong>Notas:</strong> {experiment.notes || '—'}
+              </h4>
+            </div>
+
+            {/* Número de Participantes */}
+            <div className="flex items-center gap-x-3">
+              <HiOutlineUserGroup className="text-sky-700 text-2xl" />
+
+              <h4 className="text-gray-800 font-semibold">
+                <strong>Número de Participantes:</strong>{' '}
+                {experiment.numberOfParticipants}
+              </h4>
+            </div>
+          </div>
+        </Link>
+
+        {/* Botones de acción */}
+        <div className="flex justify-end items-center gap-x-4 mt-2">
+          {/* Botón Editar */}
           <button
             onClick={handleEditClick}
-            className="bg-emerald-500 text-white p-2 rounded-md hover:bg-emerald-600 transition-colors duration-200 group"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-sky-900 hover:bg-blue-800 transition duration-200"
             aria-label="Editar experimento"
           >
-            <HiOutlinePencil className="text-lg group-hover:scale-110 transition-transform" />
+            <HiOutlinePencil className="text-white text-2xl" />
           </button>
 
-          {/* Delete Button */}
+          {/* Botón Eliminar */}
           <button
             onClick={handleDeleteClick}
-            className="bg-rose-500 text-white p-2 rounded-md hover:bg-rose-600 transition-colors duration-200 group"
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-rose-600 hover:bg-rose-500 transition duration-200"
             aria-label="Eliminar experimento"
           >
-            <HiOutlineTrash className="text-lg group-hover:scale-110 transition-transform" />
+            <HiOutlineTrash className="text-white text-2xl" />
           </button>
         </div>
       </div>
 
-      {/* Delete Experiment Modal */}
       <DeleteExperimentModal
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        onExperimentDeleted={handleExperimentDeleted}
-        experimentId={experiment.id}
+        onDeleted={handleExperimentDeleted}
+        id={experiment.id}
       />
 
-      {/* Edit Experiment Modal */}
       <EditExperimentModal
         isOpen={isEditModalOpen}
         onClose={() => setEditModalOpen(false)}
-        experimentId={experiment.id}
-        onExperimentEdited={handleExperimentEdited}
+        id={experiment.id}
+        onEdited={handleExperimentEdited}
       />
     </>
   );

@@ -16,6 +16,12 @@ import EditTrial from './Services/Update/EditTrial';
 import DeleteTrial from './Services/Delete/DeleteTrial';
 import ShowWearables from './Services/Read/ShowWearablesData';
 import PrivateRoute from './PrivateRoute';
+import ShowTemplates from './Services/Read/ShowTemplates';
+import ShowTrialsTemplates from './Services/Read/ShowTrialsTemplates';
+import ShowAllParticipants from './Services/Read/ShowAllParticipants';
+import DeleteParticipantTemplateModal from './Services/Delete/DeleteParticipantTemplate';
+import AddExistingParticipantsModal from './Services/Create/AddExistingParticipants';
+import EditPersonalDataTemplateModal from './Services/Update/EditPersonalDataTemplate';
 
 const App = () => {
   return (
@@ -194,7 +200,115 @@ const App = () => {
           path="/swData/getData/:experimentId/:participantId/:swId/:trialId"
           element={<ShowWearables />}
         />
+        {/* Nuevas rutas */}
+        <Route
+          path="/templates/by-professional/:id"
+          element={<ShowTemplates />}
+        />
+        <Route
+          path="/trialTemplates/by-professional/:id"
+          element={<ShowTrialsTemplates />}
+        />
+        <Route
+          path="/trialTemplates/create/:id"
+          element={
+            <CreateTrial
+              isOpen={false}
+              onClose={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+              onTrialCreated={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+            />
+          }
+        />
+        <Route
+          path="/participantTemplates/by-professional/:id"
+          element={<ShowAllParticipants />}
+        />
       </Route>
+
+      <Route
+        path="/participantTemplates/edit/:id"
+        element={
+          <EditParticipant
+            isOpen={false}
+            onClose={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+            participantId={0}
+            onParticipantEdited={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
+        }
+      />
+      <Route
+        path="/participantTemplates/delete/:id"
+        element={
+          <DeleteParticipantTemplateModal
+            isOpen={false}
+            onClose={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+            onParticipantDeleted={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+            participantId={0}
+          />
+        }
+      />
+
+      <Route
+        path="/participantTemplates/edit/:id"
+        element={
+          <EditPersonalData
+            isOpen={false}
+            onClose={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+            personalDataId={''}
+            onPersonalDataEdited={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
+        }
+      />
+      <Route
+        path="/participantTemplates/delete/:id"
+        element={<DeletePersonalData />}
+      />
+
+      <Route
+        path="/trials/create/:id"
+        element={
+          <AddExistingParticipantsModal
+            isOpen={false}
+            onClose={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+            onTrialCreated={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
+        }
+      />
+      <Route
+        path="/personalDataTemplate/edit/:id"
+        element={
+          <EditPersonalDataTemplateModal
+            isOpen={false}
+            onClose={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+            personalDataId={''}
+            onPersonalDataEdited={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
+        }
+      />
     </Routes>
   );
 };

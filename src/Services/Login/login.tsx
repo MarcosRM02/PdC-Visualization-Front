@@ -25,7 +25,6 @@ const Login = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           if (data) {
             // Redirigir al usuario a la ruta deseada con el id del profesional
             navigate(`/experiments/by-professional/${data}`, {
@@ -61,6 +60,7 @@ const Login = () => {
         localStorage.setItem('accessToken', data.accessToken);
         const expiration = new Date().getTime() + data.expiresIn * 1000;
         localStorage.setItem('expiresIn', expiration.toString());
+        localStorage.setItem('id', data.id.toString());
         navigate(`/experiments/by-professional/${data.id}`, {
           replace: true,
         });

@@ -1,18 +1,20 @@
 import { useRef, useEffect, useState, Fragment, useCallback } from 'react';
-import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
 import ReactPlayer from 'react-player';
-import { WearableDataProps } from '../../Types/Interfaces';
-import { DataFrame, concat, toCSV } from 'danfojs';
-import Plotly from 'plotly.js-dist-min';
 import axios from 'axios';
-import HeatMap from './Heatmap'; // Asegúrate de que la ruta sea correcta
-import ColorLegend from './ColorLegend';
+import { DataFrame } from 'danfojs';
+import Plotly from 'plotly.js-dist-min';
+import { throttle } from 'lodash';
+import { IWearableDataProps } from '../../Interfaces/DataPanel';
+import { handleRelayout, plotWearablesData } from './utils/plotHelpers';
+import { descargarDatosVisibles } from './utils/dataDownload';
 import { VideoCameraIcon } from '@heroicons/react/24/solid';
-import { throttle } from 'lodash'; // Importa throttle
-import leftPointsData from './data/leftPoints.json';
-import rightPointsData from './data/rightPoints.json';
-import HeatmapControlPanel from './heatmapControl';
+import FloatingWindow from './FloatingWindow';
+import IconActionButton from './IconActionButton';
+import { FaSync } from 'react-icons/fa';
+import InfoButton from './Buttons/InfoButton';
+import { HiOutlineFolderDownload } from 'react-icons/hi';
+import ControlPanel from './ControlPanel';
+import TimeProgressBar from './TimeProgressBar';
 
 const WearablesData = ({
   wearables,
@@ -20,7 +22,12 @@ const WearablesData = ({
   experimentId,
   swId,
   participantId,
-}: WearableDataProps) => {
+}: IWearableDataProps) => {
+  // Refs para los videos
+  const playerRef1 = useRef<ReactPlayer | null>(null);
+  const playerRef2 = useRef<ReactPlayer | null>(null);
+
+  // Refs para gráficos
   const refs = {
     leftPressureSensor: useRef(null),
     leftAccelerometer: useRef(null),
@@ -30,21 +37,26 @@ const WearablesData = ({
     rightGyroscope: useRef(null),
   };
 
+  // Refs para heatmaps
+  const leftHeatmapRef = useRef<any>(null);
+  const rightHeatmapRef = useRef<any>(null);
+
   const [playTime, setPlayTime] = useState<number>(0);
-  const playerRef = useRef<ReactPlayer | null>(null);
-  const previousTimeRef = useRef(0); // Referencia para el tiempo anterior
-  // Nuevos estados para manejar el botón de Play y la finalización de animaciones
+  const [duration1, setDuration1] = useState<number>(0);
+  const [duration2, setDuration2] = useState<number>(0);
+  // Duración global: máximo de ambas (si un video no está presente, su duración es 0)
+  const globalDuration = Math.max(duration1, duration2);
+
+  const previousTimeRef = useRef(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [animationsFinished, setAnimationsFinished] = useState({
     left: false,
     right: false,
   });
-  // Crear refs para ambos ImagePlotCanvas
-  const leftHeatmapRef = useRef<any>(null);
-  const rightHeatmapRef = useRef<any>(null);
   const [videoSrc, setVideoSrc] = useState('');
-
   const [videoError, setVideoError] = useState<boolean>(false);
+  const [videoSrc2, setVideoSrc2] = useState('');
+  const [hmVideoError, setHmVideoError] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
   const leftWearables = wearables.filter(
@@ -60,34 +72,34 @@ const WearablesData = ({
   const rightFrames = rightWearables.map(
     (wearable: any) => new DataFrame(wearable.dataframe),
   );
-
   const minLength = Math.min(
     ...leftFrames.map((frame) => frame.shape[0]),
     ...rightFrames.map((frame) => frame.shape[0]),
   );
 
-  // Implementa throttling para manejar la frecuencia de actualización
+  // Throttling para actualizar el tiempo
   const handleProgress = throttle((state: { playedSeconds: number }) => {
     setPlayTime(state.playedSeconds);
-  }, 200); // Actualiza cada 200ms
+  }, 200);
 
   const handlePointClick = (data: any) => {
     if (data.points && data.points.length > 0) {
       const pointTime = data.points[0].x;
       setPlayTime(pointTime);
-      if (playerRef.current) {
-        playerRef.current.seekTo(pointTime, 'seconds');
+      if (playerRef1.current && playerRef2.current) {
+        playerRef1.current.seekTo(pointTime, 'seconds');
+        playerRef2.current.seekTo(pointTime, 'seconds');
       }
     }
   };
 
-  // Efecto para detectar cuando ambas animaciones han terminado
   useEffect(() => {
     if (isPlaying && animationsFinished.left && animationsFinished.right) {
       setIsPlaying(false);
     }
   }, [isPlaying, animationsFinished]);
 
+  // Llamada a funciones de graficado
   useEffect(() => {
     plotWearablesData(leftWearables, rightWearables, refs, playTime, minLength);
 
@@ -117,7 +129,6 @@ const WearablesData = ({
   }, [playTime]);
 
   const updateCurrentTimeLine = (currentTime: any) => {
-    // Solo actualiza si el cambio es mayor a 0.1 segundos
     if (Math.abs(currentTime - previousTimeRef.current) > 0.1) {
       Object.values(refs).forEach((ref) => {
         if (ref.current) {
@@ -147,6 +158,7 @@ const WearablesData = ({
     });
   };
 
+  // Obtención del video desde la API
   const apiUrl = import.meta.env.VITE_API_URL;
   const accessToken = localStorage.getItem('accessToken');
 
@@ -156,19 +168,22 @@ const WearablesData = ({
         const response = await axios.get(
           `${apiUrl}/trials/retrieve-video/${trialId}`,
           {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
+            headers: { Authorization: `Bearer ${accessToken}` },
             responseType: 'blob',
           },
         );
-
         const videoBlob = response.data;
         const videoUrl = URL.createObjectURL(videoBlob);
         setVideoSrc(videoUrl);
-      } catch (error) {
-        console.error('Error fetching the video:', error);
-        setVideoError(true); // Actualizar estado de error
+      } catch (error: any) {
+        // Si es un 404, simplemente dejamos videoSrc vacío y no seteamos el error
+        if (error.response && error.response.status === 404) {
+          console.warn('Video principal no disponible (404)');
+          setVideoSrc('');
+        } else {
+          console.error('Error fetching the video:', error);
+          setVideoError(true);
+        }
       }
     };
 
@@ -181,260 +196,199 @@ const WearablesData = ({
     };
   }, [trialId]);
 
+  // Obtención del HM desde la API
+
+  useEffect(() => {
+    const fetchHMVideo = async () => {
+      try {
+        const response = await axios.get(
+          `${apiUrl}/trials/retrieve-HMvideo/${trialId}`,
+          {
+            headers: { Authorization: `Bearer ${accessToken}` },
+            responseType: 'blob',
+          },
+        );
+        const videoBlob = response.data;
+        const videoUrl = URL.createObjectURL(videoBlob);
+        setVideoSrc2(videoUrl);
+      } catch (error: any) {
+        if (error.response && error.response.status === 404) {
+          console.warn('Video HM no disponible (404)');
+          setVideoSrc2('');
+        } else {
+          console.error('Error fetching the HM video:', error);
+          setHmVideoError(true);
+        }
+      }
+    };
+
+    fetchHMVideo();
+
+    return () => {
+      if (videoSrc2) {
+        URL.revokeObjectURL(videoSrc2);
+      }
+    };
+  }, [trialId]);
+
   //@ts-ignore
   const [playbackRate, setPlaybackRate] = useState(1);
-  const changePlaybackRate = (rate: any) => {
-    if (playerRef.current) {
-      playerRef.current.getInternalPlayer().playbackRate = rate;
-      setPlaybackRate(rate);
+  const changePlaybackRate = (rate: number) => {
+    if (playerRef1.current) {
+      playerRef1.current.getInternalPlayer().playbackRate = rate;
     }
+    if (playerRef2.current) {
+      playerRef2.current.getInternalPlayer().playbackRate = rate;
+    }
+    setPlaybackRate(rate);
   };
 
-  const frames = leftWearables.map(
-    (wearable: any) => new DataFrame(wearable.dataframe),
-  );
-
-  const df = concat({ dfList: frames, axis: 1 });
-  // @ts-ignore
-  let datos = df.iloc({ rows: [`0:${minLength}`], columns: [':32'] });
-
-  const traces = datos.columns.map((column: string) => ({
-    // @ts-ignore
-    y: datos[column].values,
-  }));
-
-  const frames2 = rightWearables.map(
-    (wearable: any) => new DataFrame(wearable.dataframe),
-  );
-
-  const df2 = concat({ dfList: frames2, axis: 1 });
-  // @ts-ignore
-  let datos2 = df2.iloc({ rows: [`0:${minLength}`], columns: [':32'] });
-
-  const traces2 = datos2.columns.map((column: string) => ({
-    // @ts-ignore
-    y: datos2[column].values,
-  }));
-
-  const [leftPoints, setLeftPoints] = useState<
-    { x: number; y: number; values: number[] }[]
-  >([]);
-
-  useEffect(() => {
-    const loadedPoints = leftPointsData.map((point) => ({
-      ...point,
-      values: [],
-    }));
-    setLeftPoints(loadedPoints);
-  }, []);
-
-  const [rightPoints, setRightPoints] = useState<
-    { x: number; y: number; values: number[] }[]
-  >([]);
-
-  useEffect(() => {
-    const loadedPoints = rightPointsData.map((point) => ({
-      ...point,
-      values: [],
-    }));
-    setRightPoints(loadedPoints);
-  }, []);
-
-  leftPoints.forEach((point, index) => {
-    if (traces[index]) {
-      point.values = traces[index].y;
-    }
-  });
-
-  rightPoints.forEach((point, index) => {
-    if (traces2[index]) {
-      point.values = traces2[index].y;
-    }
-  });
-
-  const rate0 = 1 / leftWearables[0].frequency; // Calcula la velocidad
-  const formattedRate0 = rate0.toFixed(2); // Formatea a dos decimales, por ejemplo, '0.15'
-
-  // Definir las velocidades de reproducción
   const playbackRates = [
-    { label: `${formattedRate0}x`, rate: rate0 },
-    { label: '0.25x', rate: 0.25 },
-    { label: '1x', rate: 1 },
     { label: '2x', rate: 2 },
+    { label: '1.75x', rate: 1.75 },
+    { label: '1.5x', rate: 1.5 },
+    { label: '1.25x', rate: 1.25 },
+    { label: 'Normal', rate: 1 },
+    { label: '0.75x', rate: 0.75 },
+    { label: '0.5x', rate: 0.5 },
+    { label: '0.25x', rate: 0.25 },
+    {
+      label: `${(1 / leftWearables[0].frequency).toFixed(2)}x`,
+      rate: 1 / leftWearables[0].frequency,
+    },
   ];
 
-  const videoAvailable = videoSrc && !videoError;
+  const videoAvailable =
+    (!!videoSrc || !!videoSrc2) && !videoError && !hmVideoError;
 
-  // Efecto para detectar cuando ambas animaciones han terminado
+  // Efecto duplicado para animaciones finalizadas
   useEffect(() => {
     if (isPlaying && animationsFinished.left && animationsFinished.right) {
       setIsPlaying(false);
+      setIsPaused(false);
     }
   }, [isPlaying, animationsFinished]);
 
-  const [_, setFps] = useState(0); // FPS compartido
-  const [updateHz, setUpdateHz] = useState(50); // Hz compartido (valor actual por defecto)
+  const [_, setFps] = useState(0);
+  const [updateHz, setUpdateHz] = useState(50); // 50 Hz = velocidad normal
 
   const handleUpdateHzChange = (newHz: number) => {
     setUpdateHz(newHz);
-
-    // Sincronizar con ambos heatmaps
     if (leftHeatmapRef.current) {
       leftHeatmapRef.current.setUpdateHz(newHz);
     }
     if (rightHeatmapRef.current) {
       rightHeatmapRef.current.setUpdateHz(newHz);
     }
+    const newPlaybackRate = newHz / 50;
+    changePlaybackRate(newPlaybackRate);
   };
 
-  // Obtener el FPS de ambos heatmaps (promediar si necesario)
   useEffect(() => {
     const interval = setInterval(() => {
       const leftFps = leftHeatmapRef.current?.fps || 0;
       const rightFps = rightHeatmapRef.current?.fps || 0;
-      setFps((leftFps + rightFps) / 2); // Promedio del FPS
+      setFps((leftFps + rightFps) / 2);
     }, 1000);
-
     return () => clearInterval(interval);
   }, []);
 
-  // Función para obtener los FPS actuales de ambos heatmaps
   const getRenderFps = useCallback(() => {
     const leftFps = leftHeatmapRef.current?.fps || 0;
     const rightFps = rightHeatmapRef.current?.fps || 0;
     return { leftFps, rightFps };
   }, []);
 
-  // const handlePlay = () => {
-  //   // Si las animaciones han terminado, reiniciar todo
-  //   if (animationsFinished.left && animationsFinished.right) {
-  //     setAnimationsFinished({ left: false, right: false });
-  //     setIsPlaying(true);
-  //     setIsPaused(false);
-
-  //     if (leftHeatmapRef.current) {
-  //       leftHeatmapRef.current.resetFrame();
-  //       leftHeatmapRef.current.startAnimation();
-  //     }
-  //     if (rightHeatmapRef.current) {
-  //       rightHeatmapRef.current.resetFrame();
-  //       rightHeatmapRef.current.startAnimation();
-  //     }
-  //     return;
-  //   }
-
-  //   if (!isPlaying && !isPaused) {
-  //     // Iniciar la animación desde el principio
-  //     setIsPlaying(true);
-  //     setIsPaused(false);
-
-  //     if (leftHeatmapRef.current) {
-  //       leftHeatmapRef.current.resetFrame();
-  //       leftHeatmapRef.current.startAnimation();
-  //     }
-  //     if (rightHeatmapRef.current) {
-  //       rightHeatmapRef.current.resetFrame();
-  //       rightHeatmapRef.current.startAnimation();
-  //     }
-  //   } else if (isPlaying) {
-  //     // Pausar la animación
-  //     setIsPlaying(false);
-  //     setIsPaused(true);
-
-  //     if (leftHeatmapRef.current) {
-  //       leftHeatmapRef.current.stopAnimation();
-  //     }
-  //     if (rightHeatmapRef.current) {
-  //       rightHeatmapRef.current.stopAnimation();
-  //     }
-  //   } else if (isPaused) {
-  //     // Reanudar la animación desde el estado pausado
-  //     setIsPlaying(true);
-  //     setIsPaused(false);
-
-  //     if (leftHeatmapRef.current) {
-  //       leftHeatmapRef.current.startAnimation();
-  //     }
-  //     if (rightHeatmapRef.current) {
-  //       rightHeatmapRef.current.startAnimation();
-  //     }
-  //   }
-  // };
-
   const handlePlay = () => {
     if (isPlaying) {
-      // Pausar tanto el video como las animaciones
+      // Si está reproduciendo, lo pausamos
       setIsPlaying(false);
       setIsPaused(true);
-
-      if (playerRef.current) {
-        playerRef.current.getInternalPlayer().pause();
+      if (playerRef1.current) {
+        playerRef1.current.getInternalPlayer().pause();
       }
-
+      if (playerRef2.current) {
+        playerRef2.current.getInternalPlayer().pause();
+      }
       if (leftHeatmapRef.current) {
         leftHeatmapRef.current.stopAnimation();
       }
       if (rightHeatmapRef.current) {
         rightHeatmapRef.current.stopAnimation();
       }
-    } else if (isPaused) {
-      // Reanudar tanto el video como las animaciones
-      setIsPlaying(true);
-      setIsPaused(false);
-
-      if (playerRef.current) {
-        playerRef.current.getInternalPlayer().play();
-      }
-
-      if (leftHeatmapRef.current) {
-        leftHeatmapRef.current.startAnimation();
-      }
-      if (rightHeatmapRef.current) {
-        rightHeatmapRef.current.startAnimation();
-      }
     } else {
-      // Iniciar desde el principio
-      setIsPlaying(true);
-      setIsPaused(false);
+      let shouldRestart = false;
 
-      if (playerRef.current) {
-        playerRef.current.seekTo(0);
-        playerRef.current.getInternalPlayer().play();
+      if (playerRef1.current) {
+        const duration1 = playerRef1.current.getDuration();
+        const currentTime1 = playerRef1.current.getCurrentTime();
+        if (currentTime1 >= duration1 - 0.1) {
+          // Consideramos margen de error
+          shouldRestart = true;
+        }
+      }
+
+      if (playerRef2.current) {
+        const duration2 = playerRef2.current.getDuration();
+        const currentTime2 = playerRef2.current.getCurrentTime();
+        if (currentTime2 >= duration2 - 0.1) {
+          shouldRestart = true;
+        }
+      }
+
+      // Si el video está al final, reiniciamos la reproducción desde el inicio como si fuera Play, no Resume
+      if (shouldRestart) {
+        setIsPlaying(false); // Cambia el estado a "no está reproduciendo" para forzar el estado de Play
+        setTimeout(() => {
+          setIsPlaying(true); // Luego lo vuelve a activar como un nuevo Play
+        }, 100); // Pequeño delay para asegurar que React actualice correctamente el estado
+      } else {
+        setIsPlaying(true);
+        setIsPaused(false);
+      }
+
+      if (playerRef1.current) {
+        if (shouldRestart) {
+          playerRef1.current.seekTo(0);
+        }
+        playerRef1.current.getInternalPlayer().play();
+      }
+
+      if (playerRef2.current) {
+        if (shouldRestart) {
+          playerRef2.current.seekTo(0);
+        }
+        playerRef2.current.getInternalPlayer().play();
       }
 
       if (leftHeatmapRef.current) {
-        leftHeatmapRef.current.resetFrame();
+        if (shouldRestart) {
+          leftHeatmapRef.current.resetFrame();
+        }
         leftHeatmapRef.current.startAnimation();
       }
+
       if (rightHeatmapRef.current) {
-        rightHeatmapRef.current.resetFrame();
+        if (shouldRestart) {
+          rightHeatmapRef.current.resetFrame();
+        }
         rightHeatmapRef.current.startAnimation();
       }
     }
   };
 
-  // const handleReset = () => {
-  //   setIsPlaying(false);
-  //   setIsPaused(false);
-  //   setAnimationsFinished({ left: false, right: false });
-
-  //   if (leftHeatmapRef.current) {
-  //     leftHeatmapRef.current.resetFrame();
-  //   }
-  //   if (rightHeatmapRef.current) {
-  //     rightHeatmapRef.current.resetFrame();
-  //   }
-  // };
   const handleReset = () => {
     setIsPlaying(false);
     setIsPaused(false);
     setAnimationsFinished({ left: false, right: false });
-
-    if (playerRef.current) {
-      playerRef.current.seekTo(0);
-      playerRef.current.getInternalPlayer().pause();
+    if (playerRef1.current) {
+      playerRef1.current.seekTo(0);
+      playerRef1.current.getInternalPlayer().pause();
     }
-
+    if (playerRef2.current) {
+      playerRef2.current.seekTo(0);
+      playerRef2.current.getInternalPlayer().pause();
+    }
     if (leftHeatmapRef.current) {
       leftHeatmapRef.current.resetFrame();
     }
@@ -443,52 +397,148 @@ const WearablesData = ({
     }
   };
 
-  const handleLeftAnimationEnd = () => {
-    setAnimationsFinished((prev) => ({ ...prev, left: true }));
-  };
-
-  const handleRightAnimationEnd = () => {
-    setAnimationsFinished((prev) => ({ ...prev, right: true }));
-  };
-
-  // Efecto para manejar el final de ambas animaciones
-  useEffect(() => {
-    if (isPlaying && animationsFinished.left && animationsFinished.right) {
-      setIsPlaying(false);
-      setIsPaused(false);
+  // Función para sincronizar el seek en ambos videos
+  const handleSeek = (newTime: number) => {
+    if (Math.abs(newTime - playTime) < 0.1) return;
+    setPlayTime(newTime);
+    if (playerRef1.current) {
+      playerRef1.current.seekTo(newTime, 'seconds');
     }
-  }, [isPlaying, animationsFinished]);
+    if (playerRef2.current) {
+      playerRef2.current.seekTo(newTime, 'seconds');
+    }
+  };
 
-  // ---------------------------------------------------------------------------
   useEffect(() => {
-    if (isPlaying && animationsFinished.left && animationsFinished.right) {
-      setIsPlaying(false);
-      setIsPaused(false);
-
+    const attachSeekListener = (
+      playerRef: React.RefObject<ReactPlayer>,
+      onSeeked: () => void,
+    ) => {
       if (playerRef.current) {
-        playerRef.current.getInternalPlayer().pause();
+        const internalPlayer = playerRef.current.getInternalPlayer();
+        if (internalPlayer && internalPlayer.addEventListener) {
+          internalPlayer.addEventListener('seeked', onSeeked);
+          return () => internalPlayer.removeEventListener('seeked', onSeeked);
+        }
       }
-    }
-  }, [isPlaying, animationsFinished]);
+    };
+
+    const onSeekedHandler = () => {
+      const newTime =
+        playerRef1.current?.getInternalPlayer().currentTime ||
+        playerRef2.current?.getInternalPlayer().currentTime ||
+        0;
+      setPlayTime(newTime);
+      if (playerRef1.current) {
+        playerRef1.current.seekTo(newTime, 'seconds');
+      }
+      if (playerRef2.current) {
+        playerRef2.current.seekTo(newTime, 'seconds');
+      }
+    };
+
+    const cleanup1 = attachSeekListener(playerRef1, onSeekedHandler);
+    const cleanup2 = attachSeekListener(playerRef2, onSeekedHandler);
+    return () => {
+      if (cleanup1) cleanup1();
+      if (cleanup2) cleanup2();
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setTimeout(() => {
+        Object.values(refs).forEach((ref: any) => {
+          if (ref.current) {
+            // Redimensionamos la gráfica
+            Plotly.Plots.resize(ref.current);
+            // Forzamos un re-layout de la leyenda, definiendo explícitamente las propiedades relativas
+            Plotly.relayout(ref.current, {
+              //@ts-ignore
+              'legend.xref': 'paper',
+              'legend.yref': 'paper',
+              'legend.x': 0.5,
+              'legend.y': 1.05,
+            });
+          }
+        });
+      }, 100); // Un delay de 100ms
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [refs]);
+
+  const parentRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="flex flex-col lg:flex-row gap-8">
-        {/* Sección Izquierda: Reproductor de Video y Controles */}
-        <div className="flex flex-col lg:w-2/3 w-full bg-gray-50 p-6 rounded-lg shadow-inner">
-          <div className="relative aspect-video">
-            {videoSrc && !videoError ? (
+    <div
+      ref={parentRef}
+      className="relative overflow-visible flex flex-col bg-gray-100"
+    >
+      {/* Sección de gráficos detallados */}
+      <div className="flex justify-center space-x-6 items-center">
+        <IconActionButton
+          onClick={resetGraphs}
+          icon={<FaSync />}
+          color="orange"
+          tooltip="Resetear Gráficas" // Aquí se define el mensaje del tooltip
+        />
+        <div className="flex items-center space-x-2">
+          <IconActionButton
+            onClick={() =>
+              descargarDatosVisibles(
+                refs.leftPressureSensor,
+                refs.rightPressureSensor,
+                leftWearables,
+                rightWearables,
+                experimentId,
+                participantId,
+                trialId,
+                swId,
+              )
+            }
+            icon={<HiOutlineFolderDownload />}
+            color="blue"
+            tooltip="Descargar Datos Visibles"
+          />
+          <InfoButton />
+        </div>
+      </div>
+      <div className="mt-4 flex flex-col gap-8">
+        {/* Contenedor para las gráficas de presión */}
+        <div className="flex flex-col lg:flex-row items-start">
+          <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
+            {leftWearables.map((_wearable, index) => (
+              <Fragment key={index}>
+                <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
+                  Sensor de Presión Izquierdo
+                </h2>
+                <div
+                  ref={refs.leftPressureSensor}
+                  id="leftPressureSensor"
+                ></div>
+              </Fragment>
+            ))}
+          </div>
+          <div className="relative w-full max-w-md rounded-lg overflow-hidden">
+            {videoSrc2 && !videoError ? (
               <ReactPlayer
-                ref={playerRef}
-                url={videoSrc}
+                ref={playerRef2}
+                url={videoSrc2}
                 onProgress={handleProgress}
+                onSeek={handleSeek}
+                onDuration={(d) => setDuration2(d)}
                 width="100%"
-                height="100%"
-                controls={true}
+                height="auto"
+                controls={false}
                 className="rounded-lg"
-                playbackRate={playbackRate} // Pasar playbackRate directamente
-                onError={() => setVideoError(true)} // Manejar errores de reproducción
-                progressInterval={(1 / rightWearables[0].frequency) * 1000} // Ajusta la tasa de refrresco de la linea de las gráficas
+                playbackRate={playbackRate}
+                onError={() => {}}
+                progressInterval={(1 / 50) * 1000}
                 config={{
                   file: {
                     attributes: {
@@ -500,129 +550,63 @@ const WearablesData = ({
               />
             ) : (
               <div className="flex flex-col items-center justify-center w-full h-full bg-gray-800 text-white text-xl font-semibold rounded-lg">
-                <VideoCameraIcon className="h-12 w-12 mb-3" />{' '}
-                {/* Icono de tamaño ajustado */}
-                <span>No hay ningún video disponible</span>
+                <VideoCameraIcon className="h-12 w-12 mb-3" />
+                <span>No hay ningún mapa de calor disponible</span>
               </div>
             )}
+            <TimeProgressBar
+              currentTime={playTime}
+              duration={globalDuration}
+              onSeek={handleSeek}
+            />
+            <ControlPanel
+              playbackRate={playbackRate}
+              playbackRates={playbackRates}
+              changePlaybackRate={changePlaybackRate}
+              videoAvailable={videoAvailable}
+              handlePlay={handlePlay}
+              isPlaying={isPlaying}
+              isPaused={isPaused}
+              handleReset={handleReset}
+              resetGraphs={resetGraphs}
+              updateHz={updateHz}
+              handleUpdateHzChange={handleUpdateHzChange}
+              getRenderFps={getRenderFps}
+              descargarDatos={() =>
+                descargarDatosVisibles(
+                  refs.leftPressureSensor,
+                  refs.rightPressureSensor,
+                  leftWearables,
+                  rightWearables,
+                  experimentId,
+                  participantId,
+                  trialId,
+                  swId,
+                )
+              }
+            />
           </div>
-
-          {/* Controles de Velocidad de Reproducción */}
-          <div className="mt-6 flex justify-center space-x-4">
-            {playbackRates.map(({ label, rate }) => (
-              <PlaybackButton
-                key={rate}
-                label={label}
-                onClick={() => changePlaybackRate(rate)}
-                active={Math.abs(playbackRate - rate) < 0.001} // Usar tolerancia para precisión
-                disabled={!videoAvailable} // Pasar la propiedad disabled
-              />
+          <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
+            {rightWearables.map((_wearable, index) => (
+              <Fragment key={index}>
+                <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
+                  Sensor de Presión Derecho
+                </h2>
+                <div
+                  ref={refs.rightPressureSensor}
+                  id="rightPressureSensor"
+                ></div>
+              </Fragment>
             ))}
           </div>
         </div>
-
-        {/* Sección Derecha: Mapas de Calor y Leyenda */}
-        <div className="lg:w-1/3 w-full bg-gray-50 p-6 rounded-lg shadow-inner flex justify-center">
-          {/* Sección Derecha: Mapas de Calor y Leyenda */}
-          <div className="lg:w-1/3 w-full bg-gray-50 p-6 rounded-lg shadow-inner flex flex-col items-center">
-            {/* Heatmap Control Panel Arriba */}
-            <div className="w-full mb-6">
-              <HeatmapControlPanel
-                updateHz={updateHz}
-                onUpdateHzChange={handleUpdateHzChange}
-                getRenderFps={getRenderFps}
-              />
-            </div>
-
-            {/* Contenedor de los Mapas de Calor */}
-            <div className="flex flex-row justify-center space-x-6 relative w-full">
-              {/* Mapa de Calor Izquierdo */}
-              <div className="flex-shrink-0">
-                <HeatMap
-                  ref={leftHeatmapRef}
-                  width={175}
-                  height={530}
-                  points={leftPoints}
-                  initialUpdateHz={leftWearables[0].frequency}
-                  onAnimationEnd={handleLeftAnimationEnd}
-                />
-              </div>
-
-              {/* Mapa de Calor Derecho */}
-              <div className="flex-shrink-0">
-                <HeatMap
-                  ref={rightHeatmapRef}
-                  width={175}
-                  height={530}
-                  points={rightPoints}
-                  initialUpdateHz={rightWearables[0].frequency}
-                  onAnimationEnd={handleRightAnimationEnd}
-                />
-              </div>
-
-              {/* Leyenda de Colores a la Derecha */}
-              <div className="absolute top-0 right-[-160px]">
-                <ColorLegend />
-              </div>
-            </div>
-
-            {/* Botones de Control de Animación Abajo */}
-            <div className="flex justify-center mt-6 space-x-6 w-full">
-              {/* <ActionButton
-                  onClick={handlePlay}
-                  label={isPlaying ? 'Playing' : isPaused ? 'Paused' : 'Play'}
-                  color={isPlaying ? 'orange' : isPaused ? 'blue' : 'green'}
-                /> */}
-              <ActionButton
-                onClick={handlePlay}
-                label={isPlaying ? 'Pause' : isPaused ? 'Resume' : 'Play'}
-                color={isPlaying ? 'orange' : 'green'}
-              />
-
-              <ActionButton onClick={handleReset} label="Reset" color="red" />
-            </div>
-          </div>
-        </div>
-      </div>
-      {/* Botones de Acción Unificados */}
-      <div className="flex justify-center mt-12 space-x-6">
-        <ActionButton
-          onClick={resetGraphs}
-          label="Resetear Gráficos"
-          color="red"
-        />
-        <ActionButton
-          onClick={() =>
-            descargarDatosVisibles(
-              refs.leftPressureSensor,
-              refs.rightPressureSensor,
-              leftWearables,
-              rightWearables,
-              experimentId,
-              participantId,
-              trialId,
-              swId,
-            )
-          }
-          label="Descargar Datos (ZIP)"
-          color="blue"
-        />
       </div>
 
-      {/* Sección de Gráficos Detallados */}
-      <div className="mt-16 flex flex-col lg:flex-row gap-8">
-        {/* Gráficos Izquierdo */}
+      {/* Contenedor para las gráficas adicionales */}
+      <div className="flex flex-col lg:flex-row">
         <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
           {leftWearables.map((_wearable, index) => (
             <Fragment key={index}>
-              <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                Sensor de Presión Izquierdo
-              </h2>
-              <div
-                ref={refs.leftPressureSensor}
-                id="leftPressureSensor"
-                className="mb-6"
-              ></div>
               <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
                 Acelerómetro Izquierdo
               </h2>
@@ -642,19 +626,10 @@ const WearablesData = ({
             </Fragment>
           ))}
         </div>
-
-        {/* Gráficos Derecho */}
         <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
           {rightWearables.map((_wearable, index) => (
             <Fragment key={index}>
               <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                Sensor de Presión Derecho
-              </h2>
-              <div
-                ref={refs.rightPressureSensor}
-                id="rightPressureSensor"
-              ></div>
-              <h2 className="text-xl font-semibold text-center text-gray-800 mb-4 mt-6">
                 Acelerómetro Derecho
               </h2>
               <div
@@ -674,363 +649,41 @@ const WearablesData = ({
           ))}
         </div>
       </div>
+      <div className="relative mt-5">
+        <FloatingWindow
+          playerRef1={playerRef1}
+          videoSrc={videoSrc}
+          videoError={videoError}
+          playbackRate={playbackRate}
+          handleProgress={handleProgress}
+          handleSeek={handleSeek}
+          setDuration1={setDuration1}
+          playTime={playTime}
+          globalDuration={globalDuration}
+          playbackRates={playbackRates}
+          changePlaybackRate={changePlaybackRate}
+          videoAvailable={videoAvailable}
+          handlePlay={handlePlay}
+          isPlaying={isPlaying}
+          isPaused={isPaused}
+          handleReset={handleReset}
+          resetGraphs={resetGraphs}
+          updateHz={updateHz}
+          handleUpdateHzChange={handleUpdateHzChange}
+          getRenderFps={getRenderFps}
+          descargarDatosVisibles={descargarDatosVisibles}
+          refs={refs}
+          leftWearables={leftWearables}
+          rightWearables={rightWearables}
+          experimentId={experimentId}
+          participantId={participantId}
+          trialId={trialId}
+          swId={swId}
+          parentRef={parentRef}
+        />
+      </div>
     </div>
   );
 };
-
-// Componente para los botones de reproducción
-const PlaybackButton = ({
-  label,
-  onClick,
-  active = false,
-  disabled = false, // Nueva prop
-}: {
-  label: string;
-  onClick: () => void;
-  active?: boolean;
-  disabled?: boolean; // Nueva prop
-}) => (
-  <button
-    onClick={onClick}
-    disabled={disabled} // Aplicar la prop
-    className={`px-5 py-3 rounded ${
-      active
-        ? 'bg-green-500 text-white'
-        : 'bg-blue-500 hover:bg-blue-700 text-white'
-    } ${
-      disabled ? 'bg-gray-400 cursor-not-allowed opacity-50' : ''
-    } transition duration-200 text-lg`}
-  >
-    {label}
-  </button>
-);
-
-const ActionButton = ({
-  onClick,
-  label,
-  color = 'blue',
-}: {
-  onClick: () => void;
-  label: string;
-  color?: 'blue' | 'red' | 'green' | 'orange';
-}) => {
-  const colorClasses =
-    color === 'red'
-      ? 'bg-red-500 hover:bg-red-700'
-      : color === 'green'
-      ? 'bg-green-500 hover:bg-green-700'
-      : color === 'orange'
-      ? 'bg-orange-500 hover:bg-orange-700'
-      : 'bg-blue-500 hover:bg-blue-700';
-
-  return (
-    <button
-      onClick={onClick}
-      className={`${colorClasses} text-white font-bold py-3 px-8 rounded shadow-lg hover:shadow-xl transition duration-200 text-xl`}
-    >
-      {label}
-    </button>
-  );
-};
-
-function plotWearablesData(
-  leftWearables: any,
-  rightWearables: any,
-  refs: any,
-  playTime: any,
-  minLength: number,
-) {
-  plotLeftWearable(leftWearables, refs, playTime, minLength);
-  plotrightWearable(rightWearables, refs, playTime, minLength);
-}
-
-function plotLeftWearable(
-  leftWearables: any,
-  refs: any,
-  playTime: any,
-  minLength: number,
-) {
-  plotData(
-    leftWearables,
-    refs.leftPressureSensor.current,
-    'Sensor de Presión Izquierdo',
-    [':32'],
-    playTime,
-    minLength,
-    [0, 4096],
-  );
-  plotData(
-    leftWearables,
-    refs.leftAccelerometer.current,
-    'Acelerómetro Izquierdo',
-    [32, 33, 34],
-    playTime,
-    minLength,
-    [-33000, 33000],
-  );
-  plotData(
-    leftWearables,
-    refs.leftGyroscope.current,
-    'Giroscopio Izquierdo',
-    [35, 36, 37],
-    playTime,
-    minLength,
-    [-33000, 33000],
-  );
-}
-
-function plotrightWearable(
-  rightWearables: any,
-  refs: any,
-  playTime: any,
-  minLength: number,
-) {
-  plotData(
-    rightWearables,
-    refs.rightPressureSensor.current,
-    'Sensor de Presión Derecho',
-    [':32'],
-    playTime,
-    minLength,
-    [0, 4096],
-  );
-  plotData(
-    rightWearables,
-    refs.rightAccelerometer.current,
-    'Acelerómetro Derecho',
-    [32, 33, 34],
-    playTime,
-    minLength,
-    [-33000, 33000],
-  );
-  plotData(
-    rightWearables,
-    refs.rightGyroscope.current,
-    'Giroscopio Derecho',
-    [35, 36, 37],
-    playTime,
-    minLength,
-    [-33000, 33000],
-  );
-}
-
-function generateLayout(yRange?: [number, number]) {
-  return {
-    showlegend: true,
-    legend: {
-      orientation: 'h', // Orientación horizontal
-      x: 0.5, // Centra la leyenda horizontalmente
-      y: 1.05, // Posiciona la leyenda ligeramente por debajo del título
-      xanchor: 'center', // Ancla la leyenda al centro en el eje x
-      yanchor: 'bottom', // Ancla la leyenda desde la parte inferior
-      bgcolor: '#fcba03',
-      bordercolor: '#444',
-      borderwidth: 1,
-      font: { family: 'Arial', size: 12, color: '#fff' },
-      pad: { t: 10, b: 10 }, // Padding superior e inferior de la leyenda
-    },
-    autosize: true,
-    yaxis: {
-      title: 'Valor',
-      ...(yRange ? { range: yRange } : {}),
-      fixedrange: true,
-      titlefont: {
-        size: 16,
-        color: '#333',
-      },
-    },
-    xaxis: {
-      title: 'Tiempo (s)',
-      titlefont: {
-        size: 16,
-        color: '#333',
-      },
-    },
-    responsive: true,
-    margin: {
-      l: 60,
-      r: 60,
-      t: 60,
-      b: 60,
-    },
-  };
-}
-
-function plotData(
-  wearable: any,
-  divId: HTMLElement | null,
-  title: string,
-  columns: (number | string)[],
-  playTime: number,
-  minLength: number,
-  yRange?: [number, number],
-) {
-  if (!divId) {
-    console.error('Elemento div inválido');
-    return;
-  }
-
-  const frames = wearable.map(
-    (wearable: any) => new DataFrame(wearable.dataframe),
-  );
-  const df = concat({ dfList: frames, axis: 1 });
-
-  // @ts-ignore
-  let datos = df.iloc({ rows: [`0:${minLength}`], columns: columns });
-
-  const traces = datos.columns.map((column: string) => ({
-    x: Array.from(datos.index.values()).map(
-      (index: any) => index / wearable[0].frequency,
-    ),
-    // @ts-ignore
-    y: datos[column].values,
-    type: 'scattergl',
-    mode: 'lines',
-    name: column,
-    line: {
-      width: 2,
-    },
-  }));
-
-  const layout = generateLayout(yRange);
-
-  // @ts-ignore
-  layout.shapes = [
-    {
-      type: 'line',
-      x0: playTime,
-      x1: playTime,
-      y0: 0,
-      y1: 1,
-      yref: 'paper',
-      line: {
-        color: 'red',
-        width: 3,
-        dash: 'dash',
-      },
-    },
-  ];
-
-  const config = {
-    modeBarButtonsToShow: ['toImage'],
-    modeBarButtonsToRemove: [
-      'select2d',
-      'lasso2d',
-      'autoScale2d',
-      'resetScale2d',
-      'hoverClosestCartesian',
-      'hoverCompareCartesian',
-      'zoomIn2d',
-      //'zoomOut2d',
-      'toggleSpikelines',
-      'resetViews',
-      'toggleHover',
-      'toggleSelect',
-      'drawline',
-      'drawopenpath',
-      'drawclosedpath',
-      'drawcircle',
-      'drawrect',
-      'eraseshape',
-      'zoom2d',
-      'pan2d',
-    ],
-    displaylogo: false,
-    displayModeBar: true,
-    toImageButtonOptions: {
-      filename: title,
-    },
-  };
-  // @ts-ignore
-  Plotly.newPlot(divId, traces, layout, config);
-}
-
-function handleRelayout(eventData: any, triggeredBy: any, refs: any) {
-  const newRange = [
-    eventData['xaxis.range[0]'] !== undefined
-      ? eventData['xaxis.range[0]']
-      : triggeredBy.current.layout.xaxis.range[0],
-    eventData['xaxis.range[1]'] !== undefined
-      ? eventData['xaxis.range[1]']
-      : triggeredBy.current.layout.xaxis.range[1],
-  ];
-
-  const startIndex = Math.floor(newRange[0]);
-  const endIndex = Math.ceil(newRange[1]);
-
-  const graphRefs = Object.values(refs);
-
-  graphRefs.forEach((ref) => {
-    if (ref !== triggeredBy) {
-      // @ts-ignore
-      if (ref.current) {
-        try {
-          // @ts-ignore
-          Plotly.relayout(ref.current, {
-            'xaxis.range': [startIndex, endIndex],
-          });
-        } catch (error) {
-          console.error('Error al actualizar el rango del gráfico:', error);
-        }
-      }
-    }
-  });
-}
-
-async function descargarDatosVisibles(
-  leftDivId: any,
-  rightDivId: any,
-  leftWearable: any,
-  rightWearable: any,
-  experimentId: number,
-  participantId: number,
-  trialId: number,
-  swId: number,
-) {
-  const zip = new JSZip();
-
-  const generarCSVEnRango = (divId: any, wearable: any, _type: string) => {
-    const plotInstance = document.getElementById(divId.current.id);
-    // @ts-ignore
-    let xRange = plotInstance.layout.xaxis.range.map(
-      (value: any) => value * wearable[0].frequency,
-    );
-
-    if (xRange[0] < 0) {
-      xRange[0] = 0;
-    }
-
-    const startIndex = Math.floor(xRange[0]);
-    const endIndex = Math.ceil(xRange[1]);
-
-    const frames = wearable.map((item: any) => new DataFrame(item.dataframe));
-    const df = concat({ dfList: frames, axis: 1 });
-    const csv = toCSV(df, {header: false}) || '';
-
-    const lines = csv.split('\n');
-    const selectedData = lines.slice(startIndex, endIndex + 1).join('\n');
-
-    return selectedData;
-  };
-
-  const csvLeft = generarCSVEnRango(leftDivId, leftWearable, 'L');
-  const csvRight = generarCSVEnRango(rightDivId, rightWearable, 'R');
-
-  zip.file(
-    `exp_${experimentId}_part_${participantId}_trial_${trialId}_sw_${swId}_L.csv`,
-    csvLeft,
-  );
-  zip.file(
-    `exp_${experimentId}_part_${participantId}_trial_${trialId}_sw_${swId}_R.csv`,
-    csvRight,
-  );
-
-  zip.generateAsync({ type: 'blob' }).then((content) => {
-    saveAs(
-      content,
-      `wearables_data_exp_${experimentId}_part_${participantId}_trial_${trialId}_sw_${swId}.zip`,
-    );
-  });
-}
 
 export default WearablesData;
