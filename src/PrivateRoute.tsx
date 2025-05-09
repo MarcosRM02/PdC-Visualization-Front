@@ -10,8 +10,6 @@ const PrivateRoute: React.FC = () => {
   if (!token || !expiresIn || new Date().getTime() >= parseInt(expiresIn)) {
     return <Navigate to="/" replace />;
   }
-
-  // Muestra el layout estilo VSCode
   return <Layout />;
 };
 
