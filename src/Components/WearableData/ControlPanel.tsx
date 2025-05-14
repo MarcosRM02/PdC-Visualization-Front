@@ -4,8 +4,11 @@ import IconActionButton from './IconActionButton';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import { VscDebugRestart } from 'react-icons/vsc';
 import { IControlPanelProps } from '../../Interfaces/DataPanel';
+import { RiVideoDownloadFill } from 'react-icons/ri';
 
 const ControlPanel: React.FC<IControlPanelProps> = ({
+  videoSrc,
+  videoName,
   playbackRate,
   playbackRates,
   changePlaybackRate,
@@ -15,8 +18,16 @@ const ControlPanel: React.FC<IControlPanelProps> = ({
   handleReset,
   updateHz,
   handleUpdateHzChange,
-  getRenderFps,
 }) => {
+  const handleDownload = () => {
+    const link = document.createElement('a');
+    link.href = videoSrc;
+    link.setAttribute('download', videoName); // Dejar vacio si interesa que el nombre del archivo sea aleatorio
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="w-full mb-2 flex items-center justify-center">
       <IconActionButton
@@ -38,7 +49,12 @@ const ControlPanel: React.FC<IControlPanelProps> = ({
         videoAvailable={videoAvailable}
         updateHz={updateHz}
         onUpdateHzChange={handleUpdateHzChange}
-        getRenderFps={getRenderFps}
+      />
+      <IconActionButton
+        onClick={handleDownload}
+        icon={<RiVideoDownloadFill />}
+        color="blue"
+        tooltip="Download Video"
       />
     </div>
   );

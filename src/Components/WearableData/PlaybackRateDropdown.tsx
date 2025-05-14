@@ -11,10 +11,11 @@ const PlaybackRateDropdown: React.FC<IPlaybackRateDropdownProps> = ({
   videoAvailable,
   updateHz,
   onUpdateHzChange,
-  getRenderFps,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  
 
   // Alterna la apertura/cierre del dropdown
   const toggleDropdown = () => {
@@ -43,7 +44,7 @@ const PlaybackRateDropdown: React.FC<IPlaybackRateDropdownProps> = ({
         className="ffont-bold py-3 px-8 rounded shadow-lg hover:shadow-xl transition duration-200 text-xl flex items-center justify-center  h-[40px] "
         title="Cambiar Velocidad"
       >
-        <MdOutlineShutterSpeed size={24} color="blue" />
+        <MdOutlineShutterSpeed size={24} color="blueviolet" />
       </button>
       {/* Menú desplegable con scroll vertical en caso de exceso de elementos */}
       {isOpen && (
@@ -53,7 +54,6 @@ const PlaybackRateDropdown: React.FC<IPlaybackRateDropdownProps> = ({
             <HzControlPanel
               updateHz={updateHz}
               onUpdateHzChange={onUpdateHzChange}
-              getRenderFps={getRenderFps}
             />
             {/* Lista de botones para cambiar la velocidad */}
             {playbackRates.map(({ label, rate }) => (

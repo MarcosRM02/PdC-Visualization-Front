@@ -9,7 +9,6 @@ import { IFloatingWindowProps } from '../../Interfaces/DataPanel';
 const FloatingWindow: React.FC<IFloatingWindowProps> = ({
   playerRef1,
   videoSrc,
-  videoError,
   playbackRate,
   handleProgress,
   handleSeek,
@@ -21,12 +20,10 @@ const FloatingWindow: React.FC<IFloatingWindowProps> = ({
   videoAvailable,
   handlePlay,
   isPlaying,
-  isPaused,
   handleReset,
   resetGraphs,
   updateHz,
   handleUpdateHzChange,
-  getRenderFps,
   descargarDatosVisibles,
   refs,
   leftWearables,
@@ -36,6 +33,7 @@ const FloatingWindow: React.FC<IFloatingWindowProps> = ({
   trialId,
   swId,
   parentRef,
+  onEnded,
 }) => {
   // TAMAÑO ORIGINAL deseado para la ventana fija.
   const originalSize = { width: 1200, height: 900 };
@@ -127,11 +125,12 @@ const FloatingWindow: React.FC<IFloatingWindowProps> = ({
       <VideoSection
         playerRef1={playerRef1}
         videoFile={videoSrc}
-        videoError={videoError}
+        isPlaying={isPlaying}
         playbackRate={playbackRate}
         handleProgress={handleProgress}
         handleSeek={handleSeek}
         onDuration1={(d: number) => setDuration1(d)}
+        onEnded={onEnded}
       />
       <TimeProgressBar
         currentTime={playTime}
@@ -139,18 +138,18 @@ const FloatingWindow: React.FC<IFloatingWindowProps> = ({
         onSeek={handleSeek}
       />
       <ControlPanel
+        videoSrc={videoSrc}
+        videoName="RecordedVideo"
         playbackRate={playbackRate}
         playbackRates={playbackRates}
         changePlaybackRate={changePlaybackRate}
         videoAvailable={videoAvailable}
         handlePlay={handlePlay}
         isPlaying={isPlaying}
-        isPaused={isPaused}
         handleReset={handleReset}
         resetGraphs={resetGraphs}
         updateHz={updateHz}
         handleUpdateHzChange={handleUpdateHzChange}
-        getRenderFps={getRenderFps}
         descargarDatos={() =>
           descargarDatosVisibles(
             refs.leftPressureSensor,

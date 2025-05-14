@@ -23,10 +23,14 @@ const WearablesData = ({
   swId,
   participantId,
 }: IWearableDataProps) => {
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const accessToken = localStorage.getItem('accessToken');
+
   // Refs para los videos
   const playerRef1 = useRef<ReactPlayer | null>(null);
   const playerRef2 = useRef<ReactPlayer | null>(null);
 
+  const parentRef = useRef<HTMLDivElement>(null);
   // Refs para gráficos
   const refs = {
     leftPressureSensor: useRef(null),
@@ -49,15 +53,15 @@ const WearablesData = ({
 
   const previousTimeRef = useRef(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [animationsFinished, setAnimationsFinished] = useState({
-    left: false,
-    right: false,
-  });
   const [videoSrc, setVideoSrc] = useState('');
   const [videoError, setVideoError] = useState<boolean>(false);
   const [videoSrc2, setVideoSrc2] = useState('');
   const [hmVideoError, setHmVideoError] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
+  const [_, setFps] = useState(0);
+  const [updateHz, setUpdateHz] = useState(50); // 50 Hz = velocidad normal
+  const playerRefs = [playerRef1, playerRef2];
+  const heatmapRefs = [leftHeatmapRef, rightHeatmapRef];
+  const [hasEnded, setHasEnded] = useState(false);
 
   const leftWearables = wearables.filter(
     (wearable) => wearable.wearableType === 'L',
@@ -92,42 +96,6 @@ const WearablesData = ({
       }
     }
   };
-
-  useEffect(() => {
-    if (isPlaying && animationsFinished.left && animationsFinished.right) {
-      setIsPlaying(false);
-    }
-  }, [isPlaying, animationsFinished]);
-
-  // Llamada a funciones de graficado
-  useEffect(() => {
-    plotWearablesData(leftWearables, rightWearables, refs, playTime, minLength);
-
-    Object.values(refs).forEach((ref) => {
-      // @ts-ignore
-      if (ref.current && typeof ref.current.on === 'function') {
-        // @ts-ignore
-        ref.current.on('plotly_relayout', (eventData: any) =>
-          handleRelayout(eventData, ref.current, refs),
-        );
-      }
-    });
-  }, [wearables, ...Object.values(refs)]);
-
-  useEffect(() => {
-    Object.values(refs).forEach((ref) => {
-      // @ts-ignore
-      if (ref.current && typeof ref.current.on === 'function') {
-        // @ts-ignore
-        ref.current.on('plotly_click', handlePointClick);
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    updateCurrentTimeLine(playTime);
-  }, [playTime]);
-
   const updateCurrentTimeLine = (currentTime: any) => {
     if (Math.abs(currentTime - previousTimeRef.current) > 0.1) {
       Object.values(refs).forEach((ref) => {
@@ -158,10 +126,140 @@ const WearablesData = ({
     });
   };
 
-  // Obtención del video desde la API
-  const apiUrl = import.meta.env.VITE_API_URL;
-  const accessToken = localStorage.getItem('accessToken');
+  //@ts-ignore
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const changePlaybackRate = (rate: number) => {
+    if (playerRef1.current) {
+      playerRef1.current.getInternalPlayer().playbackRate = rate;
+    }
+    if (playerRef2.current) {
+      playerRef2.current.getInternalPlayer().playbackRate = rate;
+    }
+    setPlaybackRate(rate);
+  };
 
+  const playbackRates = [
+    { label: '2x', rate: 2 },
+    { label: '1.75x', rate: 1.75 },
+    { label: '1.5x', rate: 1.5 },
+    { label: '1.25x', rate: 1.25 },
+    { label: 'Normal', rate: 1 },
+    { label: '0.75x', rate: 0.75 },
+    { label: '0.5x', rate: 0.5 },
+    { label: '0.25x', rate: 0.25 },
+    { label: '0.12x', rate: 0.12 },
+    { label: '0.02x', rate: 0.02 },
+  ];
+
+  const videoAvailable =
+    (!!videoSrc || !!videoSrc2) && !videoError && !hmVideoError;
+
+  // Pausa todos los reproductores
+  const pauseAll = useCallback(() => {
+    playerRefs.forEach((ref) => {
+      const player = ref.current?.getInternalPlayer();
+      if (player?.pause) player.pause();
+    });
+    heatmapRefs.forEach((hm) => hm.current?.stopAnimation());
+  }, [playerRefs, heatmapRefs]);
+
+  // Reinicia al frame 0 todos los reproductores
+  const restartAll = useCallback(() => {
+    playerRefs.forEach((ref) => ref.current?.seekTo(0));
+    heatmapRefs.forEach((hm) => hm.current?.resetFrame());
+  }, [playerRefs, heatmapRefs]);
+
+  // Lanza play en todo
+  const playAll = useCallback(() => {
+    playerRefs.forEach((ref) => {
+      const player = ref.current?.getInternalPlayer();
+      if (player?.play) player.play();
+    });
+    heatmapRefs.forEach((hm) => hm.current?.startAnimation());
+  }, [playerRefs, heatmapRefs]);
+
+  // Handler Play/Pause
+  const handlePlayPause = useCallback(() => {
+    if (isPlaying) {
+      // → Pausa normal
+      setIsPlaying(false);
+      pauseAll();
+    } else {
+      // → Si antes había terminado, reiniciamos al inicio ahora
+      if (hasEnded) {
+        playerRef1.current?.seekTo(0);
+        playerRef2.current?.seekTo(0);
+        leftHeatmapRef.current?.resetFrame();
+        rightHeatmapRef.current?.resetFrame();
+        setHasEnded(false);
+      }
+      // → Y arrancamos
+      setIsPlaying(true);
+      playAll();
+    }
+  }, [isPlaying, hasEnded, pauseAll, playAll]);
+
+  // Cuando termina cualquiera de los videos, reinicia todo
+  const handleEnded = useCallback(() => {
+    setIsPlaying(false);
+    setHasEnded(true);
+    pauseAll();
+  }, [restartAll]);
+
+  const handleUpdateHzChange = (newHz: number) => {
+    setUpdateHz(newHz);
+    if (leftHeatmapRef.current) {
+      leftHeatmapRef.current.setUpdateHz(newHz);
+    }
+    if (rightHeatmapRef.current) {
+      rightHeatmapRef.current.setUpdateHz(newHz);
+    }
+    const newPlaybackRate = newHz / 50;
+    changePlaybackRate(newPlaybackRate);
+  };
+
+  // Función para sincronizar el seek en ambos videos
+  const handleSeek = (newTime: number) => {
+    if (Math.abs(newTime - playTime) < 0.1) return;
+    setPlayTime(newTime);
+    if (playerRef1.current) {
+      playerRef1.current.seekTo(newTime, 'seconds');
+    }
+    if (playerRef2.current) {
+      playerRef2.current.seekTo(newTime, 'seconds');
+    }
+  };
+
+  // Llamada a funciones de graficado
+  useEffect(() => {
+    plotWearablesData(leftWearables, rightWearables, refs, playTime, minLength);
+
+    Object.values(refs).forEach((ref) => {
+      // @ts-ignore
+      if (ref.current && typeof ref.current.on === 'function') {
+        // @ts-ignore
+        ref.current.on('plotly_relayout', (eventData: any) =>
+          handleRelayout(eventData, ref.current, refs),
+        );
+      }
+    });
+  }, [wearables, ...Object.values(refs)]);
+
+  useEffect(() => {
+    Object.values(refs).forEach((ref) => {
+      // @ts-ignore
+      if (ref.current && typeof ref.current.on === 'function') {
+        // @ts-ignore
+        ref.current.on('plotly_click', handlePointClick);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    updateCurrentTimeLine(playTime);
+  }, [playTime]);
+
+  // Obtención del video desde la API
   useEffect(() => {
     const fetchVideo = async () => {
       try {
@@ -197,7 +295,6 @@ const WearablesData = ({
   }, [trialId]);
 
   // Obtención del HM desde la API
-
   useEffect(() => {
     const fetchHMVideo = async () => {
       try {
@@ -231,59 +328,6 @@ const WearablesData = ({
     };
   }, [trialId]);
 
-  //@ts-ignore
-  const [playbackRate, setPlaybackRate] = useState(1);
-  const changePlaybackRate = (rate: number) => {
-    if (playerRef1.current) {
-      playerRef1.current.getInternalPlayer().playbackRate = rate;
-    }
-    if (playerRef2.current) {
-      playerRef2.current.getInternalPlayer().playbackRate = rate;
-    }
-    setPlaybackRate(rate);
-  };
-
-  const playbackRates = [
-    { label: '2x', rate: 2 },
-    { label: '1.75x', rate: 1.75 },
-    { label: '1.5x', rate: 1.5 },
-    { label: '1.25x', rate: 1.25 },
-    { label: 'Normal', rate: 1 },
-    { label: '0.75x', rate: 0.75 },
-    { label: '0.5x', rate: 0.5 },
-    { label: '0.25x', rate: 0.25 },
-    {
-      label: `${(1 / leftWearables[0].frequency).toFixed(2)}x`,
-      rate: 1 / leftWearables[0].frequency,
-    },
-  ];
-
-  const videoAvailable =
-    (!!videoSrc || !!videoSrc2) && !videoError && !hmVideoError;
-
-  // Efecto duplicado para animaciones finalizadas
-  useEffect(() => {
-    if (isPlaying && animationsFinished.left && animationsFinished.right) {
-      setIsPlaying(false);
-      setIsPaused(false);
-    }
-  }, [isPlaying, animationsFinished]);
-
-  const [_, setFps] = useState(0);
-  const [updateHz, setUpdateHz] = useState(50); // 50 Hz = velocidad normal
-
-  const handleUpdateHzChange = (newHz: number) => {
-    setUpdateHz(newHz);
-    if (leftHeatmapRef.current) {
-      leftHeatmapRef.current.setUpdateHz(newHz);
-    }
-    if (rightHeatmapRef.current) {
-      rightHeatmapRef.current.setUpdateHz(newHz);
-    }
-    const newPlaybackRate = newHz / 50;
-    changePlaybackRate(newPlaybackRate);
-  };
-
   useEffect(() => {
     const interval = setInterval(() => {
       const leftFps = leftHeatmapRef.current?.fps || 0;
@@ -292,122 +336,6 @@ const WearablesData = ({
     }, 1000);
     return () => clearInterval(interval);
   }, []);
-
-  const getRenderFps = useCallback(() => {
-    const leftFps = leftHeatmapRef.current?.fps || 0;
-    const rightFps = rightHeatmapRef.current?.fps || 0;
-    return { leftFps, rightFps };
-  }, []);
-
-  const handlePlay = () => {
-    if (isPlaying) {
-      // Si está reproduciendo, lo pausamos
-      setIsPlaying(false);
-      setIsPaused(true);
-      if (playerRef1.current) {
-        playerRef1.current.getInternalPlayer().pause();
-      }
-      if (playerRef2.current) {
-        playerRef2.current.getInternalPlayer().pause();
-      }
-      if (leftHeatmapRef.current) {
-        leftHeatmapRef.current.stopAnimation();
-      }
-      if (rightHeatmapRef.current) {
-        rightHeatmapRef.current.stopAnimation();
-      }
-    } else {
-      let shouldRestart = false;
-
-      if (playerRef1.current) {
-        const duration1 = playerRef1.current.getDuration();
-        const currentTime1 = playerRef1.current.getCurrentTime();
-        if (currentTime1 >= duration1 - 0.1) {
-          // Consideramos margen de error
-          shouldRestart = true;
-        }
-      }
-
-      if (playerRef2.current) {
-        const duration2 = playerRef2.current.getDuration();
-        const currentTime2 = playerRef2.current.getCurrentTime();
-        if (currentTime2 >= duration2 - 0.1) {
-          shouldRestart = true;
-        }
-      }
-
-      // Si el video está al final, reiniciamos la reproducción desde el inicio como si fuera Play, no Resume
-      if (shouldRestart) {
-        setIsPlaying(false); // Cambia el estado a "no está reproduciendo" para forzar el estado de Play
-        setTimeout(() => {
-          setIsPlaying(true); // Luego lo vuelve a activar como un nuevo Play
-        }, 100); // Pequeño delay para asegurar que React actualice correctamente el estado
-      } else {
-        setIsPlaying(true);
-        setIsPaused(false);
-      }
-
-      if (playerRef1.current) {
-        if (shouldRestart) {
-          playerRef1.current.seekTo(0);
-        }
-        playerRef1.current.getInternalPlayer().play();
-      }
-
-      if (playerRef2.current) {
-        if (shouldRestart) {
-          playerRef2.current.seekTo(0);
-        }
-        playerRef2.current.getInternalPlayer().play();
-      }
-
-      if (leftHeatmapRef.current) {
-        if (shouldRestart) {
-          leftHeatmapRef.current.resetFrame();
-        }
-        leftHeatmapRef.current.startAnimation();
-      }
-
-      if (rightHeatmapRef.current) {
-        if (shouldRestart) {
-          rightHeatmapRef.current.resetFrame();
-        }
-        rightHeatmapRef.current.startAnimation();
-      }
-    }
-  };
-
-  const handleReset = () => {
-    setIsPlaying(false);
-    setIsPaused(false);
-    setAnimationsFinished({ left: false, right: false });
-    if (playerRef1.current) {
-      playerRef1.current.seekTo(0);
-      playerRef1.current.getInternalPlayer().pause();
-    }
-    if (playerRef2.current) {
-      playerRef2.current.seekTo(0);
-      playerRef2.current.getInternalPlayer().pause();
-    }
-    if (leftHeatmapRef.current) {
-      leftHeatmapRef.current.resetFrame();
-    }
-    if (rightHeatmapRef.current) {
-      rightHeatmapRef.current.resetFrame();
-    }
-  };
-
-  // Función para sincronizar el seek en ambos videos
-  const handleSeek = (newTime: number) => {
-    if (Math.abs(newTime - playTime) < 0.1) return;
-    setPlayTime(newTime);
-    if (playerRef1.current) {
-      playerRef1.current.seekTo(newTime, 'seconds');
-    }
-    if (playerRef2.current) {
-      playerRef2.current.seekTo(newTime, 'seconds');
-    }
-  };
 
   useEffect(() => {
     const attachSeekListener = (
@@ -472,8 +400,6 @@ const WearablesData = ({
     };
   }, [refs]);
 
-  const parentRef = useRef<HTMLDivElement>(null);
-
   return (
     <div
       ref={parentRef}
@@ -524,12 +450,17 @@ const WearablesData = ({
               </Fragment>
             ))}
           </div>
-          <div className="relative w-full max-w-md rounded-lg overflow-hidden">
+          <div
+            className="relative w-full max-w-md rounded-lg overflow-hidden"
+            onContextMenu={(e) => e.preventDefault()}
+          >
             {videoSrc2 && !videoError ? (
               <ReactPlayer
                 ref={playerRef2}
                 url={videoSrc2}
+                playing={isPlaying}
                 onProgress={handleProgress}
+                onEnded={handleEnded}
                 onSeek={handleSeek}
                 onDuration={(d) => setDuration2(d)}
                 width="100%"
@@ -560,18 +491,18 @@ const WearablesData = ({
               onSeek={handleSeek}
             />
             <ControlPanel
+              videoSrc={videoSrc2}
+              videoName="HeatMapAnimation"
               playbackRate={playbackRate}
               playbackRates={playbackRates}
               changePlaybackRate={changePlaybackRate}
               videoAvailable={videoAvailable}
-              handlePlay={handlePlay}
+              handlePlay={handlePlayPause}
               isPlaying={isPlaying}
-              isPaused={isPaused}
-              handleReset={handleReset}
+              handleReset={restartAll}
               resetGraphs={resetGraphs}
               updateHz={updateHz}
               handleUpdateHzChange={handleUpdateHzChange}
-              getRenderFps={getRenderFps}
               descargarDatos={() =>
                 descargarDatosVisibles(
                   refs.leftPressureSensor,
@@ -654,7 +585,6 @@ const WearablesData = ({
           <FloatingWindow
             playerRef1={playerRef1}
             videoSrc={videoSrc}
-            videoError={videoError}
             playbackRate={playbackRate}
             handleProgress={handleProgress}
             handleSeek={handleSeek}
@@ -664,14 +594,12 @@ const WearablesData = ({
             playbackRates={playbackRates}
             changePlaybackRate={changePlaybackRate}
             videoAvailable={videoAvailable}
-            handlePlay={handlePlay}
+            handlePlay={handlePlayPause}
             isPlaying={isPlaying}
-            isPaused={isPaused}
-            handleReset={handleReset}
+            handleReset={restartAll}
             resetGraphs={resetGraphs}
             updateHz={updateHz}
             handleUpdateHzChange={handleUpdateHzChange}
-            getRenderFps={getRenderFps}
             descargarDatosVisibles={descargarDatosVisibles}
             refs={refs}
             leftWearables={leftWearables}
@@ -681,6 +609,7 @@ const WearablesData = ({
             trialId={trialId}
             swId={swId}
             parentRef={parentRef}
+            onEnded={handleEnded}
           />
         </div>
       )}

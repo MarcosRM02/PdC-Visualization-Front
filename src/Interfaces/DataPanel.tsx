@@ -33,25 +33,24 @@ export interface IPlaybackButtonProps {
 }
 
 export interface IControlPanelProps {
+  videoSrc: string;
+  videoName: string;
   playbackRate: number;
   playbackRates: { label: string; rate: number }[];
   changePlaybackRate: (rate: number) => void;
   videoAvailable: boolean;
   handlePlay: () => void;
   isPlaying: boolean;
-  isPaused: boolean;
   handleReset: () => void;
   resetGraphs: () => void;
   updateHz: number;
   handleUpdateHzChange: (newHz: number) => void;
-  getRenderFps: () => { leftFps: number; rightFps: number };
   descargarDatos: () => void;
 }
 
 export interface IFloatingWindowProps {
   playerRef1: React.RefObject<any>;
   videoSrc: string;
-  videoError: any;
   playbackRate: number;
   handleProgress: (progress: any) => void;
   handleSeek: (time: number) => void;
@@ -63,12 +62,10 @@ export interface IFloatingWindowProps {
   videoAvailable: boolean;
   handlePlay: () => void;
   isPlaying: boolean;
-  isPaused: boolean;
   handleReset: () => void;
   resetGraphs: () => void;
   updateHz: number;
   handleUpdateHzChange: (value: number) => void;
-  getRenderFps: any;
   descargarDatosVisibles: any;
   refs: {
     leftPressureSensor: any;
@@ -81,12 +78,12 @@ export interface IFloatingWindowProps {
   trialId: number;
   swId: number;
   parentRef: React.RefObject<HTMLDivElement>;
+  onEnded: () => void;
 }
 
 export interface IHeatmapControlPanelProps {
   updateHz: number;
   onUpdateHzChange: (newHz: number) => void;
-  getRenderFps: () => { leftFps: number; rightFps: number }; // Función para obtener FPS
 }
 
 export interface IIconActionButtonProps {
@@ -103,7 +100,6 @@ export interface IPlaybackRateDropdownProps {
   videoAvailable: boolean;
   updateHz: number;
   onUpdateHzChange: (newHz: number) => void;
-  getRenderFps: () => { leftFps: number; rightFps: number };
 }
 
 export interface ITimeProgressBarProps {
@@ -115,9 +111,10 @@ export interface ITimeProgressBarProps {
 export interface IVideoSectionProps {
   playerRef1: React.RefObject<ReactPlayer>;
   videoFile: string;
-  videoError: boolean;
   playbackRate: number;
+  isPlaying: boolean;
   handleProgress: (state: { playedSeconds: number }) => void;
   handleSeek: (newTime: number) => void;
   onDuration1: (duration: number) => void;
+  onEnded: () => void;
 }

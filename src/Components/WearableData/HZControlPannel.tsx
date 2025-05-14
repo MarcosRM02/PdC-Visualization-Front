@@ -1,28 +1,14 @@
-import { useState, useEffect } from 'react';
 import { IHeatmapControlPanelProps } from '../../Interfaces/DataPanel';
 
 const HeatmapControlPanel = ({
   updateHz,
   onUpdateHzChange,
-  getRenderFps,
 }: IHeatmapControlPanelProps) => {
-  const [_, setFps] = useState(0); // Estado para el FPS combinado
 
   // Valor normal (50) y límite superior (x2 normal, es decir 100)
   const normalHz = 50;
   const maxHz = normalHz * 2;
 
-  // Actualizar el FPS cada segundo
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const { leftFps, rightFps } = getRenderFps();
-      setFps(Math.round((leftFps + rightFps) / 2)); // Promedio del FPS
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [getRenderFps]);
-
-  // Calcula el multiplicador
   const multiplier = (updateHz / normalHz).toFixed(2);
 
   return (
