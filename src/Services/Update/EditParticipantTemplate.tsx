@@ -14,27 +14,15 @@ const EditParticipantTemplateModal: React.FC<IEditModalProps> = ({
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
   const { enqueueSnackbar } = useSnackbar();
-
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     if (!isOpen) return;
 
     const fetchParticipant = async () => {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
       setLoading(true);
       try {
-        const response = await axios.get(
-          `${apiUrl}/participantTemplates/${id}`,
-          config,
-        );
+        const response = await axios.get(`participantTemplates/${id}`);
         setCode(response.data.code);
         setLoading(false);
       } catch (err) {
@@ -48,7 +36,7 @@ const EditParticipantTemplateModal: React.FC<IEditModalProps> = ({
     };
 
     fetchParticipant();
-  }, [isOpen, id, accessToken, apiUrl, enqueueSnackbar]);
+  }, [isOpen, id, enqueueSnackbar]);
 
   const handleEditParticipant = async () => {
     if (!code.trim()) {
@@ -60,19 +48,9 @@ const EditParticipantTemplateModal: React.FC<IEditModalProps> = ({
 
     const data = { code };
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
-
     setLoading(true);
     try {
-      await axios.put(
-        `${apiUrl}/participantTemplates/edit/${id}`,
-        data,
-        config,
-      );
+      await axios.put(`participantTemplates/edit/${id}`, data);
       setLoading(false);
       enqueueSnackbar('Participante editado exitosamente.', {
         variant: 'success',

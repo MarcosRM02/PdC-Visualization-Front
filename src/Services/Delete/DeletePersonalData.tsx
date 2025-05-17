@@ -10,20 +10,12 @@ const DeletePersonalData = () => {
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
-
   const handleDeletePersonalData = () => {
     setLoading(true);
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
     setLoading(true);
     axios
-      .delete(`${apiUrl}/personalData/delete/${id}`, config)
+      .delete(`personalData/delete/${id}`)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Personal Data Deleted successfully', {

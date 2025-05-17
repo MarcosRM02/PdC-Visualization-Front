@@ -25,9 +25,6 @@ const ParticipantSingleCard: React.FC<IParticipantSingleCardProps> = ({
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
-
   const handleEditClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
     setEditModalOpen(true);
@@ -50,14 +47,9 @@ const ParticipantSingleCard: React.FC<IParticipantSingleCardProps> = ({
 
   useEffect(() => {
     if (showModal && participants.personalDataId) {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
       setLoading(true);
       axios
-        .get(`${apiUrl}/personalData/${participants.personalDataId}`, config)
+        .get(`personalData/${participants.personalDataId}`,)
         .then((response) => {
           setModalData(response.data);
           setLoading(false);
@@ -68,7 +60,7 @@ const ParticipantSingleCard: React.FC<IParticipantSingleCardProps> = ({
           setLoading(false);
         });
     }
-  }, [showModal, participants.personalDataId, accessToken, apiUrl]);
+  }, [showModal, participants.personalDataId]);
 
   const formattedCode = participants.code || '—';
   const detailsUrl = `/trials/by-participant/${participants.id}`;

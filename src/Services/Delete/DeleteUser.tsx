@@ -10,20 +10,12 @@ const DeleteUser = () => {
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
-
   const handleDeleteProfessional = () => {
     setLoading(true);
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
     setLoading(true);
     axios
-      .delete(`${apiUrl}/professionals/delete/${id}`, config)
+      .delete(`professionals/delete/${id}`)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Professional Deleted successfully', {

@@ -13,18 +13,10 @@ const EditUser = () => {
   const { id } = useParams();
   const { enqueueSnackbar } = useSnackbar();
 
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
-
   useEffect(() => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
     setLoading(true);
     axios
-      .get(`${apiUrl}/professionals/${id}`, config)
+      .get(`professionals/${id}`)
       .then((response) => {
         setName(response.data.name);
         setSurname(response.data.surname);
@@ -34,7 +26,7 @@ const EditUser = () => {
       .catch((error) => {
         setLoading(false);
         alert('An error happened. Please Chack console');
-        console.log(error);
+        console.error(error);
       });
   }, []);
 
@@ -44,14 +36,10 @@ const EditUser = () => {
       surname,
       email,
     };
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
+
     setLoading(true);
     axios
-      .put(`${apiUrl}/professionals/edit/${id}`, data, config)
+      .put(`professionals/edit/${id}`, data)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Professional Edited successfully', {
@@ -63,7 +51,7 @@ const EditUser = () => {
         setLoading(false);
         // alert('An error happened. Please Chack console');
         enqueueSnackbar('Error', { variant: 'error' });
-        console.log(error);
+        console.error(error);
       });
   };
 

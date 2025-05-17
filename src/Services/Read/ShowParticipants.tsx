@@ -25,9 +25,7 @@ const ShowParticipant = () => {
   const [error, setError] = useState('');
 
   const { id } = useParams<{ id: string }>(); // ID del experimento
-  const accessToken = localStorage.getItem('accessToken');
   const professionalId = localStorage.getItem('id');
-  const apiUrl = import.meta.env.VITE_API_URL;
 
   const { enqueueSnackbar } = useSnackbar();
   // Estados para el modal de adición
@@ -49,17 +47,10 @@ const ShowParticipant = () => {
   // Función para obtener los participantes
   const fetchParticipants = useCallback(async () => {
     if (!id) return;
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
+
     setLoading(true);
     try {
-      const response = await axios.get(
-        `${apiUrl}/participants/by-experiment/${id}`,
-        config,
-      );
+      const response = await axios.get(`participants/by-experiment/${id}`);
       let participantsData: IParticipant[] = response.data;
 
       // Ordenar los participantes por ID de manera ascendente
@@ -77,7 +68,7 @@ const ShowParticipant = () => {
     } finally {
       setLoading(false);
     }
-  }, [id, accessToken, apiUrl, enqueueSnackbar]);
+  }, [id, enqueueSnackbar]);
 
   // Obtener los participantes al montar el componente
   useEffect(() => {

@@ -22,14 +22,16 @@ import ShowAllParticipants from './Services/Read/ShowAllParticipants';
 import DeleteParticipantTemplateModal from './Services/Delete/DeleteParticipantTemplate';
 import AddExistingParticipantsModal from './Services/Create/AddExistingParticipants';
 import EditPersonalDataTemplateModal from './Services/Update/EditPersonalDataTemplate';
+import CookiePolicy from './Components/CommonComponents/CookiesPolicy';
 
 const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Login />} />
-      <Route path="/" element={<PrivateRoute />}>
+      <Route path="/cookie-policy" element={<CookiePolicy />} />
+      <Route element={<PrivateRoute />}>
         <Route
-          path="/experiments/create/:id"
+          path="experiments/create/:id"
           element={
             <CreateExperiment
               isOpen={false}
@@ -43,7 +45,7 @@ const App = () => {
           }
         />
         <Route
-          path="/experiments/edit/:id"
+          path="experiments/edit/:id"
           element={
             <EditExperiment
               isOpen={false}
@@ -96,7 +98,7 @@ const App = () => {
           }
         />
         <Route
-          path="/participants/edit/:id"
+          path="participants/edit/:id"
           element={
             <EditParticipant
               isOpen={false}
@@ -111,7 +113,7 @@ const App = () => {
           }
         />
         <Route
-          path="/participants/delete/:id"
+          path="participants/delete/:id"
           element={
             <DeleteParticipant
               isOpen={false}
@@ -127,7 +129,7 @@ const App = () => {
         />
 
         <Route
-          path="/personalData/edit/:id"
+          path="personalData/edit/:id"
           element={
             <EditPersonalData
               isOpen={false}
@@ -142,16 +144,16 @@ const App = () => {
           }
         />
         <Route
-          path="/personalData/delete/:id"
+          path="personalData/delete/:id"
           element={<DeletePersonalData />}
         />
         <Route
-          path="/participants/by-experiment/:id"
+          path="participants/by-experiment/:id"
           element={<ShowParticipants />}
         />
 
         <Route
-          path="/trials/create/:id"
+          path="trials/create/:id"
           element={
             <CreateTrial
               isOpen={false}
@@ -165,7 +167,7 @@ const App = () => {
           }
         />
         <Route
-          path="/trials/edit/:id"
+          path="trials/edit/:id"
           element={
             <EditTrial
               isOpen={false}
@@ -180,7 +182,7 @@ const App = () => {
           }
         />
         <Route
-          path="/trials/delete/:id"
+          path="trials/delete/:id"
           element={
             <DeleteTrial
               isOpen={false}
@@ -194,23 +196,23 @@ const App = () => {
             />
           }
         />
-        <Route path="/trials/by-participant/:id" element={<ShowTrials />} />
+        <Route path="trials/by-participant/:id" element={<ShowTrials />} />
 
         <Route
-          path="/swData/getData/:experimentId/:participantId/:swId/:trialId"
+          path="swData/getData/:experimentId/:participantId/:swId/:trialId"
           element={<ShowWearables />}
         />
         {/* Nuevas rutas */}
         <Route
-          path="/templates/by-professional/:id"
+          path="templates/by-professional/:id"
           element={<ShowTemplates />}
         />
         <Route
-          path="/trialTemplates/by-professional/:id"
+          path="trialTemplates/by-professional/:id"
           element={<ShowTrialsTemplates />}
         />
         <Route
-          path="/trialTemplates/create/:id"
+          path="trialTemplates/create/:id"
           element={
             <CreateTrial
               isOpen={false}
@@ -224,13 +226,13 @@ const App = () => {
           }
         />
         <Route
-          path="/participantTemplates/by-professional/:id"
+          path="participantTemplates/by-professional/:id"
           element={<ShowAllParticipants />}
         />
       </Route>
 
       <Route
-        path="/participantTemplates/edit/:id"
+        path="participantTemplates/edit/:id"
         element={
           <EditParticipant
             isOpen={false}
@@ -245,7 +247,7 @@ const App = () => {
         }
       />
       <Route
-        path="/participantTemplates/delete/:id"
+        path="participantTemplates/delete/:id"
         element={
           <DeleteParticipantTemplateModal
             isOpen={false}
@@ -261,7 +263,7 @@ const App = () => {
       />
 
       <Route
-        path="/participantTemplates/edit/:id"
+        path="participantTemplates/edit/:id"
         element={
           <EditPersonalData
             isOpen={false}
@@ -276,12 +278,12 @@ const App = () => {
         }
       />
       <Route
-        path="/participantTemplates/delete/:id"
+        path="participantTemplates/delete/:id"
         element={<DeletePersonalData />}
       />
 
       <Route
-        path="/trials/create/:id"
+        path="trials/create/:id"
         element={
           <AddExistingParticipantsModal
             isOpen={false}
@@ -295,7 +297,7 @@ const App = () => {
         }
       />
       <Route
-        path="/personalDataTemplate/edit/:id"
+        path="personalDataTemplate/edit/:id"
         element={
           <EditPersonalDataTemplateModal
             isOpen={false}

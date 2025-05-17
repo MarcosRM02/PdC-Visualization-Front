@@ -26,9 +26,7 @@ const ShowTrialsTemplates = () => {
 
   const { id } = useParams<{ id: string }>();
 
-  const accessToken = localStorage.getItem('accessToken');
   const professionalId = localStorage.getItem('id');
-  const apiUrl = import.meta.env.VITE_API_URL;
   const { enqueueSnackbar } = useSnackbar();
 
   // Callback para manejar la edición de una prueba
@@ -56,16 +54,10 @@ const ShowTrialsTemplates = () => {
 
   useEffect(() => {
     const fetchTrials = async () => {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
       setLoading(true);
       try {
         const response = await axios.get(
-          `${apiUrl}/trialTemplates/by-professional/${id}`,
-          config,
+          `trialTemplates/by-professional/${id}`,
         );
         let trialsData = response.data;
         // Ordenar los trials por fecha de manera ascendente
@@ -86,7 +78,7 @@ const ShowTrialsTemplates = () => {
     };
 
     fetchTrials();
-  }, [id, accessToken, apiUrl, refreshTrigger]); // Añadido refreshTrigger
+  }, [id, refreshTrigger]); // Añadido refreshTrigger
 
   // Función para normalizar la fecha (eliminar la parte de tiempo)
   const normalizeDate = (date: Date) => {

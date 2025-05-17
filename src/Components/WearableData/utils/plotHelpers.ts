@@ -272,6 +272,7 @@ export function plotData(
   ];
 
   const config = {
+    responsive: true,
     modeBarButtonsToShow: ['toImage'],
     modeBarButtonsToRemove: [
       'select2d',

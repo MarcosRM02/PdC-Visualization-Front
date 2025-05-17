@@ -17,8 +17,6 @@ const CreateExperimentModal: React.FC<ICreateModalProps> = ({
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams();
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleSaveExperiment = async () => {
     // Validaciones básicas (Descripción es opcional)
@@ -35,14 +33,9 @@ const CreateExperimentModal: React.FC<ICreateModalProps> = ({
       startDate,
     };
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
     setLoading(true);
     try {
-      await axios.post(`${apiUrl}/experiments/create/${id}`, data, config);
+      await axios.post(`experiments/create/${id}`, data);
       setLoading(false);
       enqueueSnackbar('Experimento creado exitosamente', {
         variant: 'success',

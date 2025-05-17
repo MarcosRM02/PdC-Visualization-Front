@@ -32,9 +32,7 @@ const ShowTrials = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(false);
 
   const { id } = useParams<{ id: string }>();
-  const accessToken = localStorage.getItem('accessToken');
   const professionalId = localStorage.getItem('id');
-  const apiUrl = import.meta.env.VITE_API_URL;
   const { enqueueSnackbar } = useSnackbar();
   const [experimentId, setExperimentId] = useState({
     experimentId: null,
@@ -88,17 +86,9 @@ const ShowTrials = () => {
 
   useEffect(() => {
     const fetchTrials = async () => {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
       setLoading(true);
       try {
-        const response = await axios.get(
-          `${apiUrl}/trials/by-participant/${id}`,
-          config,
-        );
+        const response = await axios.get(`/trials/by-participant/${id}`);
         let trialsData = response.data;
 
         // // Ordenar los trials por ID de manera ascendente
@@ -122,7 +112,7 @@ const ShowTrials = () => {
     };
 
     fetchTrials();
-  }, [id, accessToken, apiUrl, refreshTrigger]); // Añadido refreshTrigger
+  }, [id, refreshTrigger]); // Añadido refreshTrigger
 
   // Función para normalizar la fecha (eliminar la parte de tiempo)
   const normalizeDate = (date: Date) => {

@@ -16,8 +16,6 @@ const CreateTemplateModal: React.FC<ICreateModalProps> = ({
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams<{ id: string }>();
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleSaveTrial = async () => {
     if (!name.trim()) {
@@ -32,16 +30,10 @@ const CreateTemplateModal: React.FC<ICreateModalProps> = ({
       ...(description && { description }),
     };
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
-
     setLoading(true);
 
     try {
-      await axios.post(`${apiUrl}/templates/create`, dataToSend, config);
+      await axios.post(`templates/create`, dataToSend);
       setLoading(false);
       enqueueSnackbar('Template creada exitosamente', { variant: 'success' });
       onClose();

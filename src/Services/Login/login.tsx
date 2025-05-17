@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Login = () => {
   const [email, setEmail] = useState<string>('');
@@ -7,133 +8,129 @@ const Login = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const navigate = useNavigate();
 
-  // Efecto para verificar la existencia de un token y validar su vigencia
+  // Intenta recuperar sesión activa
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    const expiresIn = localStorage.getItem('expiresIn');
-
-    if (token && expiresIn && new Date().getTime() < parseInt(expiresIn)) {
-      const apiUrl = import.meta.env.VITE_API_URL;
-
-      // Verificar el token con el servidor
-      fetch(`${apiUrl}/experiments/by-token/token`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`, // Enviar el token en el encabezado
-          'Content-Type': 'application/json',
-        },
+    axios
+      .get<number>('experiments/by-token/token') // → ruta relativa
+      .then(({ data: professionalId }) => {
+        if (professionalId) {
+          navigate(`experiments/by-professional/${professionalId}`, {
+            replace: true,
+          });
+        }
       })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data) {
-            // Redirigir al usuario a la ruta deseada con el id del profesional
-            navigate(`/experiments/by-professional/${data}`, {
-              replace: true,
-            });
-          } else {
-            console.log('No se encontró el id del profesional');
-          }
-        })
-        .catch((error) => {
-          console.error('Error al verificar el token:', error);
-          // Opcional: manejar errores y redirigir al login si es necesario
-        });
-    } else {
-      console.log('No hay token o ha expirado');
-    }
+      .catch(() => {
+        // 401 / 403 → sin sesión, no hacemos nada
+      });
   }, [navigate]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const apiUrl = import.meta.env.VITE_API_URL;
 
     try {
-      const response = await fetch(`${apiUrl}/authentication/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
+      const { data } = await axios.post<{
+        id: number;
+        name: string;
+      }>('authentication/login', { email, password }); // → ruta relativa
+
+      // data.id es el ID del profesional
+      navigate(`experiments/by-professional/${data.id}`, {
+        replace: true,
       });
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('accessToken', data.accessToken);
-        const expiration = new Date().getTime() + data.expiresIn * 1000;
-        localStorage.setItem('expiresIn', expiration.toString());
-        localStorage.setItem('id', data.id.toString());
-        navigate(`/experiments/by-professional/${data.id}`, {
-          replace: true,
-        });
+    } catch (err: any) {
+      if (err.response) {
+        setErrorMessage(err.response.data.message || 'Credenciales inválidas');
       } else {
-        const errorData = await response.json();
-        setErrorMessage(errorData.message);
-        setTimeout(() => {
-          setErrorMessage('');
-        }, 3000);
+        setErrorMessage('Ha ocurrido un error. Inténtalo más tarde.');
       }
-    } catch (error) {
-      console.error('Login error:', error);
-      setErrorMessage('An error occurred. Please try again later.');
-      setTimeout(() => {
-        setErrorMessage('');
-      }, 3000);
+      setTimeout(() => setErrorMessage(''), 3000);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <div className="p-8 max-w-md w-full space-y-8 bg-white shadow-2xl rounded-lg">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Sign in to your account
-        </h2>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      {/* 1) Área central con el form */}
+      <div className="flex-1 flex items-center justify-center">
+        <div className="p-8 max-w-md w-full space-y-8 bg-white shadow-2xl rounded-lg">
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Sign in to your account
+          </h2>
+          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+            <div className="rounded-md shadow-sm -space-y-px">
+              <div>
+                <label htmlFor="email" className="sr-only">
+                  Email address
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  placeholder="Email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="password" className="sr-only">
+                  Password
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
             </div>
-            <div>
-              <label htmlFor="password" className="sr-only">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          </div>
-          {errorMessage && (
-            <div className="rounded-md bg-red-50 p-4">
-              <p className="text-sm font-medium text-red-800">{errorMessage}</p>
-            </div>
-          )}
-          <button
-            type="submit"
-            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Sign in
-          </button>
-        </form>
+            {errorMessage && (
+              <div className="rounded-md bg-red-50 p-4">
+                <p className="text-sm font-medium text-red-800">
+                  {errorMessage}
+                </p>
+              </div>
+            )}
+            <button
+              type="submit"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              Sign in
+            </button>
+          </form>
+        </div>
       </div>
+
+      <footer className="h-12 bg-gray-800 flex items-center justify-center">
+        <div className="text-gray-300 text-sm">
+          &copy; {new Date().getFullYear()}
+          <a
+            href="https://mamilab.eu/"
+            className="underline hover:text-white ml-2"
+          >
+            MAmI Reasearch Lab{' '}
+          </a>
+          <a
+            href="/cookie-policy"
+            className="underline hover:text-white ml-2"
+            onClick={(e) => {
+              e.preventDefault();
+              // push a history en lugar de replace:
+              navigate('/cookie-policy', {
+                state: { from: location.pathname },
+              });
+            }}
+          >
+            Cookie Policy
+          </a>
+        </div>
+      </footer>
     </div>
   );
 };

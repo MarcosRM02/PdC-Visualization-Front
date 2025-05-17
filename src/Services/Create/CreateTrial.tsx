@@ -19,18 +19,12 @@ const CreateTrialModal: React.FC<ICreateModalProps> = ({
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams<{ id: string }>();
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     if (isOpen) {
       const fetchSWIds = async () => {
         try {
-          const response = await axios.get(`${apiUrl}/sw`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
+          const response = await axios.get(`sw`);
           setSWIds(response.data);
         } catch (error) {
           enqueueSnackbar('Error al obtener los SW IDs', { variant: 'error' });
@@ -40,7 +34,7 @@ const CreateTrialModal: React.FC<ICreateModalProps> = ({
 
       fetchSWIds();
     }
-  }, [apiUrl, accessToken, enqueueSnackbar, isOpen]);
+  }, [enqueueSnackbar, isOpen]);
 
   const handleSaveTrial = async () => {
     if (!swId) {
@@ -61,16 +55,10 @@ const CreateTrialModal: React.FC<ICreateModalProps> = ({
       ...(annotation && { annotation }),
     };
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
-
     setLoading(true);
 
     try {
-      await axios.post(`${apiUrl}/trials/create`, dataToSend, config);
+      await axios.post(`trials/create`, dataToSend);
       setLoading(false);
       enqueueSnackbar('Prueba creada exitosamente', { variant: 'success' });
       onClose();

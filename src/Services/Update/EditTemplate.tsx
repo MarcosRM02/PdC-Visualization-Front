@@ -17,21 +17,13 @@ const EditTrialTemplate: React.FC<IEditModalProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const { enqueueSnackbar } = useSnackbar();
 
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
-
   useEffect(() => {
     if (!isOpen) return;
 
     const fetchTrial = async () => {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
       setLoading(true);
       try {
-        const response = await axios.get(`${apiUrl}/templates/${id}`, config);
+        const response = await axios.get(`templates/${id}`);
         setName(response.data.name);
         setDescription(response.data.description || '');
       } catch (error) {
@@ -45,7 +37,7 @@ const EditTrialTemplate: React.FC<IEditModalProps> = ({
     };
 
     fetchTrial();
-  }, [isOpen, id, accessToken, apiUrl, enqueueSnackbar]);
+  }, [isOpen, id, enqueueSnackbar]);
 
   const handleEditTemplate = async () => {
     // Validaciones básicas
@@ -61,14 +53,9 @@ const EditTrialTemplate: React.FC<IEditModalProps> = ({
       description: description.trim() !== '' ? description.trim() : null,
     };
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
     setLoading(true);
     try {
-      await axios.put(`${apiUrl}/templates/edit/${id}`, data, config);
+      await axios.put(`templates/edit/${id}`, data);
       enqueueSnackbar('Template editado exitosamente', {
         variant: 'success',
       });

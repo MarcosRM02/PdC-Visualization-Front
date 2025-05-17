@@ -14,21 +14,10 @@ const DeleteExperimentModal: React.FC<IDeleteModalProps> = ({
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
-
   const handleDeleteExperiment = async () => {
     setLoading(true);
-    console.log(`Attempting to delete experiment with ID: ${id}`);
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
-
     try {
-      await axios.delete(`${apiUrl}/experiments/delete/${id}`, config);
+      await axios.delete(`experiments/delete/${id}`);
       setLoading(false);
       enqueueSnackbar('Experimento eliminado exitosamente', {
         variant: 'success',

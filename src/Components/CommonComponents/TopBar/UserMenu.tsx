@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaUserEdit } from 'react-icons/fa';
 import { MdLogout } from 'react-icons/md';
+import axios from 'axios';
 
 const UserMenu: React.FC = () => {
   const navigate = useNavigate();
@@ -14,13 +15,18 @@ const UserMenu: React.FC = () => {
   const [hasImageError, setHasImageError] = useState(false);
 
   // Lógica de logout
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('expiresIn');
-    sessionStorage.clear(); // opcional
-    navigate('/', { replace: true });
+  const handleLogout = async () => {
+    try {
+      // 1) Llamas al backend para borrar la cookie
+      await axios.post('authentication/logout');
+    } catch (err) {
+      console.error('Error during logout:', err);
+      // aunque falle, seguimos adelante
+    } finally {
+      // 2) Rediriges al login
+      navigate('/', { replace: true });
+    }
   };
-
   // Al hacer click en cualquier parte fuera del dropdown, se cierra
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

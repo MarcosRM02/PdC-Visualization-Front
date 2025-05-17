@@ -23,8 +23,6 @@ const AddExistingTemplatesModal: React.FC<ICreateModalProps> = ({
   const { enqueueSnackbar } = useSnackbar();
   const { id: participantID } = useParams<{ id: string }>();
   const professionalId = localStorage.getItem('id');
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
 
   const [selectedSWIds, setSelectedSWIds] = useState<number[]>([]);
 
@@ -33,12 +31,7 @@ const AddExistingTemplatesModal: React.FC<ICreateModalProps> = ({
       const fetchSWIds = async () => {
         try {
           const response = await axios.get(
-            `${apiUrl}/templates/by-professional/${professionalId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            },
+            `templates/by-professional/${professionalId}`,
           );
           setSWIds(response.data);
         } catch (error) {
@@ -51,7 +44,7 @@ const AddExistingTemplatesModal: React.FC<ICreateModalProps> = ({
 
       fetchSWIds();
     }
-  }, [apiUrl, accessToken, enqueueSnackbar, isOpen]);
+  }, [enqueueSnackbar, isOpen]);
 
   const handleSaveTrial = async () => {
     if (selectedSWIds.length === 0) {
@@ -61,20 +54,12 @@ const AddExistingTemplatesModal: React.FC<ICreateModalProps> = ({
       return;
     }
     const dataToSend = { templateIds: selectedSWIds.map((id) => Number(id)) };
-    console.log('Data to send:', dataToSend);
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
-
     setLoading(true);
 
     try {
       await axios.post(
-        `${apiUrl}/trials/create-from-templates/${participantID}`,
+        `trials/create-from-templates/${participantID}`,
         dataToSend,
-        config,
       );
       setLoading(false);
       enqueueSnackbar('Prueba creada exitosamente', { variant: 'success' });

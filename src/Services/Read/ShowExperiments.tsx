@@ -28,9 +28,6 @@ const ShowExperiment = () => {
   const [filterEndDate, setFilterEndDate] = useState<Date | null>(null);
   const [error, setError] = useState('');
 
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
-
   // Estados para los modales
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -49,17 +46,9 @@ const ShowExperiment = () => {
 
   const fetchExperiments = useCallback(async () => {
     if (!id) return;
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
     setLoading(true);
     try {
-      const response = await axios.get(
-        `${apiUrl}/experiments/by-professional/${id}`,
-        config,
-      );
+      const response = await axios.get(`experiments/by-professional/${id}`);
       setExperiments(response.data);
       setFilteredExperiments(response.data);
       setError('');
@@ -72,7 +61,7 @@ const ShowExperiment = () => {
     } finally {
       setLoading(false);
     }
-  }, [id, accessToken, apiUrl, enqueueSnackbar]);
+  }, [id, enqueueSnackbar]);
 
   useEffect(() => {
     fetchExperiments();

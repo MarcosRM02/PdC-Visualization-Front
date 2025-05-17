@@ -23,8 +23,6 @@ const CreateParticipantModal: React.FC<ICreateModalProps> = ({
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams<{ id: string }>(); // ID del experimento
   const professionalId = localStorage.getItem('id');
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleCreateParticipant = async () => {
     // Validaciones básicas
@@ -43,21 +41,11 @@ const CreateParticipantModal: React.FC<ICreateModalProps> = ({
       ...(footLength !== undefined && { footLength }),
     };
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
-
     setLoading(true);
 
     try {
       // Primera solicitud POST para personalData
-      const response1 = await axios.post(
-        `${apiUrl}/personalData`,
-        dataToSend,
-        config,
-      );
+      const response1 = await axios.post(`personalData`, dataToSend);
 
       console.log('Respuesta personalData:', response1.data); // Verificar la estructura de la respuesta
 
@@ -88,9 +76,8 @@ const CreateParticipantModal: React.FC<ICreateModalProps> = ({
       console.log('Datos del participante a crear:', participantData);
 
       await axios.post(
-        `${apiUrl}/participants/create/${professionalId}/${id}`,
+        `/participants/create/${professionalId}/${id}`,
         participantData,
-        config,
       );
       console.log('Participante creado con éxito ', response1.data);
       setLoading(false);

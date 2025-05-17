@@ -34,6 +34,8 @@ const VideoSection: React.FC<IVideoSectionProps> = ({
         config={{
           file: {
             attributes: {
+              crossOrigin: 'use-credentials',
+              preload: 'auto',
               controlsList: 'nodownload',
               disablePictureInPicture: true,
             },

@@ -21,9 +21,6 @@ const EditPersonalDataModal: React.FC<IEditModalProps> = ({
 
   const { enqueueSnackbar } = useSnackbar();
 
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
-
   const handleEditPersonalData = async () => {
     // Construir el objeto de datos con todos los campos
     const data: any = {
@@ -34,19 +31,9 @@ const EditPersonalDataModal: React.FC<IEditModalProps> = ({
       footLength: footLength !== undefined ? footLength : null,
     };
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
-
     setLoading(true);
     try {
-      const response = await axios.put(
-        `${apiUrl}/personalData/edit/${id}`,
-        data,
-        config,
-      );
+      const response = await axios.put(`personalData/edit/${id}`, data);
       setLoading(false);
       enqueueSnackbar('Personal Data Edited successfully', {
         variant: 'success',
@@ -76,17 +63,9 @@ const EditPersonalDataModal: React.FC<IEditModalProps> = ({
   useEffect(() => {
     if (isOpen && id) {
       const fetchPersonalData = async () => {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        };
         setLoading(true);
         try {
-          const response = await axios.get(
-            `${apiUrl}/personalData/${id}`,
-            config,
-          );
+          const response = await axios.get(`personalData/${id}`);
           setName(response.data.name || '');
           setAge(response.data.age ? String(response.data.age) : '');
           setHeight(
@@ -116,7 +95,7 @@ const EditPersonalDataModal: React.FC<IEditModalProps> = ({
 
       fetchPersonalData();
     }
-  }, [isOpen, id, accessToken, apiUrl, enqueueSnackbar]);
+  }, [isOpen, id, enqueueSnackbar]);
 
   useEffect(() => {
     if (!isOpen) {

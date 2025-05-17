@@ -14,19 +14,11 @@ const DeleteTemplate: React.FC<IDeleteModalProps> = ({
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
-
   const handleDeleteTrial = async () => {
     setLoading(true);
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
 
     try {
-      await axios.delete(`${apiUrl}/templates/delete/${id}`, config);
+      await axios.delete(`templates/delete/${id}`);
       setLoading(false);
       enqueueSnackbar('Template eliminada exitosamente', {
         variant: 'success',

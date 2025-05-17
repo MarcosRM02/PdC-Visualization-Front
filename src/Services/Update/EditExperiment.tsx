@@ -19,21 +19,13 @@ const EditExperimentModal: React.FC<IEditModalProps> = ({
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
-
   useEffect(() => {
     if (!isOpen) return;
 
     const fetchExperiment = async () => {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
       setLoading(true);
       try {
-        const response = await axios.get(`${apiUrl}/experiments/${id}`, config);
+        const response = await axios.get(`experiments/${id}`);
         setName(response.data.name);
         setDescription(response.data.description);
         const formattedStartDate = new Date(response.data.startDate)
@@ -61,7 +53,7 @@ const EditExperimentModal: React.FC<IEditModalProps> = ({
     };
 
     fetchExperiment();
-  }, [isOpen, id, accessToken, apiUrl, enqueueSnackbar]);
+  }, [isOpen, id, enqueueSnackbar]);
 
   const handleEditExperiment = async () => {
     // Validaciones básicas
@@ -82,14 +74,9 @@ const EditExperimentModal: React.FC<IEditModalProps> = ({
       notes,
     };
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
     setLoading(true);
     try {
-      await axios.put(`${apiUrl}/experiments/edit/${id}`, data, config);
+      await axios.put(`experiments/edit/${id}`, data);
       setLoading(false);
       enqueueSnackbar('Experimento editado exitosamente', {
         variant: 'success',

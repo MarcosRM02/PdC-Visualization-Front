@@ -22,11 +22,7 @@ const ShowTemplates = () => {
 
   // Nuevo estado para controlar el refresco de datos
   const [refreshTrigger, setRefreshTrigger] = useState(false);
-
   const { id } = useParams<{ id: string }>();
-
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
   const { enqueueSnackbar } = useSnackbar();
 
   const breadcrumbItems: IBreadcrumbItem[] = [
@@ -50,17 +46,9 @@ const ShowTemplates = () => {
 
   useEffect(() => {
     const fetchTrials = async () => {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
       setLoading(true);
       try {
-        const response = await axios.get(
-          `${apiUrl}/templates/by-professional/${id}`,
-          config,
-        );
+        const response = await axios.get(`/templates/by-professional/${id}`);
         let trialsData = response.data;
 
         // Ordenar los trials por nombre de manera ascendente
@@ -77,7 +65,7 @@ const ShowTemplates = () => {
     };
 
     fetchTrials();
-  }, [id, accessToken, apiUrl, refreshTrigger]); // Añadido refreshTrigger
+  }, [id, refreshTrigger]); // Añadido refreshTrigger
 
   // Lógica de filtrado
   useEffect(() => {

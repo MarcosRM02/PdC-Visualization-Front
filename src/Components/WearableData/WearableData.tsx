@@ -23,9 +23,6 @@ const WearablesData = ({
   swId,
   participantId,
 }: IWearableDataProps) => {
-  const apiUrl = import.meta.env.VITE_API_URL;
-  const accessToken = localStorage.getItem('accessToken');
-
   // Refs para los videos
   const playerRef1 = useRef<ReactPlayer | null>(null);
   const playerRef2 = useRef<ReactPlayer | null>(null);
@@ -53,15 +50,20 @@ const WearablesData = ({
 
   const previousTimeRef = useRef(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [videoSrc, setVideoSrc] = useState('');
-  const [videoError, setVideoError] = useState<boolean>(false);
-  const [videoSrc2, setVideoSrc2] = useState('');
-  const [hmVideoError, setHmVideoError] = useState(false);
   const [_, setFps] = useState(0);
   const [updateHz, setUpdateHz] = useState(50); // 50 Hz = velocidad normal
   const playerRefs = [playerRef1, playerRef2];
   const heatmapRefs = [leftHeatmapRef, rightHeatmapRef];
   const [hasEnded, setHasEnded] = useState(false);
+  const [videoExists, setVideoExists] = useState<boolean>(false);
+  const [hmVideoExists, setHmVideoExists] = useState<boolean>(false);
+
+  const hmVideoSrc = `${
+    import.meta.env.VITE_API_URL
+  }/trials/retrieve-HMvideo/${trialId}`;
+  const recordedVideoSrc = `${
+    import.meta.env.VITE_API_URL
+  }/trials/retrieve-video/${trialId}`;
 
   const leftWearables = wearables.filter(
     (wearable) => wearable.wearableType === 'L',
@@ -150,9 +152,6 @@ const WearablesData = ({
     { label: '0.12x', rate: 0.12 },
     { label: '0.02x', rate: 0.02 },
   ];
-
-  const videoAvailable =
-    (!!videoSrc || !!videoSrc2) && !videoError && !hmVideoError;
 
   // Pausa todos los reproductores
   const pauseAll = useCallback(() => {
@@ -259,73 +258,34 @@ const WearablesData = ({
     updateCurrentTimeLine(playTime);
   }, [playTime]);
 
-  // Obtención del video desde la API
+  // 1Comprobar existencia del vídeo principal
   useEffect(() => {
-    const fetchVideo = async () => {
-      try {
-        const response = await axios.get(
-          `${apiUrl}/trials/retrieve-video/${trialId}`,
-          {
-            headers: { Authorization: `Bearer ${accessToken}` },
-            responseType: 'blob',
-          },
-        );
-        const videoBlob = response.data;
-        const videoUrl = URL.createObjectURL(videoBlob);
-        setVideoSrc(videoUrl);
-      } catch (error: any) {
-        // Si es un 404, simplemente dejamos videoSrc vacío y no seteamos el error
-        if (error.response && error.response.status === 404) {
-          console.warn('Video principal no disponible (404)');
-          setVideoSrc('');
+    axios
+      .head(`/trials/retrieve-video/${trialId}`)
+      .then(() => setVideoExists(true))
+      .catch((err) => {
+        if (err.response?.status === 404) {
+          console.warn('Vídeo principal no disponible (404)');
+          setVideoExists(false);
         } else {
-          console.error('Error fetching the video:', error);
-          setVideoError(true);
+          console.error('Error comprobando vídeo principal:', err);
         }
-      }
-    };
-
-    fetchVideo();
-
-    return () => {
-      if (videoSrc) {
-        URL.revokeObjectURL(videoSrc);
-      }
-    };
+      });
   }, [trialId]);
 
-  // Obtención del HM desde la API
+  // 2Comprobar existencia del HM video
   useEffect(() => {
-    const fetchHMVideo = async () => {
-      try {
-        const response = await axios.get(
-          `${apiUrl}/trials/retrieve-HMvideo/${trialId}`,
-          {
-            headers: { Authorization: `Bearer ${accessToken}` },
-            responseType: 'blob',
-          },
-        );
-        const videoBlob = response.data;
-        const videoUrl = URL.createObjectURL(videoBlob);
-        setVideoSrc2(videoUrl);
-      } catch (error: any) {
-        if (error.response && error.response.status === 404) {
-          console.warn('Video HM no disponible (404)');
-          setVideoSrc2('');
+    axios
+      .head(`/trials/retrieve-HMvideo/${trialId}`)
+      .then(() => setHmVideoExists(true))
+      .catch((err) => {
+        if (err.response?.status === 404) {
+          console.warn('HM video no disponible (404)');
+          setHmVideoExists(false);
         } else {
-          console.error('Error fetching the HM video:', error);
-          setHmVideoError(true);
+          console.error('Error comprobando HM video:', err);
         }
-      }
-    };
-
-    fetchHMVideo();
-
-    return () => {
-      if (videoSrc2) {
-        URL.revokeObjectURL(videoSrc2);
-      }
-    };
+      });
   }, [trialId]);
 
   useEffect(() => {
@@ -454,10 +414,10 @@ const WearablesData = ({
             className="relative w-full max-w-md rounded-lg overflow-hidden"
             onContextMenu={(e) => e.preventDefault()}
           >
-            {videoSrc2 && !videoError ? (
+            {hmVideoExists ? (
               <ReactPlayer
                 ref={playerRef2}
-                url={videoSrc2}
+                url={hmVideoSrc}
                 playing={isPlaying}
                 onProgress={handleProgress}
                 onEnded={handleEnded}
@@ -473,6 +433,8 @@ const WearablesData = ({
                 config={{
                   file: {
                     attributes: {
+                      crossOrigin: 'use-credentials',
+                      preload: 'auto',
                       controlsList: 'nodownload',
                       disablePictureInPicture: true,
                     },
@@ -491,12 +453,12 @@ const WearablesData = ({
               onSeek={handleSeek}
             />
             <ControlPanel
-              videoSrc={videoSrc2}
+              videoSrc={hmVideoSrc}
               videoName="HeatMapAnimation"
               playbackRate={playbackRate}
               playbackRates={playbackRates}
               changePlaybackRate={changePlaybackRate}
-              videoAvailable={videoAvailable}
+              videoAvailable={hmVideoExists}
               handlePlay={handlePlayPause}
               isPlaying={isPlaying}
               handleReset={restartAll}
@@ -580,11 +542,11 @@ const WearablesData = ({
           ))}
         </div>
       </div>
-      {videoSrc && (
+      {videoExists && (
         <div className="relative mt-5">
           <FloatingWindow
             playerRef1={playerRef1}
-            videoSrc={videoSrc}
+            videoSrc={recordedVideoSrc}
             playbackRate={playbackRate}
             handleProgress={handleProgress}
             handleSeek={handleSeek}
@@ -593,7 +555,7 @@ const WearablesData = ({
             globalDuration={globalDuration}
             playbackRates={playbackRates}
             changePlaybackRate={changePlaybackRate}
-            videoAvailable={videoAvailable}
+            videoAvailable={videoExists}
             handlePlay={handlePlayPause}
             isPlaying={isPlaying}
             handleReset={restartAll}

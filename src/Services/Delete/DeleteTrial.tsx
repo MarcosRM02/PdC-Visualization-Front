@@ -14,21 +14,11 @@ const DeleteTrialModal: React.FC<IDeleteModalProps> = ({
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
-
   const handleDeleteTrial = async () => {
     setLoading(true);
-    console.log(`Attempting to delete trial with ID: ${id}`);
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
 
     try {
-      await axios.delete(`${apiUrl}/trials/delete/${id}`, config);
+      await axios.delete(`trials/delete/${id}`);
       setLoading(false);
       enqueueSnackbar('Prueba eliminada exitosamente', {
         variant: 'success',

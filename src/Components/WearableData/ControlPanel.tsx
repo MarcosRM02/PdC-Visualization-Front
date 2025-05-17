@@ -5,6 +5,7 @@ import { FaPlay, FaPause } from 'react-icons/fa';
 import { VscDebugRestart } from 'react-icons/vsc';
 import { IControlPanelProps } from '../../Interfaces/DataPanel';
 import { RiVideoDownloadFill } from 'react-icons/ri';
+import axios from 'axios';
 
 const ControlPanel: React.FC<IControlPanelProps> = ({
   videoSrc,
@@ -19,15 +20,40 @@ const ControlPanel: React.FC<IControlPanelProps> = ({
   updateHz,
   handleUpdateHzChange,
 }) => {
-  const handleDownload = () => {
-    const link = document.createElement('a');
-    link.href = videoSrc;
-    link.setAttribute('download', videoName); // Dejar vacio si interesa que el nombre del archivo sea aleatorio
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  // const handleDownload = () => {
+  //   const link = document.createElement('a');
+  //   link.href = videoSrc;
+  //   link.setAttribute('download', videoName); // Dejar vacio si interesa que el nombre del archivo sea aleatorio
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // };
+  const handleDownload = async () => {
+    try {
+      // 1) Petición al servidor, enviando la cookie HttpOnly
+      console.log('Descargando video desde:', videoSrc);
+      const response = await axios.get<Blob>(videoSrc, {
+        responseType: 'blob',
+        withCredentials: true,
+      });
 
+      // 2) Convertir a URL de objeto
+      const blobUrl = URL.createObjectURL(response.data);
+
+      // 3) Simular <a download>
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.setAttribute('download', `${videoName}.mp4`);
+      document.body.appendChild(link);
+      link.click();
+
+      // 4) Limpieza
+      URL.revokeObjectURL(blobUrl);
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error downloading video:', error);
+    }
+  };
   return (
     <div className="w-full mb-2 flex items-center justify-center">
       <IconActionButton

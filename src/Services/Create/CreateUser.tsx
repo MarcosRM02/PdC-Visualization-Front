@@ -11,8 +11,6 @@ const CreateUser = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
 
   const handleSaveUser = () => {
     const data = {
@@ -20,14 +18,10 @@ const CreateUser = () => {
       surname,
       email,
     };
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
+
     setLoading(true);
     axios
-      .post(`${apiUrl}/professionals/create`, data, config)
+      .post(`professionals/create`, data)
       .then(() => {
         setLoading(false);
         enqueueSnackbar('Professional Created successfully', {

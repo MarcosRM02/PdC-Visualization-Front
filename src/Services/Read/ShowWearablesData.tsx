@@ -19,7 +19,7 @@ const ShowWearables = () => {
       .map((id) => `wearableIds=${encodeURIComponent(id)}`)
       .join('&');
   }, [wearableIds]);
-  const apiUrl = import.meta.env.VITE_API_URL;
+
   const breadcrumbItems: IBreadcrumbItem[] = [
     {
       label: 'Experimentos',
@@ -37,19 +37,10 @@ const ShowWearables = () => {
   ];
 
   useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken');
-    if (!accessToken) return; // Si no hay token, no ejecutar la llamada.
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
     setLoading(true);
     axios
       .get(
-        `${apiUrl}/swData/getData/${experimentId}/${participantId}/${swId}/${trialId}?${wearableQuery}`,
-        config,
+        `swData/getData/${experimentId}/${participantId}/${swId}/${trialId}?${wearableQuery}`,
       )
       .then((response) => {
         setWearables(response.data);
@@ -59,7 +50,7 @@ const ShowWearables = () => {
         console.error(error);
         setLoading(false);
       });
-  }, [experimentId, participantId, swId, trialId, wearableQuery, apiUrl]);
+  }, [experimentId, participantId, swId, trialId, wearableQuery]);
 
   return (
     <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">

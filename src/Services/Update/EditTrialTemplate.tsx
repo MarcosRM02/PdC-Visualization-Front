@@ -19,24 +19,13 @@ const EditTrialTemplate: React.FC<IEditModalProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const { enqueueSnackbar } = useSnackbar();
 
-  const accessToken = localStorage.getItem('accessToken');
-  const apiUrl = import.meta.env.VITE_API_URL;
-
   useEffect(() => {
     if (!isOpen) return;
 
     const fetchTrial = async () => {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      };
       setLoading(true);
       try {
-        const response = await axios.get(
-          `${apiUrl}/trialTemplates/${id}`,
-          config,
-        );
+        const response = await axios.get(`trialTemplates/${id}`);
         setCode(response.data.code || '');
         setDate(response.data.date ? response.data.date.split('T')[0] : '');
         setDescription(response.data.description || '');
@@ -52,7 +41,7 @@ const EditTrialTemplate: React.FC<IEditModalProps> = ({
     };
 
     fetchTrial();
-  }, [isOpen, id, accessToken, apiUrl, enqueueSnackbar]);
+  }, [isOpen, id, enqueueSnackbar]);
 
   const handleEditTrial = async () => {
     // Construir los datos a enviar, estableciendo a null si están vacíos
@@ -63,14 +52,9 @@ const EditTrialTemplate: React.FC<IEditModalProps> = ({
       annotation: annotation.trim() !== '' ? annotation.trim() : null,
     };
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    };
     setLoading(true);
     try {
-      await axios.put(`${apiUrl}/trialTemplates/edit/${id}`, data, config);
+      await axios.put(`trialTemplates/edit/${id}`, data);
       enqueueSnackbar('Trial editado exitosamente', {
         variant: 'success',
       });
