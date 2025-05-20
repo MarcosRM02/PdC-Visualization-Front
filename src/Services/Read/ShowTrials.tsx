@@ -32,7 +32,7 @@ const ShowTrials = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(false);
 
   const { id } = useParams<{ id: string }>();
-  const professionalId = localStorage.getItem('id');
+  const professionalId = localStorage.getItem('professionalId');
   const { enqueueSnackbar } = useSnackbar();
   const [experimentId, setExperimentId] = useState({
     experimentId: null,
