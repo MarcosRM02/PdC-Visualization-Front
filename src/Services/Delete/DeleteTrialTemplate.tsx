@@ -20,14 +20,16 @@ const DeleteTrialTemplate: React.FC<IDeleteModalProps> = ({
     try {
       await axios.delete(`trialTemplates/delete/${id}`);
       setLoading(false);
-      enqueueSnackbar('Template eliminada exitosamente', {
+      enqueueSnackbar('Trial Template deleted successfully', {
         variant: 'success',
       });
       onDeleted(); // Notificar al componente padre
       onClose();
     } catch (error) {
       setLoading(false);
-      enqueueSnackbar('Error al eliminar la Template', { variant: 'error' });
+      enqueueSnackbar('An error occurred while deleting the trial template', {
+        variant: 'error',
+      });
       console.error('Error deleting Template:', error);
     }
   };
@@ -46,7 +48,7 @@ const DeleteTrialTemplate: React.FC<IDeleteModalProps> = ({
         {/* Cabecera del Modal */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Eliminar Template
+            Delete Trial Template
           </h2>
           <button onClick={onClose} aria-label="Cerrar modal">
             <FaTimes className="text-red-600 hover:text-gray-800" />
@@ -61,7 +63,7 @@ const DeleteTrialTemplate: React.FC<IDeleteModalProps> = ({
         ) : (
           <div className="flex flex-col space-y-4">
             <h3 className="text-lg">
-              ¿Estás seguro de que deseas eliminar esta template?
+              Are you sure you want to delete this trial template?
             </h3>
 
             <div className="flex justify-end space-x-4 mt-4">
@@ -69,13 +71,13 @@ const DeleteTrialTemplate: React.FC<IDeleteModalProps> = ({
                 onClick={onClose}
                 className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200"
               >
-                Cancelar
+                Cancel
               </button>
               <button
                 onClick={handleDeleteTrial}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
               >
-                Sí, Eliminar
+                Delete
               </button>
             </div>
           </div>

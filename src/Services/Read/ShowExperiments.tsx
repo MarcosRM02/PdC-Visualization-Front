@@ -39,7 +39,7 @@ const ShowExperiment = () => {
 
   const breadcrumbItems: IBreadcrumbItem[] = [
     {
-      label: 'Experimentos',
+      label: 'Experiments',
       path: `/experiments/by-professional/${id}`,
     },
   ];
@@ -54,8 +54,8 @@ const ShowExperiment = () => {
       setError('');
     } catch (error) {
       console.error(error);
-      setError('Error al cargar los experimentos.');
-      enqueueSnackbar('Error al cargar los experimentos.', {
+      setError('An error occurred while loading the experiments');
+      enqueueSnackbar('An error occurred while loading the experiments', {
         variant: 'error',
       });
     } finally {
@@ -128,14 +128,14 @@ const ShowExperiment = () => {
         <div className="flex justify-between items-center mb-6">
           <Breadcrumb items={breadcrumbItems} />
         </div>
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Experimentos</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Experiments</h1>
 
         <div className="flex flex-col md:flex-row items-center justify-between mb-6 space-y-4 md:space-y-0">
           <div className="flex items-center bg-gray-100 rounded-lg px-4 py-2 w-full md:w-1/3">
             <FaSearch className="text-gray-500 mr-2" />
             <input
               type="text"
-              placeholder="Buscar por nombre..."
+              placeholder="Search by Name"
               value={searchName}
               onChange={(e) => setSearchName(e.target.value)}
               className="bg-transparent focus:outline-none w-full"
@@ -148,7 +148,7 @@ const ShowExperiment = () => {
             <DatePicker
               selected={filterStartDate}
               onChange={(date: Date | null) => setFilterStartDate(date)}
-              placeholderText="Fecha de Inicio"
+              placeholderText="Start Date"
               className="bg-transparent focus:outline-none w-full"
               aria-label="Filtrar por fecha de inicio"
               dateFormat="dd/MM/yyyy"
@@ -161,7 +161,7 @@ const ShowExperiment = () => {
             <DatePicker
               selected={filterEndDate}
               onChange={(date: Date | null) => setFilterEndDate(date)}
-              placeholderText="Fecha de Finalización"
+              placeholderText="Completion Date"
               className="bg-transparent focus:outline-none w-full"
               aria-label="Filtrar por fecha de finalización"
               dateFormat="dd/MM/yyyy"
@@ -175,7 +175,7 @@ const ShowExperiment = () => {
             aria-label="Resetear filtros"
           >
             <FaUndo className="mr-2" />
-            Resetear
+            Reset
           </button>
         </div>
 
@@ -210,9 +210,6 @@ const ShowExperiment = () => {
             <h2 className="text-2xl font-semibold text-gray-700">
               No Experiments Available
             </h2>
-            <p className="text-gray-500 mt-2">
-              Intenta ajustar los filtros de búsqueda.
-            </p>
           </div>
         )}
       </div>

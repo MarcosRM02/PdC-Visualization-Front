@@ -21,7 +21,7 @@ const CreateExperimentModal: React.FC<ICreateModalProps> = ({
   const handleSaveExperiment = async () => {
     // Validaciones básicas (Descripción es opcional)
     if (!name.trim() || !startDate) {
-      enqueueSnackbar('Por favor, completa todos los campos requeridos.', {
+      enqueueSnackbar('Please complete all required fields', {
         variant: 'warning',
       });
       return;
@@ -37,7 +37,7 @@ const CreateExperimentModal: React.FC<ICreateModalProps> = ({
     try {
       await axios.post(`experiments/create/${id}`, data);
       setLoading(false);
-      enqueueSnackbar('Experimento creado exitosamente', {
+      enqueueSnackbar('Experiment created Successfully', {
         variant: 'success',
       });
       onClose();
@@ -48,7 +48,9 @@ const CreateExperimentModal: React.FC<ICreateModalProps> = ({
       setStartDate('');
     } catch (error) {
       setLoading(false);
-      enqueueSnackbar('Error al crear el experimento', { variant: 'error' });
+      enqueueSnackbar('An error occurred while creating the Experiment', {
+        variant: 'error',
+      });
       console.error(error);
     }
   };
@@ -69,7 +71,7 @@ const CreateExperimentModal: React.FC<ICreateModalProps> = ({
         {/* Cabecera del Modal */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Crear Experimento
+            Create Experiment
           </h2>
           <button onClick={onClose} aria-label="Cerrar modal">
             <FaTimes className="text-red-600 hover:text-gray-800" />
@@ -89,7 +91,7 @@ const CreateExperimentModal: React.FC<ICreateModalProps> = ({
                 className="block text-gray-700 text-lg mb-2"
                 htmlFor="name"
               >
-                Nombre <span className="text-red-500">*</span>
+                Name <span className="text-red-500">*</span>
               </label>
               <input
                 id="name"
@@ -97,7 +99,7 @@ const CreateExperimentModal: React.FC<ICreateModalProps> = ({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Ingrese el nombre del experimento"
+                placeholder="Enter the name of the experiment"
                 required
               />
             </div>
@@ -108,14 +110,14 @@ const CreateExperimentModal: React.FC<ICreateModalProps> = ({
                 className="block text-gray-700 text-lg mb-2"
                 htmlFor="description"
               >
-                Descripción <span className="text-gray-500">(opcional)</span>
+                Description <span className="text-gray-500">(opcional)</span>
               </label>
               <textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Ingrese la descripción del experimento"
+                placeholder="Enter the description of the experiment"
                 rows={4}
               />
             </div>
@@ -126,7 +128,7 @@ const CreateExperimentModal: React.FC<ICreateModalProps> = ({
                 className="block text-gray-700 text-lg mb-2"
                 htmlFor="startDate"
               >
-                Fecha de Inicio <span className="text-red-500">*</span>
+                Start Date <span className="text-red-500">*</span>
               </label>
               <input
                 id="startDate"
@@ -141,7 +143,7 @@ const CreateExperimentModal: React.FC<ICreateModalProps> = ({
               onClick={handleSaveExperiment}
               className="mt-4 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors duration-200"
             >
-              Guardar
+              Save
             </button>
           </div>
         )}

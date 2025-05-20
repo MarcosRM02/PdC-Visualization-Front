@@ -35,7 +35,7 @@ const AddExistingTemplatesModal: React.FC<ICreateModalProps> = ({
           );
           setSWIds(response.data);
         } catch (error) {
-          enqueueSnackbar('Error al obtener los Templates', {
+          enqueueSnackbar('Failed to load Templates', {
             variant: 'error',
           });
           console.error('Error fetching Templates: ', error);
@@ -48,7 +48,7 @@ const AddExistingTemplatesModal: React.FC<ICreateModalProps> = ({
 
   const handleSaveTrial = async () => {
     if (selectedSWIds.length === 0) {
-      enqueueSnackbar('Por favor, selecciona al menos un Template.', {
+      enqueueSnackbar('Please select at least one Template.', {
         variant: 'warning',
       });
       return;
@@ -62,14 +62,14 @@ const AddExistingTemplatesModal: React.FC<ICreateModalProps> = ({
         dataToSend,
       );
       setLoading(false);
-      enqueueSnackbar('Prueba creada exitosamente', { variant: 'success' });
+      enqueueSnackbar('Template added', { variant: 'success' });
       // Limpia los checkboxes seleccionados
       setSelectedSWIds([]);
       onClose();
       onCreated(); // Notificar al componente padre
     } catch (error) {
       setLoading(false);
-      enqueueSnackbar('Error al crear la prueba', { variant: 'error' });
+      enqueueSnackbar('Failed to load Template', { variant: 'error' });
       console.error('Error:', error);
     }
   };
@@ -87,7 +87,7 @@ const AddExistingTemplatesModal: React.FC<ICreateModalProps> = ({
         {/* Cabecera del Modal */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Añadir Templates
+            Add Templates
           </h2>
           <button onClick={handleClose} aria-label="Cerrar modal">
             <FaTimes className="text-red-600 hover:text-gray-800" />
@@ -126,11 +126,11 @@ const AddExistingTemplatesModal: React.FC<ICreateModalProps> = ({
                     />
                     <span className="text-gray-700">
                       <div>
-                        <strong>Nombre: </strong>
+                        <strong>Name: </strong>
                         {sw.name}
                       </div>
                       <div>
-                        <strong>Nº de Trials: </strong>
+                        <strong>Nº of Trials: </strong>
                         {sw.numberOfTemplates}
                       </div>
                     </span>
@@ -143,7 +143,7 @@ const AddExistingTemplatesModal: React.FC<ICreateModalProps> = ({
               onClick={handleSaveTrial}
               className="mt-4 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors duration-200"
             >
-              Guardar
+              Save
             </button>
           </div>
         )}

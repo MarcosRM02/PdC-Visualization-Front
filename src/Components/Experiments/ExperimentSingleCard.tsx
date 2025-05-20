@@ -78,7 +78,7 @@ const ExperimentSingleCard: React.FC<IExperimentSingleCardProps> = ({
               <HiOutlineInformationCircle className="text-sky-700 text-2xl" />
 
               <h4 className="text-gray-800 font-medium">
-                <strong>Descripción:</strong> {experiment.description || '—'}
+                <strong>Description</strong> {experiment.description || '—'}
               </h4>
             </div>
 
@@ -87,7 +87,7 @@ const ExperimentSingleCard: React.FC<IExperimentSingleCardProps> = ({
               <FaRegCalendarAlt className="text-sky-700 text-2xl" />
 
               <h4 className="text-gray-800 font-medium">
-                <strong>Fecha de Inicio:</strong> {formattedStartDate || '—'}
+                <strong>Start Date:</strong> {formattedStartDate || '—'}
               </h4>
             </div>
 
@@ -96,8 +96,7 @@ const ExperimentSingleCard: React.FC<IExperimentSingleCardProps> = ({
               <FaRegCalendarCheck className="text-sky-700 text-2xl" />
 
               <h4 className="text-gray-800 font-medium">
-                <strong>Fecha de Finalización:</strong>{' '}
-                {formattedFinishDate || '—'}
+                <strong>Completion Date:</strong> {formattedFinishDate || '—'}
               </h4>
             </div>
 
@@ -106,7 +105,7 @@ const ExperimentSingleCard: React.FC<IExperimentSingleCardProps> = ({
               <HiOutlineAnnotation className="text-sky-700 text-2xl" />
 
               <h4 className="text-gray-800 font-medium">
-                <strong>Notas:</strong> {experiment.notes || '—'}
+                <strong>Notes:</strong> {experiment.notes || '—'}
               </h4>
             </div>
 
@@ -115,7 +114,7 @@ const ExperimentSingleCard: React.FC<IExperimentSingleCardProps> = ({
               <HiOutlineUserGroup className="text-sky-700 text-2xl" />
 
               <h4 className="text-gray-800 font-semibold">
-                <strong>Número de Participantes:</strong>{' '}
+                <strong>Number of Participants:</strong>{' '}
                 {experiment.numberOfParticipants}
               </h4>
             </div>

@@ -40,7 +40,7 @@ const UserModal: React.FC<IUserModalProps> = ({ user, onClose }) => {
             onClick={onClose}
             className="mt-4 px-4 py-2 bg-rose-500 text-white rounded hover:bg-rose-600 transition-colors"
           >
-            Cerrar
+            Close
           </button>
         </div>
       </div>
@@ -74,7 +74,7 @@ const UserModal: React.FC<IUserModalProps> = ({ user, onClose }) => {
             id="modal-title"
             className="text-2xl font-semibold mb-4 text-slate-800"
           >
-            Datos Personales del Participante
+            Participant's Personal Data
           </h2>
 
           {/* Contenido del Modal */}
@@ -83,7 +83,7 @@ const UserModal: React.FC<IUserModalProps> = ({ user, onClose }) => {
             <div className="flex items-center gap-x-3">
               <HiOutlineUser className="text-sky-700 text-2xl" />
               <div>
-                <span className="text-slate-700 font-medium">Nombre:</span>
+                <span className="text-slate-700 font-medium">Name:</span>
                 <span className="ml-2 text-slate-800 font-semibold text-2xl">
                   {currentUser.name || '—'}
                 </span>
@@ -94,9 +94,9 @@ const UserModal: React.FC<IUserModalProps> = ({ user, onClose }) => {
             <div className="flex items-center gap-x-3">
               <HiOutlineCake className="text-sky-700 text-2xl" />
               <div>
-                <span className="text-slate-700 font-medium">Edad:</span>
+                <span className="text-slate-700 font-medium">Age:</span>
                 <span className="ml-2 text-slate-800 font-medium">
-                  {currentUser.age || '—'} años
+                  {currentUser.age || '—'} years
                 </span>
               </div>
             </div>
@@ -105,7 +105,7 @@ const UserModal: React.FC<IUserModalProps> = ({ user, onClose }) => {
             <div className="flex items-center gap-x-3">
               <FaRulerVertical className="text-sky-700 text-2xl" />
               <div>
-                <span className="text-slate-700 font-medium">Altura:</span>
+                <span className="text-slate-700 font-medium">Height:</span>
                 <span className="ml-2 text-slate-800 font-medium">
                   {currentUser.height ? `${currentUser.height} m` : '—'}
                 </span>
@@ -116,7 +116,7 @@ const UserModal: React.FC<IUserModalProps> = ({ user, onClose }) => {
             <div className="flex items-center gap-x-3">
               <GiWeightScale className="text-sky-700 text-2xl" />
               <div>
-                <span className="text-slate-700 font-medium">Peso:</span>
+                <span className="text-slate-700 font-medium">Weight:</span>
                 <span className="ml-2 text-slate-800 font-medium">
                   {currentUser.weight || '—'} kg
                 </span>
@@ -127,9 +127,7 @@ const UserModal: React.FC<IUserModalProps> = ({ user, onClose }) => {
             <div className="flex items-center gap-x-3">
               <GiFootprint className="text-sky-700 text-2xl" />
               <div>
-                <span className="text-slate-700 font-medium">
-                  Longitud de Pie:
-                </span>
+                <span className="text-slate-700 font-medium">Foot Length:</span>
                 <span className="ml-2 text-slate-800 font-medium">
                   {currentUser.footLength || '—'} cm
                 </span>

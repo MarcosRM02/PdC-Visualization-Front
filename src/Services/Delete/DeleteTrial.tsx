@@ -20,15 +20,16 @@ const DeleteTrialModal: React.FC<IDeleteModalProps> = ({
     try {
       await axios.delete(`trials/delete/${id}`);
       setLoading(false);
-      enqueueSnackbar('Prueba eliminada exitosamente', {
+      enqueueSnackbar('Trial deleted successfully', {
         variant: 'success',
       });
-      console.log('Trial deleted successfully. Calling callback.');
       onDeleted(); // Notificar al componente padre
       onClose();
     } catch (error) {
       setLoading(false);
-      enqueueSnackbar('Error al eliminar la prueba', { variant: 'error' });
+      enqueueSnackbar('An error occurred while deleting the trial', {
+        variant: 'error',
+      });
       console.error('Error deleting trial:', error);
     }
   };
@@ -46,9 +47,7 @@ const DeleteTrialModal: React.FC<IDeleteModalProps> = ({
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
         {/* Cabecera del Modal */}
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold text-gray-800">
-            Eliminar Prueba
-          </h2>
+          <h2 className="text-2xl font-semibold text-gray-800">Delete Trial</h2>
           <button onClick={onClose} aria-label="Cerrar modal">
             <FaTimes className="text-red-600 hover:text-gray-800" />
           </button>
@@ -62,7 +61,7 @@ const DeleteTrialModal: React.FC<IDeleteModalProps> = ({
         ) : (
           <div className="flex flex-col space-y-4">
             <h3 className="text-lg">
-              ¿Estás seguro de que deseas eliminar esta prueba?
+              Are you sure you want to delete this trial?
             </h3>
 
             <div className="flex justify-end space-x-4 mt-4">
@@ -70,13 +69,13 @@ const DeleteTrialModal: React.FC<IDeleteModalProps> = ({
                 onClick={onClose}
                 className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200"
               >
-                Cancelar
+                Cancel
               </button>
               <button
                 onClick={handleDeleteTrial}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
               >
-                Sí, Eliminar
+                Delete
               </button>
             </div>
           </div>

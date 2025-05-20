@@ -27,8 +27,8 @@ const EditParticipantTemplateModal: React.FC<IEditModalProps> = ({
         setLoading(false);
       } catch (err) {
         setLoading(false);
-        setError('Ocurrió un error al cargar los datos del participante.');
-        enqueueSnackbar('Error al cargar los datos del participante.', {
+        setError('An error occurred while loading the participant');
+        enqueueSnackbar('An error occurred while loading the participant', {
           variant: 'error',
         });
         console.error(err);
@@ -40,7 +40,7 @@ const EditParticipantTemplateModal: React.FC<IEditModalProps> = ({
 
   const handleEditParticipant = async () => {
     if (!code.trim()) {
-      enqueueSnackbar('El campo "Code" es obligatorio.', {
+      enqueueSnackbar('"Code" field is required', {
         variant: 'warning',
       });
       return;
@@ -52,14 +52,16 @@ const EditParticipantTemplateModal: React.FC<IEditModalProps> = ({
     try {
       await axios.put(`participantTemplates/edit/${id}`, data);
       setLoading(false);
-      enqueueSnackbar('Participante editado exitosamente.', {
+      enqueueSnackbar('Participant successfully edited', {
         variant: 'success',
       });
       onClose();
       onEdited(); // Notificar al componente padre
     } catch (err) {
       setLoading(false);
-      enqueueSnackbar('Error al editar el participante.', { variant: 'error' });
+      enqueueSnackbar('An error occurred while editing the participant', {
+        variant: 'error',
+      });
       console.error(err);
     }
   };
@@ -80,7 +82,7 @@ const EditParticipantTemplateModal: React.FC<IEditModalProps> = ({
         {/* Cabecera del Modal */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Editar Participante
+            Edit Participant
           </h2>
           <button
             onClick={onClose}
@@ -112,7 +114,7 @@ const EditParticipantTemplateModal: React.FC<IEditModalProps> = ({
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Ingrese el código del participante"
+                placeholder="Enter the participant code"
                 required
               />
             </div>
@@ -129,7 +131,7 @@ const EditParticipantTemplateModal: React.FC<IEditModalProps> = ({
               onClick={handleEditParticipant}
               className="mt-4 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors duration-200"
             >
-              Guardar
+              Save
             </button>
           </div>
         )}

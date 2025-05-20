@@ -26,7 +26,7 @@ const DeletePersonalData = () => {
       .catch((error) => {
         setLoading(false);
         enqueueSnackbar('Error', { variant: 'error' });
-        console.log(error);
+        console.error(error);
       });
   };
 
@@ -43,7 +43,7 @@ const DeletePersonalData = () => {
           className="p-4 bg-red-600 text-white m-8 w-full"
           onClick={handleDeletePersonalData}
         >
-          Yes, Delete it
+          Delete
         </button>
       </div>
     </div>

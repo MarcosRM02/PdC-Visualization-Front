@@ -41,11 +41,11 @@ const ShowTrials = () => {
 
   const breadcrumbItems: IBreadcrumbItem[] = [
     {
-      label: 'Experimentos',
+      label: 'Experiments',
       path: `/experiments/by-professional/${professionalId}`,
     },
     {
-      label: 'Participantes',
+      label: 'Participants',
       path: `/participants/by-experiment/${experimentId.experimentId}`,
     },
     { label: 'Trials', path: `/trials/by-participant/${id}` },
@@ -105,7 +105,10 @@ const ShowTrials = () => {
         setFilteredSWDatas(trialsData);
       } catch (error) {
         console.error(error);
-        setError('Error al cargar los trials.');
+        setError('An error occurred while loading the trials');
+        enqueueSnackbar('An error occurred while loading the trials', {
+          variant: 'error',
+        });
       } finally {
         setLoading(false);
       }
@@ -188,7 +191,7 @@ const ShowTrials = () => {
             <FaSearch className="text-gray-500 mr-2" />
             <input
               type="text"
-              placeholder="Buscar por código..."
+              placeholder="Search by Code"
               value={searchCode}
               onChange={(e) => setSearchCode(e.target.value)}
               className="bg-transparent focus:outline-none w-full"
@@ -202,7 +205,7 @@ const ShowTrials = () => {
             <DatePicker
               selected={filterDate}
               onChange={(date: Date | null) => setFilterDate(date)}
-              placeholderText="Filtrar por fecha"
+              placeholderText="Filter by Date"
               className="bg-transparent focus:outline-none w-full"
               aria-label="Filtrar por fecha"
               dateFormat="dd/MM/yyyy"
@@ -217,19 +220,9 @@ const ShowTrials = () => {
             aria-label="Resetear filtros"
           >
             <FaUndo className="mr-2" />
-            Resetear
+            Reset
           </button>
         </div>
-
-        {/* // Botón para Abrir el Modal de Crear Trial
-        <div className="flex justify-end mb-6">
-          <button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="flex items-center text-sky-900 hover:text-blue-800 transition-colors duration-200"
-          >
-            <MdOutlineAddBox className="text-4xl mr-2" />
-          </button>
-        </div> */}
 
         {/* Dropdown */}
         <div className="flex justify-end mb-6">
@@ -291,9 +284,6 @@ const ShowTrials = () => {
             <h2 className="text-2xl font-semibold text-gray-700">
               No Trials Available
             </h2>
-            <p className="text-gray-500 mt-2">
-              Intenta ajustar los filtros de búsqueda.
-            </p>
           </div>
         )}
         {/* Modal de Añadir Participantes Existentes */}

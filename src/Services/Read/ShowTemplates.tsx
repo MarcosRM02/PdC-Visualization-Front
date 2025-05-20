@@ -58,7 +58,10 @@ const ShowTemplates = () => {
         setFilteredSWDatas(trialsData);
       } catch (error) {
         console.error(error);
-        setError('Error al cargar los templates.');
+        setError('An error occurred while loading the templates');
+        enqueueSnackbar('An error occurred while loading the templates', {
+          variant: 'error',
+        });
       } finally {
         setLoading(false);
       }
@@ -102,7 +105,7 @@ const ShowTemplates = () => {
             <FaSearch className="text-gray-500 mr-2" />
             <input
               type="text"
-              placeholder="Buscar por código..."
+              placeholder="Search by Code"
               value={searchName}
               onChange={(e) => setSearchName(e.target.value)}
               className="bg-transparent focus:outline-none w-full"
@@ -117,7 +120,7 @@ const ShowTemplates = () => {
             aria-label="Resetear filtros"
           >
             <FaUndo className="mr-2" />
-            Resetear
+            Reset
           </button>
         </div>
 
@@ -154,9 +157,6 @@ const ShowTemplates = () => {
             <h2 className="text-2xl font-semibold text-gray-700">
               No Templates Available
             </h2>
-            <p className="text-gray-500 mt-2">
-              Intenta ajustar los filtros de búsqueda.
-            </p>
           </div>
         )}
 

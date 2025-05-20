@@ -64,7 +64,7 @@ const TrialSingleCard: React.FC<ITrialSingleCardProps> = ({
           <div className="flex items-center gap-x-3">
             <FaRegCalendarCheck className="text-sky-700 text-2xl" />
             <h4 className="text-gray-800 font-medium">
-              <strong>Fecha:</strong> {formattedDate || '—'}
+              <strong>Date:</strong> {formattedDate || '—'}
             </h4>
           </div>
 
@@ -72,7 +72,7 @@ const TrialSingleCard: React.FC<ITrialSingleCardProps> = ({
           <div className="flex items-center gap-x-3">
             <HiOutlineQrcode className="text-sky-700 text-2xl" />
             <h4 className="text-gray-800 font-medium">
-              <strong>Código:</strong> {trials.code || '—'}
+              <strong>Code:</strong> {trials.code || '—'}
             </h4>
           </div>
 
@@ -80,7 +80,7 @@ const TrialSingleCard: React.FC<ITrialSingleCardProps> = ({
           <div className="flex items-center gap-x-3">
             <HiOutlineInformationCircle className="text-sky-700 text-2xl" />
             <h4 className="text-gray-800 font-medium">
-              <strong>Descripción:</strong> {trials.description || '—'}
+              <strong>Description:</strong> {trials.description || '—'}
             </h4>
           </div>
 
@@ -88,7 +88,7 @@ const TrialSingleCard: React.FC<ITrialSingleCardProps> = ({
           <div className="flex items-center gap-x-3">
             <HiOutlineAnnotation className="text-sky-700 text-2xl" />
             <h4 className="text-gray-800 font-medium">
-              <strong>Notas:</strong> {trials.annotation || '—'}
+              <strong>Notes:</strong> {trials.annotation || '—'}
             </h4>
           </div>
         </div>

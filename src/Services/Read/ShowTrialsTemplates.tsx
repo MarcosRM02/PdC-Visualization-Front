@@ -71,7 +71,10 @@ const ShowTrialsTemplates = () => {
         setFilteredSWDatas(trialsData);
       } catch (error) {
         console.error(error);
-        setError('Error al cargar los templates.');
+        setError('An error occurred while loading the templates');
+        enqueueSnackbar('An error occurred while loading the templates', {
+          variant: 'error',
+        });
       } finally {
         setLoading(false);
       }
@@ -138,7 +141,7 @@ const ShowTrialsTemplates = () => {
             <FaSearch className="text-gray-500 mr-2" />
             <input
               type="text"
-              placeholder="Buscar por código..."
+              placeholder="Search by Code"
               value={searchCode}
               onChange={(e) => setSearchCode(e.target.value)}
               className="bg-transparent focus:outline-none w-full"
@@ -152,7 +155,7 @@ const ShowTrialsTemplates = () => {
             <DatePicker
               selected={filterDate}
               onChange={(date: Date | null) => setFilterDate(date)}
-              placeholderText="Filtrar por fecha"
+              placeholderText="Filter by Date"
               className="bg-transparent focus:outline-none w-full"
               aria-label="Filtrar por fecha"
               dateFormat="dd/MM/yyyy"
@@ -167,7 +170,7 @@ const ShowTrialsTemplates = () => {
             aria-label="Resetear filtros"
           >
             <FaUndo className="mr-2" />
-            Resetear
+            Reset
           </button>
         </div>
 
@@ -204,9 +207,6 @@ const ShowTrialsTemplates = () => {
             <h2 className="text-2xl font-semibold text-gray-700">
               No Templates Available
             </h2>
-            <p className="text-gray-500 mt-2">
-              Intenta ajustar los filtros de búsqueda.
-            </p>
           </div>
         )}
 

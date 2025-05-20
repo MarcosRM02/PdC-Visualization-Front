@@ -27,7 +27,7 @@ const CreateTrialTemplateModal: React.FC<ICreateModalProps> = ({
           const response = await axios.get(`sw`);
           setSWIds(response.data);
         } catch (error) {
-          enqueueSnackbar('Error al obtener los SW IDs', { variant: 'error' });
+          enqueueSnackbar('Error fetching SW IDs', { variant: 'error' });
           console.error('Error fetching SW IDs:', error);
         }
       };
@@ -38,12 +38,9 @@ const CreateTrialTemplateModal: React.FC<ICreateModalProps> = ({
 
   const handleSaveTrial = async () => {
     if (!swId) {
-      enqueueSnackbar(
-        'Por favor, selecciona un SW ID válido antes de continuar.',
-        {
-          variant: 'warning',
-        },
-      );
+      enqueueSnackbar('Please select a valid SW ID before continuing.', {
+        variant: 'warning',
+      });
       return;
     }
 
@@ -60,7 +57,7 @@ const CreateTrialTemplateModal: React.FC<ICreateModalProps> = ({
     try {
       await axios.post(`trialTemplates/create`, dataToSend);
       setLoading(false);
-      enqueueSnackbar('Template creada exitosamente', { variant: 'success' });
+      enqueueSnackbar('Trial created successfully', { variant: 'success' });
       onClose();
       onCreated(); // Notificar al componente padre
       // Limpiar campos
@@ -70,7 +67,9 @@ const CreateTrialTemplateModal: React.FC<ICreateModalProps> = ({
       setSWId('');
     } catch (error) {
       setLoading(false);
-      enqueueSnackbar('Error al crear la template', { variant: 'error' });
+      enqueueSnackbar('An error occurred while creating the trial', {
+        variant: 'error',
+      });
       console.error('Error:', error);
     }
   };
@@ -92,9 +91,7 @@ const CreateTrialTemplateModal: React.FC<ICreateModalProps> = ({
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
         {/* Cabecera del Modal */}
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold text-gray-800">
-            Crear Template
-          </h2>
+          <h2 className="text-2xl font-semibold text-gray-800">Create Tial</h2>
           <button onClick={onClose} aria-label="Cerrar modal">
             <FaTimes className="text-red-600 hover:text-gray-800" />
           </button>
@@ -113,7 +110,7 @@ const CreateTrialTemplateModal: React.FC<ICreateModalProps> = ({
                 className="block text-gray-700 text-lg mb-2"
                 htmlFor="swId"
               >
-                SW (ID - Descripción) <span className="text-red-500">*</span>
+                SW (ID - Description) <span className="text-red-500">*</span>
               </label>
               <select
                 id="swId"
@@ -122,7 +119,7 @@ const CreateTrialTemplateModal: React.FC<ICreateModalProps> = ({
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
                 required
               >
-                <option value="">Seleccionar SW</option>
+                <option value="">Select SW</option>
                 {swIds.map((sw) => (
                   <option key={sw.id} value={sw.id}>
                     {sw.id} - {sw.description}
@@ -137,7 +134,7 @@ const CreateTrialTemplateModal: React.FC<ICreateModalProps> = ({
                 className="block text-gray-700 text-lg mb-2"
                 htmlFor="description"
               >
-                Descripción <span className="text-gray-500">(opcional)</span>
+                Description <span className="text-gray-500">(Optional)</span>
               </label>
               <input
                 id="description"
@@ -145,7 +142,7 @@ const CreateTrialTemplateModal: React.FC<ICreateModalProps> = ({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Ingrese la descripción"
+                placeholder="Enter the trial description"
               />
             </div>
 
@@ -155,7 +152,7 @@ const CreateTrialTemplateModal: React.FC<ICreateModalProps> = ({
                 className="block text-gray-700 text-lg mb-2"
                 htmlFor="code"
               >
-                Código <span className="text-gray-500">(opcional)</span>
+                Code <span className="text-gray-500">(Optional)</span>
               </label>
               <input
                 id="code"
@@ -163,7 +160,7 @@ const CreateTrialTemplateModal: React.FC<ICreateModalProps> = ({
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Ingrese el código"
+                placeholder="Enter the trial code"
               />
             </div>
 
@@ -173,7 +170,7 @@ const CreateTrialTemplateModal: React.FC<ICreateModalProps> = ({
                 className="block text-gray-700 text-lg mb-2"
                 htmlFor="annotation"
               >
-                Anotaciones <span className="text-gray-500">(opcional)</span>
+                Notes <span className="text-gray-500">(Optional)</span>
               </label>
               <input
                 id="annotation"
@@ -181,7 +178,7 @@ const CreateTrialTemplateModal: React.FC<ICreateModalProps> = ({
                 value={annotation}
                 onChange={(e) => setAnnotation(e.target.value)}
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Ingrese las anotaciones"
+                placeholder="Enter some annotation"
               />
             </div>
 
@@ -190,7 +187,7 @@ const CreateTrialTemplateModal: React.FC<ICreateModalProps> = ({
               onClick={handleSaveTrial}
               className="mt-4 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors duration-200"
             >
-              Guardar
+              Save
             </button>
           </div>
         )}

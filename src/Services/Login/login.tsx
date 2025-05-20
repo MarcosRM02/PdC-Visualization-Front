@@ -39,9 +39,11 @@ const Login = () => {
       });
     } catch (err: any) {
       if (err.response) {
-        setErrorMessage(err.response.data.message || 'Credenciales inválidas');
+        setErrorMessage(
+          err.response.data.message || 'Invalid username or password',
+        );
       } else {
-        setErrorMessage('Ha ocurrido un error. Inténtalo más tarde.');
+        setErrorMessage('An error has occurred. Please try again later');
       }
       setTimeout(() => setErrorMessage(''), 3000);
     }

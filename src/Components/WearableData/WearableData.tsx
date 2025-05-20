@@ -371,7 +371,7 @@ const WearablesData = ({
           onClick={resetGraphs}
           icon={<FaSync />}
           color="orange"
-          tooltip="Resetear Gráficas" // Aquí se define el mensaje del tooltip
+          tooltip="Reset Plots" // Aquí se define el mensaje del tooltip
         />
         <div className="flex items-center space-x-2">
           <IconActionButton
@@ -389,7 +389,7 @@ const WearablesData = ({
             }
             icon={<HiOutlineFolderDownload />}
             color="blue"
-            tooltip="Descargar Datos Visibles"
+            tooltip="Download Visible Data"
           />
           <InfoButton />
         </div>
@@ -401,7 +401,7 @@ const WearablesData = ({
             {leftWearables.map((_wearable, index) => (
               <Fragment key={index}>
                 <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                  Sensor de Presión Izquierdo
+                  Left Pressure Sensors
                 </h2>
                 <div
                   ref={refs.leftPressureSensor}
@@ -444,7 +444,7 @@ const WearablesData = ({
             ) : (
               <div className="flex flex-col items-center justify-center w-full h-[500px] bg-gray-800 text-white text-xl font-semibold rounded-lg">
                 <VideoCameraIcon className="h-12 w-12 mb-3" />
-                <span>El Mapa de Calor se está generando</span>
+                <span>Heatmap is being generated</span>
               </div>
             )}
             <TimeProgressBar
@@ -483,7 +483,7 @@ const WearablesData = ({
             {rightWearables.map((_wearable, index) => (
               <Fragment key={index}>
                 <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                  Sensor de Presión Derecho
+                  Right Pressure Sensors
                 </h2>
                 <div
                   ref={refs.rightPressureSensor}
@@ -501,7 +501,7 @@ const WearablesData = ({
           {leftWearables.map((_wearable, index) => (
             <Fragment key={index}>
               <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                Acelerómetro Izquierdo
+                Left Accelerometer
               </h2>
               <div
                 ref={refs.leftAccelerometer}
@@ -509,7 +509,7 @@ const WearablesData = ({
                 className="mb-6"
               ></div>
               <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                Giroscopio Izquierdo
+                Left Gyroscope
               </h2>
               <div
                 ref={refs.leftGyroscope}
@@ -523,7 +523,7 @@ const WearablesData = ({
           {rightWearables.map((_wearable, index) => (
             <Fragment key={index}>
               <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                Acelerómetro Derecho
+                Right Accelerometer
               </h2>
               <div
                 ref={refs.rightAccelerometer}
@@ -531,7 +531,7 @@ const WearablesData = ({
                 className="mb-6"
               ></div>
               <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
-                Giroscopio Derecho
+                Right Gyroscope
               </h2>
               <div
                 ref={refs.rightGyroscope}

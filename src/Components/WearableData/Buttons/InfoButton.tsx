@@ -4,7 +4,7 @@ import { Tooltip } from 'react-tooltip';
 
 const InfoButton: React.FC = () => {
   const message =
-    'Los datos que contienen los CSV son los del rango visible actual de las gráficas';
+    'The data in the CSV corresponds to the currently visible range of the plots';
   return (
     <div>
       <button

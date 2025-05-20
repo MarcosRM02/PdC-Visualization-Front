@@ -25,7 +25,7 @@ const CreateParticipantTemplateModal: React.FC<ICreateModalProps> = ({
   const handleCreateParticipant = async () => {
     // Validaciones básicas
     if (!code.trim()) {
-      enqueueSnackbar('El campo "Code" es obligatorio.', {
+      enqueueSnackbar('"Code" field is required', {
         variant: 'warning',
       });
       return;
@@ -49,7 +49,7 @@ const CreateParticipantTemplateModal: React.FC<ICreateModalProps> = ({
       let newPersonalDataId = response1.data;
 
       if (!newPersonalDataId) {
-        throw new Error('No se obtuvo el ID de personalData en la respuesta.');
+        throw new Error('PersonalData id was not obtained in the response');
       }
 
       // Segunda solicitud POST para crear el participante utilizando el ID del experimento
@@ -90,7 +90,9 @@ const CreateParticipantTemplateModal: React.FC<ICreateModalProps> = ({
       } else if (error.message) {
         enqueueSnackbar(`Error: ${error.message}`, { variant: 'error' });
       } else {
-        enqueueSnackbar('Error creating the participant', { variant: 'error' });
+        enqueueSnackbar('An error occurred while creating the participant', {
+          variant: 'error',
+        });
       }
       console.error('Error creating participant:', error);
     }
@@ -116,7 +118,7 @@ const CreateParticipantTemplateModal: React.FC<ICreateModalProps> = ({
         {/* Cabecera del Modal */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Crear Participante
+            Create Participant
           </h2>
           <button
             onClick={onClose}
@@ -269,7 +271,7 @@ const CreateParticipantTemplateModal: React.FC<ICreateModalProps> = ({
               className="mt-4 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors duration-200"
               disabled={loading} // Deshabilitar mientras carga
             >
-              Guardar
+              Save
             </button>
           </div>
         )}

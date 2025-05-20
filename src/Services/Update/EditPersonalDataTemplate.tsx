@@ -54,7 +54,9 @@ const EditPersonalDataTemplateModal: React.FC<IEditModalProps> = ({
           variant: 'error',
         });
       } else {
-        enqueueSnackbar('Error editing personal data', { variant: 'error' });
+        enqueueSnackbar('An error occurred while editing personal data', {
+          variant: 'error',
+        });
       }
       console.error('Error editing personal data:', error);
     }
@@ -86,7 +88,7 @@ const EditPersonalDataTemplateModal: React.FC<IEditModalProps> = ({
           setLoading(false);
         } catch (error) {
           setLoading(false);
-          enqueueSnackbar('Error fetching personal data.', {
+          enqueueSnackbar('An error occurred while loading personal data', {
             variant: 'error',
           });
           console.error('Error fetching personal data:', error);
@@ -116,7 +118,7 @@ const EditPersonalDataTemplateModal: React.FC<IEditModalProps> = ({
         {/* Cabecera del Modal */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Editar Datos Personales
+            Edit Personal Data
           </h2>
           <button
             onClick={onClose}
@@ -148,7 +150,7 @@ const EditPersonalDataTemplateModal: React.FC<IEditModalProps> = ({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Ingrese el nombre del participante"
+                placeholder="Enter the participant's name"
               />
             </div>
 
@@ -163,7 +165,7 @@ const EditPersonalDataTemplateModal: React.FC<IEditModalProps> = ({
                 value={age}
                 onChange={(e) => setAge(e.target.value)}
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Ingrese la edad del participante"
+                placeholder="Enter the participant's age"
                 min="1" // Evita números menores que 1
                 step="1" // Solo permite números enteros
               />
@@ -250,7 +252,7 @@ const EditPersonalDataTemplateModal: React.FC<IEditModalProps> = ({
               className="mt-4 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors duration-200"
               disabled={loading} // Deshabilitar mientras carga
             >
-              Guardar
+              Save
             </button>
           </div>
         )}

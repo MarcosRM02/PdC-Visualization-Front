@@ -31,7 +31,7 @@ const EditTrial: React.FC<IEditModalProps> = ({
         setDescription(response.data.description || '');
         setAnnotation(response.data.annotation || '');
       } catch (error) {
-        enqueueSnackbar('Ocurrió un error al cargar los datos del trial.', {
+        enqueueSnackbar('An error occurred while loading the trial data', {
           variant: 'error',
         });
         console.error('Error fetching trial data:', error);
@@ -55,7 +55,7 @@ const EditTrial: React.FC<IEditModalProps> = ({
     setLoading(true);
     try {
       await axios.put(`trials/edit/${id}`, data);
-      enqueueSnackbar('Trial editado exitosamente', {
+      enqueueSnackbar('Trial successfully edited', {
         variant: 'success',
       });
       onClose();
@@ -66,7 +66,9 @@ const EditTrial: React.FC<IEditModalProps> = ({
       setDescription('');
       setAnnotation('');
     } catch (error) {
-      enqueueSnackbar('Error al editar el trial.', { variant: 'error' });
+      enqueueSnackbar('An error occurred while editing the trial', {
+        variant: 'error',
+      });
       console.error('Error editing trial:', error);
     } finally {
       setLoading(false);
@@ -90,7 +92,7 @@ const EditTrial: React.FC<IEditModalProps> = ({
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg relative">
         {/* Cabecera del Modal */}
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold text-gray-800">Editar Trial</h2>
+          <h2 className="text-2xl font-semibold text-gray-800">Edit Trial</h2>
           <button
             onClick={onClose}
             aria-label="Cerrar modal"
@@ -113,7 +115,7 @@ const EditTrial: React.FC<IEditModalProps> = ({
                 className="block text-gray-700 text-lg mb-2"
                 htmlFor="code"
               >
-                Código
+                Code
               </label>
               <input
                 id="code"
@@ -121,7 +123,7 @@ const EditTrial: React.FC<IEditModalProps> = ({
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Ingrese el código del trial"
+                placeholder="Enter the trial code"
               />
             </div>
 
@@ -131,7 +133,7 @@ const EditTrial: React.FC<IEditModalProps> = ({
                 className="block text-gray-700 text-lg mb-2"
                 htmlFor="date"
               >
-                Fecha
+                Date
               </label>
               <input
                 id="date"
@@ -139,7 +141,7 @@ const EditTrial: React.FC<IEditModalProps> = ({
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Seleccione una fecha"
+                placeholder="Select the date for the trial"
               />
             </div>
 
@@ -149,14 +151,14 @@ const EditTrial: React.FC<IEditModalProps> = ({
                 className="block text-gray-700 text-lg mb-2"
                 htmlFor="description"
               >
-                Descripción <span className="text-gray-500">(opcional)</span>
+                Description <span className="text-gray-500">(Optional)</span>
               </label>
               <textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Ingrese la descripción del trial"
+                placeholder="Enter the description of the trial"
                 rows={4}
               />
             </div>
@@ -167,14 +169,14 @@ const EditTrial: React.FC<IEditModalProps> = ({
                 className="block text-gray-700 text-lg mb-2"
                 htmlFor="annotation"
               >
-                Anotación <span className="text-gray-500">(opcional)</span>
+                Notes <span className="text-gray-500">(Optional)</span>
               </label>
               <textarea
                 id="annotation"
                 value={annotation}
                 onChange={(e) => setAnnotation(e.target.value)}
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Ingrese las anotaciones del trial"
+                placeholder="Enter some annotation"
                 rows={4}
               />
             </div>
@@ -186,7 +188,7 @@ const EditTrial: React.FC<IEditModalProps> = ({
                 onClick={onClose}
                 className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200"
               >
-                Cancelar
+                Cancel
               </button>
 
               {/* Botón de Guardar */}
@@ -195,7 +197,7 @@ const EditTrial: React.FC<IEditModalProps> = ({
                 className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={loading}
               >
-                Guardar
+                Save
               </button>
             </div>
           </div>

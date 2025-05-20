@@ -53,7 +53,7 @@ const TemplateSingleCard: React.FC<ITrialSingleCardProps> = ({
               <HiOutlineQrcode className="text-sky-700 text-2xl" />
 
               <h4 className="text-gray-800 font-semibold text-lg">
-                <strong>Nombre:</strong> {template.name || '—'}
+                <strong>Name:</strong> {template.name || '—'}
               </h4>
             </div>
 
@@ -62,7 +62,7 @@ const TemplateSingleCard: React.FC<ITrialSingleCardProps> = ({
               <HiOutlineInformationCircle className="text-sky-700 text-2xl" />
 
               <h4 className="text-gray-800 font-medium">
-                <strong>Descripción:</strong> {template.description || '—'}
+                <strong>Description:</strong> {template.description || '—'}
               </h4>
             </div>
           </div>
@@ -70,7 +70,7 @@ const TemplateSingleCard: React.FC<ITrialSingleCardProps> = ({
           <div className="flex items-center gap-x-3">
             <HiOutlineUserGroup className="text-sky-700 text-2xl" />
             <h4 className="text-gray-800 font-medium">
-              <strong>Número de Trials:</strong> {template.numberOfTemplates}
+              <strong>Number of Trials:</strong> {template.numberOfTemplates}
             </h4>
           </div>
         </Link>

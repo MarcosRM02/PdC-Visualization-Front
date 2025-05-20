@@ -25,7 +25,7 @@ export async function descargarDatosVisibles(
   ): string => {
     const plotInstance = document.getElementById(divId.current.id);
     if (!plotInstance) {
-      console.error('Div no encontrado:', divId.current.id);
+      console.error('Div no Found:', divId.current.id);
       return '';
     }
     // @ts-ignore Plotly layout

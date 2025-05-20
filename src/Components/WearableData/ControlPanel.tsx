@@ -20,18 +20,9 @@ const ControlPanel: React.FC<IControlPanelProps> = ({
   updateHz,
   handleUpdateHzChange,
 }) => {
-  // const handleDownload = () => {
-  //   const link = document.createElement('a');
-  //   link.href = videoSrc;
-  //   link.setAttribute('download', videoName); // Dejar vacio si interesa que el nombre del archivo sea aleatorio
-  //   document.body.appendChild(link);
-  //   link.click();
-  //   document.body.removeChild(link);
-  // };
   const handleDownload = async () => {
     try {
       // 1) Petición al servidor, enviando la cookie HttpOnly
-      console.log('Descargando video desde:', videoSrc);
       const response = await axios.get<Blob>(videoSrc, {
         responseType: 'blob',
         withCredentials: true,
@@ -60,13 +51,13 @@ const ControlPanel: React.FC<IControlPanelProps> = ({
         onClick={handlePlay}
         icon={isPlaying ? <FaPause /> : <FaPlay />}
         color={isPlaying ? 'orange' : 'green'}
-        tooltip={isPlaying ? 'Pausar Vídeo' : 'Reproducir Vídeo'}
+        tooltip={isPlaying ? 'Pause' : 'Play'}
       />
       <IconActionButton
         onClick={handleReset}
         icon={<VscDebugRestart />}
         color="red"
-        tooltip="Reiniciar Vídeo"
+        tooltip="Reset"
       />
       <PlaybackRateDropdown
         playbackRate={playbackRate}

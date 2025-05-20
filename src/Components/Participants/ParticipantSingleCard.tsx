@@ -75,7 +75,7 @@ const ParticipantSingleCard: React.FC<IParticipantSingleCardProps> = ({
               <HiOutlineIdentification className="text-sky-700 text-2xl" />
 
               <h4 className="text-gray-800 font-semibold">
-                <strong>Código:</strong> {formattedCode}
+                <strong>Code:</strong> {formattedCode}
               </h4>
             </div>
           </div>
@@ -139,7 +139,7 @@ const ParticipantSingleCard: React.FC<IParticipantSingleCardProps> = ({
       {/* Estado de carga */}
       {loading && (
         <div className="absolute inset-0 flex items-center justify-center bg-slate-800 bg-opacity-50 rounded-lg">
-          <div className="text-white text-lg">Cargando...</div>
+          <div className="text-white text-lg">Loading...</div>
         </div>
       )}
 

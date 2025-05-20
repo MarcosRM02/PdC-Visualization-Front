@@ -46,7 +46,7 @@ function plotLeftWearable(
   plotData(
     leftWearables,
     refs.leftPressureSensor.current,
-    'Sensor de Presión Izquierdo',
+    'Left Pressure Sensors',
     [':32'],
     playTime,
     minLength,
@@ -55,7 +55,7 @@ function plotLeftWearable(
   plotData(
     leftWearables,
     refs.leftAccelerometer.current,
-    'Acelerómetro Izquierdo',
+    'Left Accelerometer',
     [32, 33, 34],
     playTime,
     minLength,
@@ -64,7 +64,7 @@ function plotLeftWearable(
   plotData(
     leftWearables,
     refs.leftGyroscope.current,
-    'Giroscopio Izquierdo',
+    'Left Gyroscope',
     [35, 36, 37],
     playTime,
     minLength,
@@ -81,7 +81,7 @@ function plotRightWearable(
   plotData(
     rightWearables,
     refs.rightPressureSensor.current,
-    'Sensor de Presión Derecho',
+    'Right Pressure Sensors',
     [':32'],
     playTime,
     minLength,
@@ -90,7 +90,7 @@ function plotRightWearable(
   plotData(
     rightWearables,
     refs.rightAccelerometer.current,
-    'Acelerómetro Derecho',
+    'Right Accelerometer',
     [32, 33, 34],
     playTime,
     minLength,
@@ -99,7 +99,7 @@ function plotRightWearable(
   plotData(
     rightWearables,
     refs.rightGyroscope.current,
-    'Giroscopio Derecho',
+    'Right Gyroscope',
     [35, 36, 37],
     playTime,
     minLength,
@@ -162,7 +162,7 @@ function generateLayout(yRange?: [number, number]) {
     ],
 
     yaxis: {
-      title: 'Valor',
+      title: 'Value',
       ...(yRange ? { range: yRange } : {}),
       fixedrange: true,
       titlefont: {
@@ -171,7 +171,7 @@ function generateLayout(yRange?: [number, number]) {
       },
     },
     xaxis: {
-      title: 'Tiempo (s)',
+      title: 'Time (s)',
       titlefont: {
         size: 16,
         color: '#333',
@@ -196,7 +196,7 @@ export function plotData(
   yRange?: [number, number],
 ) {
   if (!divId) {
-    console.error('Elemento div inválido');
+    console.error('Invalid div Element');
     return;
   }
 
@@ -208,21 +208,21 @@ export function plotData(
 
   // Determinar el factor de conversión según el título
   let conversionFactor = 1;
-  if (title.includes('Acelerómetro')) {
+  if (title.includes('Accelerometer')) {
     conversionFactor = ACCEL_CONVERSION;
-  } else if (title.includes('Giroscopio')) {
+  } else if (title.includes('Gyroscope')) {
     conversionFactor = GYRO_CONVERSION;
   }
 
   // Convertir el rango de la gráfica si es necesario (para acelerómetro o giroscopio)
   let convertedYRange = yRange;
   if (yRange && Array.isArray(yRange) && yRange.length === 2) {
-    if (title.includes('Acelerómetro')) {
+    if (title.includes('Accelerometer')) {
       convertedYRange = [
         yRange[0] * ACCEL_CONVERSION,
         yRange[1] * ACCEL_CONVERSION,
       ];
-    } else if (title.includes('Giroscopio')) {
+    } else if (title.includes('Gyroscope')) {
       convertedYRange = [
         yRange[0] * GYRO_CONVERSION,
         yRange[1] * GYRO_CONVERSION,
@@ -230,7 +230,7 @@ export function plotData(
     }
   }
   let axisLabels: string[] = [];
-  if (title.includes('Acelerómetro') || title.includes('Giroscopio')) {
+  if (title.includes('Accelerometer') || title.includes('Gyroscope')) {
     axisLabels = ['X', 'Y', 'Z'];
   }
   const traces = datos.columns.map((column: string, index: number) => ({
@@ -248,10 +248,10 @@ export function plotData(
   }));
 
   const layout = generateLayout(convertedYRange);
-  if (title.includes('Acelerómetro')) {
-    layout.yaxis.title = 'Valor de Aceleración (m/s²)';
-  } else if (title.includes('Giroscopio')) {
-    layout.yaxis.title = 'Valor de Velocidad Angular (°/s)';
+  if (title.includes('Accelerometer')) {
+    layout.yaxis.title = 'Acceleration Value (m/s²)';
+  } else if (title.includes('Gyroscope')) {
+    layout.yaxis.title = 'Angular Velocity Value (°/s)';
   }
   // Línea roja para indicar el tiempo actual
   // @ts-ignore
@@ -299,7 +299,7 @@ export function plotData(
     displayModeBar: true,
     modeBarButtonsToAdd: [
       {
-        name: 'Apagar Leyenda',
+        name: 'Turn off legend',
         icon: Plotly.Icons.eraseshape,
         click: function (gd: any) {
           //@ts-ignore
@@ -307,7 +307,7 @@ export function plotData(
         },
       },
       {
-        name: 'Reactivar Leyenda',
+        name: 'Reactivate Legend',
         icon: Plotly.Icons.undo,
         click: function (gd: any) {
           //@ts-ignore

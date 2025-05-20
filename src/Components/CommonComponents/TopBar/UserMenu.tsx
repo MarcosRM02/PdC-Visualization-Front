@@ -81,7 +81,7 @@ const UserMenu: React.FC = () => {
                 onClick={handleEditUser}
               >
                 <FaUserEdit className="text-lg text-white group-hover:scale-110 transition-transform" />
-                <span className="text-white">Editar usuario</span>
+                <span className="text-white">Edit Profile</span>
               </button>
             </li>
             <li className="border-t border-gray-200"></li>
@@ -91,7 +91,7 @@ const UserMenu: React.FC = () => {
                 onClick={handleLogout}
               >
                 <MdLogout className="text-lg text-white  group-hover:scale-110 transition-transform" />
-                <span className="text-white">Cerrar sesión</span>
+                <span className="text-white">Log out</span>
               </button>
             </li>
           </ul>

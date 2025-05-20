@@ -27,7 +27,7 @@ const EditTrialTemplate: React.FC<IEditModalProps> = ({
         setName(response.data.name);
         setDescription(response.data.description || '');
       } catch (error) {
-        enqueueSnackbar('Ocurrió un error al cargar los datos del trial.', {
+        enqueueSnackbar('An error occurred while loading trial', {
           variant: 'error',
         });
         console.error('Error fetching trial data:', error);
@@ -42,7 +42,7 @@ const EditTrialTemplate: React.FC<IEditModalProps> = ({
   const handleEditTemplate = async () => {
     // Validaciones básicas
     if (!name.trim()) {
-      enqueueSnackbar('Por favor, completa todos los campos requeridos.', {
+      enqueueSnackbar('Please complete all required fields', {
         variant: 'warning',
       });
       return;
@@ -56,13 +56,15 @@ const EditTrialTemplate: React.FC<IEditModalProps> = ({
     setLoading(true);
     try {
       await axios.put(`templates/edit/${id}`, data);
-      enqueueSnackbar('Template editado exitosamente', {
+      enqueueSnackbar('Template Edited successfully', {
         variant: 'success',
       });
       onClose();
       onEdited(); // Notificar al componente padre
     } catch (error) {
-      enqueueSnackbar('Error al editar el Template.', { variant: 'error' });
+      enqueueSnackbar('An error occurred while editing the template.', {
+        variant: 'error',
+      });
       console.error('Error editing Template:', error);
     } finally {
       setLoading(false);
@@ -85,7 +87,7 @@ const EditTrialTemplate: React.FC<IEditModalProps> = ({
         {/* Cabecera del Modal */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Editar Template
+            Edit Template
           </h2>
           <button
             onClick={onClose}
@@ -108,7 +110,7 @@ const EditTrialTemplate: React.FC<IEditModalProps> = ({
                 className="block text-gray-700 text-lg mb-2"
                 htmlFor="name"
               >
-                Nombre <span className="text-red-500">*</span>
+                Name <span className="text-red-500">*</span>
               </label>
               <input
                 id="name"
@@ -116,7 +118,7 @@ const EditTrialTemplate: React.FC<IEditModalProps> = ({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Ingrese el nombre del template"
+                placeholder="Enter the template name"
                 required
               />
             </div>
@@ -127,14 +129,14 @@ const EditTrialTemplate: React.FC<IEditModalProps> = ({
                 className="block text-gray-700 text-lg mb-2"
                 htmlFor="description"
               >
-                Descripción <span className="text-gray-500">(opcional)</span>
+                Description <span className="text-gray-500">(opcional)</span>
               </label>
               <textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Ingrese la descripción del template"
+                placeholder="Enter the template description"
                 rows={4}
               />
             </div>
@@ -146,7 +148,7 @@ const EditTrialTemplate: React.FC<IEditModalProps> = ({
                 onClick={onClose}
                 className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200"
               >
-                Cancelar
+                Cancel
               </button>
 
               {/* Botón de Guardar */}
@@ -155,7 +157,7 @@ const EditTrialTemplate: React.FC<IEditModalProps> = ({
                 className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={loading}
               >
-                Guardar
+                Save
               </button>
             </div>
           </div>

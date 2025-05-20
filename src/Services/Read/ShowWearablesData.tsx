@@ -22,11 +22,11 @@ const ShowWearables = () => {
 
   const breadcrumbItems: IBreadcrumbItem[] = [
     {
-      label: 'Experimentos',
+      label: 'Experiments',
       path: `/experiments/by-professional/${professionalId}`,
     },
     {
-      label: 'Participantes',
+      label: 'Participants',
       path: `/participants/by-experiment/${experimentId}`,
     },
     { label: 'Trials', path: `/trials/by-participant/${participantId}` },

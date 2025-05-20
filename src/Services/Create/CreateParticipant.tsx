@@ -27,7 +27,7 @@ const CreateParticipantModal: React.FC<ICreateModalProps> = ({
   const handleCreateParticipant = async () => {
     // Validaciones básicas
     if (!code.trim()) {
-      enqueueSnackbar('El campo "Code" es obligatorio.', {
+      enqueueSnackbar('"Code" field is required', {
         variant: 'warning',
       });
       return;
@@ -47,8 +47,6 @@ const CreateParticipantModal: React.FC<ICreateModalProps> = ({
       // Primera solicitud POST para personalData
       const response1 = await axios.post(`personalData`, dataToSend);
 
-      console.log('Respuesta personalData:', response1.data); // Verificar la estructura de la respuesta
-
       // Verifica que la respuesta contenga el ID de personalData
       let newPersonalDataId: number | undefined;
 
@@ -61,10 +59,8 @@ const CreateParticipantModal: React.FC<ICreateModalProps> = ({
         newPersonalDataId = response1.data;
       }
 
-      console.log('Nuevo personalData ID:', newPersonalDataId);
-
       if (!newPersonalDataId) {
-        throw new Error('No se obtuvo el ID de personalData en la respuesta.');
+        throw new Error('Personal Data id was not obtained in the response');
       }
 
       // Segunda solicitud POST para crear el participante utilizando el ID del experimento
@@ -73,15 +69,12 @@ const CreateParticipantModal: React.FC<ICreateModalProps> = ({
         personaldataid: newPersonalDataId,
       };
 
-      console.log('Datos del participante a crear:', participantData);
-
       await axios.post(
         `/participants/create/${professionalId}/${id}`,
         participantData,
       );
-      console.log('Participante creado con éxito ', response1.data);
       setLoading(false);
-      enqueueSnackbar('Participant Created successfully', {
+      enqueueSnackbar('Participant Created Successfully', {
         variant: 'success',
       });
       onClose();
@@ -107,7 +100,9 @@ const CreateParticipantModal: React.FC<ICreateModalProps> = ({
       } else if (error.message) {
         enqueueSnackbar(`Error: ${error.message}`, { variant: 'error' });
       } else {
-        enqueueSnackbar('Error creating the participant', { variant: 'error' });
+        enqueueSnackbar('An error occurred while creating the participant', {
+          variant: 'error',
+        });
       }
       console.error('Error creating participant:', error);
     }
@@ -133,7 +128,7 @@ const CreateParticipantModal: React.FC<ICreateModalProps> = ({
         {/* Cabecera del Modal */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold text-gray-800">
-            Crear Participante
+            Create Participant
           </h2>
           <button
             onClick={onClose}
@@ -165,7 +160,7 @@ const CreateParticipantModal: React.FC<ICreateModalProps> = ({
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Ingrese el código del participante"
+                placeholder="Enter the participant code"
                 required
               />
             </div>
@@ -184,7 +179,7 @@ const CreateParticipantModal: React.FC<ICreateModalProps> = ({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Ingrese el nombre del participante"
+                placeholder="Enter the participant's name"
               />
             </div>
 
@@ -199,7 +194,7 @@ const CreateParticipantModal: React.FC<ICreateModalProps> = ({
                 value={age}
                 onChange={(e) => setAge(e.target.value)}
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Ingrese la edad del participante"
+                placeholder="Enter the participant's age"
                 min="1" // Evita números menores que 1
                 step="1" // Solo permite números enteros
               />
@@ -286,7 +281,7 @@ const CreateParticipantModal: React.FC<ICreateModalProps> = ({
               className="mt-4 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors duration-200"
               disabled={loading} // Deshabilitar mientras carga
             >
-              Guardar
+              Save
             </button>
           </div>
         )}

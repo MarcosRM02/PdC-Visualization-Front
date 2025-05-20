@@ -206,7 +206,7 @@ const FloatingWindow: React.FC<IFloatingWindowProps> = ({
               opacity: isHovered ? 1 : 0,
               transition: 'opacity 0.3s ease',
             }}
-            title={isFloating ? 'Fijar ventana' : 'Hacer ventana flotante'}
+            title={isFloating ? 'Pin window' : 'Make floating window'}
           >
             {isFloating ? <MdPushPin /> : <MdOpenWith />}
           </button>

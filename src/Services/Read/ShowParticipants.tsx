@@ -38,10 +38,10 @@ const ShowParticipant = () => {
 
   const breadcrumbItems: IBreadcrumbItem[] = [
     {
-      label: 'Experimentos',
+      label: 'Experiments',
       path: `/experiments/by-professional/${professionalId}`,
     },
-    { label: 'Participantes', path: `/participants/by-experiment/${id}` },
+    { label: 'Participants', path: `/participants/by-experiment/${id}` },
   ];
 
   // Función para obtener los participantes
@@ -61,8 +61,8 @@ const ShowParticipant = () => {
       setError('');
     } catch (error: any) {
       console.error(error);
-      setError('Error al cargar los participantes.');
-      enqueueSnackbar('Error al cargar los participantes.', {
+      setError('An error occurred while loading the participants');
+      enqueueSnackbar('An error occurred while loading the participants', {
         variant: 'error',
       });
     } finally {
@@ -130,7 +130,7 @@ const ShowParticipant = () => {
         <div className="flex justify-between items-center mb-6">
           <Breadcrumb items={breadcrumbItems} />
         </div>
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Participantes</h1>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6">Participants</h1>
 
         {/* Sección de Filtros */}
         <div className="flex flex-col md:flex-row items-center justify-between mb-6 space-y-4 md:space-y-0">
@@ -139,11 +139,11 @@ const ShowParticipant = () => {
             <FaSearch className="text-gray-500 mr-2" />
             <input
               type="text"
-              placeholder="Buscar por código..."
+              placeholder="Search by Code"
               value={searchCode}
               onChange={(e) => setSearchCode(e.target.value)}
               className="bg-transparent focus:outline-none w-full"
-              aria-label="Buscar por código"
+              aria-label="Search by Code"
             />
           </div>
 
@@ -151,10 +151,10 @@ const ShowParticipant = () => {
           <button
             onClick={resetFilters}
             className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors duration-200"
-            aria-label="Resetear filtros"
+            aria-label="Reset filters"
           >
             <FaUndo className="mr-2" />
-            Resetear
+            Reset
           </button>
         </div>
 
@@ -218,9 +218,6 @@ const ShowParticipant = () => {
             <h2 className="text-2xl font-semibold text-gray-700">
               No Participants Available
             </h2>
-            <p className="text-gray-500 mt-2">
-              Intenta ajustar los filtros de búsqueda.
-            </p>
           </div>
         )}
         {/* Modal de Añadir Participantes Existentes */}
