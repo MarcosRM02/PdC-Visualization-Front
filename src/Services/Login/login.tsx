@@ -31,8 +31,8 @@ const Login = () => {
       const { data } = await axios.post<{
         id: number;
         name: string;
-      }>('authentication/login', { email, password }); // → ruta relativa
-
+      }>('authentication/login', { email, password });
+      localStorage.setItem('professionalId', data.id.toString());
       // data.id es el ID del profesional
       navigate(`experiments/by-professional/${data.id}`, {
         replace: true,

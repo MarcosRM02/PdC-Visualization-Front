@@ -25,7 +25,7 @@ const ShowParticipant = () => {
   const [error, setError] = useState('');
 
   const { id } = useParams<{ id: string }>(); // ID del experimento
-  const professionalId = localStorage.getItem('id');
+  const professionalId = localStorage.getItem('professionalId');
 
   const { enqueueSnackbar } = useSnackbar();
   // Estados para el modal de adición

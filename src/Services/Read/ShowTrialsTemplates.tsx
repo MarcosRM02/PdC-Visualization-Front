@@ -26,7 +26,7 @@ const ShowTrialsTemplates = () => {
 
   const { id } = useParams<{ id: string }>();
 
-  const professionalId = localStorage.getItem('id');
+  const professionalId = localStorage.getItem('professionalId');
   const { enqueueSnackbar } = useSnackbar();
 
   // Callback para manejar la edición de una prueba

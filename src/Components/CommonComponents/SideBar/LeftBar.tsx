@@ -6,7 +6,7 @@ import { ILeftBarProps } from '../../../Interfaces/SideBar';
 
 const LeftBar: React.FC<ILeftBarProps> = ({ selectedPanel, togglePanel }) => {
   const navigate = useNavigate();
-  const professionalId = localStorage.getItem('id');
+  const professionalId = localStorage.getItem('professionalId');
 
   return (
     <div className="bg-gray-800 text-white w-16 flex flex-col items-center py-4">

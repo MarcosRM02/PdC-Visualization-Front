@@ -13,7 +13,7 @@ const ShowWearables = () => {
   const { experimentId, participantId, swId, trialId } = useParams();
   const [searchParams] = useSearchParams();
   const wearableIds = searchParams.getAll('wearableIds');
-  const professionalId = localStorage.getItem('id');
+  const professionalId = localStorage.getItem('professionalId');
   const wearableQuery = useMemo(() => {
     return wearableIds
       .map((id) => `wearableIds=${encodeURIComponent(id)}`)
