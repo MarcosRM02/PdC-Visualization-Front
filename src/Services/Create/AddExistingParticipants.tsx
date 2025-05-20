@@ -12,7 +12,7 @@ const AddExistingParticipantsModal: React.FC<ICreateModalProps> = ({
   onCreated,
 }) => {
   const [ids, setIds] = useState<
-    { id: number; code: string; personaldataid: number }[]
+    { id: number; code: string; personalDataId: number }[]
   >([]);
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
@@ -34,6 +34,7 @@ const AddExistingParticipantsModal: React.FC<ICreateModalProps> = ({
           console.error('Failed to load Participants', error);
         }
       };
+      console.log(ids);
 
       fetchSWIds();
     }
@@ -52,12 +53,12 @@ const AddExistingParticipantsModal: React.FC<ICreateModalProps> = ({
       .map((item) => ({
         id: item.id,
         code: item.code,
-        personaldataid: item.personaldataid,
+        personaldataid: item.personalDataId,
       }));
 
     const dataToSend = selectedParticipants;
     setLoading(true);
-
+    console.log('Data to send:', dataToSend);
     try {
       await axios.post(
         `participants/create-multiple/${professionalId}/${experimentId}`,
