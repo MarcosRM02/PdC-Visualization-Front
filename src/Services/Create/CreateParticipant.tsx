@@ -22,7 +22,7 @@ const CreateParticipantModal: React.FC<ICreateModalProps> = ({
 
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams<{ id: string }>(); // ID del experimento
-  const professionalId = localStorage.getItem('id');
+  const professionalId = localStorage.getItem('professionalId');
 
   const handleCreateParticipant = async () => {
     // Validaciones básicas

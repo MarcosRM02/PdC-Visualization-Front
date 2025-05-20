@@ -17,7 +17,7 @@ const AddExistingParticipantsModal: React.FC<ICreateModalProps> = ({
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const { id: experimentId } = useParams<{ id: string }>();
-  const professionalId = localStorage.getItem('id');
+  const professionalId = localStorage.getItem('professionalId');
 
   const [selectedSWIds, setSelectedSWIds] = useState<number[]>([]);
 

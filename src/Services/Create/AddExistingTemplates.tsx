@@ -22,7 +22,7 @@ const AddExistingTemplatesModal: React.FC<ICreateModalProps> = ({
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const { id: participantID } = useParams<{ id: string }>();
-  const professionalId = localStorage.getItem('id');
+  const professionalId = localStorage.getItem('professionalId');
 
   const [selectedSWIds, setSelectedSWIds] = useState<number[]>([]);
 
