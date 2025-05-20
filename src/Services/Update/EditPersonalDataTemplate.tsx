@@ -54,7 +54,7 @@ const EditPersonalDataTemplateModal: React.FC<IEditModalProps> = ({
           variant: 'error',
         });
       } else {
-        enqueueSnackbar('An error occurred while editing personal data', {
+        enqueueSnackbar('An error occurred while editing the personal data', {
           variant: 'error',
         });
       }
@@ -246,14 +246,23 @@ const EditPersonalDataTemplateModal: React.FC<IEditModalProps> = ({
               />
             </div>
 
-            {/* Botón de Guardar */}
-            <button
-              onClick={handleEditPersonalData}
-              className="mt-4 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors duration-200"
-              disabled={loading} // Deshabilitar mientras carga
-            >
-              Save
-            </button>
+            <div className="flex justify-end space-x-4">
+              {/* Botón de Cancelar */}
+              <button
+                onClick={onClose}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200"
+              >
+                Cancel
+              </button>
+              {/* Botón de Guardar */}
+              <button
+                className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleEditPersonalData}
+                disabled={loading} // Deshabilitar mientras carga
+              >
+                Save
+              </button>
+            </div>
           </div>
         )}
       </div>

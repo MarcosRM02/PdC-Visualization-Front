@@ -116,13 +116,23 @@ const CreateTemplateModal: React.FC<ICreateModalProps> = ({
                 placeholder="Ingrese la descripción"
               />
             </div>
-            {/* Botón de Guardar */}
-            <button
-              onClick={handleSaveTrial}
-              className="mt-4 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors duration-200"
-            >
-              Save
-            </button>
+            <div className="flex justify-end space-x-4">
+              {/* Botón de Cancelar */}
+              <button
+                onClick={onClose}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200"
+              >
+                Cancel
+              </button>
+              {/* Botón de Guardar */}
+              <button
+                className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={loading}
+                onClick={handleSaveTrial}
+              >
+                Save
+              </button>
+            </div>
           </div>
         )}
       </div>

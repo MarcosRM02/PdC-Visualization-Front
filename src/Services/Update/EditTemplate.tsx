@@ -27,7 +27,7 @@ const EditTrialTemplate: React.FC<IEditModalProps> = ({
         setName(response.data.name);
         setDescription(response.data.description || '');
       } catch (error) {
-        enqueueSnackbar('An error occurred while loading trial', {
+        enqueueSnackbar('An error occurred while loading the trial data', {
           variant: 'error',
         });
         console.error('Error fetching trial data:', error);

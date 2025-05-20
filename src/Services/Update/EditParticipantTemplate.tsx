@@ -28,9 +28,12 @@ const EditParticipantTemplateModal: React.FC<IEditModalProps> = ({
       } catch (err) {
         setLoading(false);
         setError('An error occurred while loading the participant');
-        enqueueSnackbar('An error occurred while loading the participant', {
-          variant: 'error',
-        });
+        enqueueSnackbar(
+          'An error occurred while loading the participant data',
+          {
+            variant: 'error',
+          },
+        );
         console.error(err);
       }
     };
@@ -126,13 +129,23 @@ const EditParticipantTemplateModal: React.FC<IEditModalProps> = ({
               </div>
             )}
 
-            {/* Botón de Guardar */}
-            <button
-              onClick={handleEditParticipant}
-              className="mt-4 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition-colors duration-200"
-            >
-              Save
-            </button>
+            <div className="flex justify-end space-x-4">
+              {/* Botón de Cancelar */}
+              <button
+                onClick={onClose}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200"
+              >
+                Cancel
+              </button>
+              {/* Botón de Guardar */}
+              <button
+                className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={loading}
+                onClick={handleEditParticipant}
+              >
+                Save
+              </button>
+            </div>
           </div>
         )}
       </div>
