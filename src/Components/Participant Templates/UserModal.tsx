@@ -108,7 +108,7 @@ const UserModal: React.FC<IUserModalProps> = ({ user, onClose }) => {
               <div>
                 <span className="text-gray-700 font-medium">Height:</span>
                 <span className="ml-2 text-gray-800 font-medium">
-                  {currentUser.height ? `${currentUser.height} m` : '—'}
+                  {currentUser.height ? `${currentUser.height}` : '—'} m
                 </span>
               </div>
             </div>
