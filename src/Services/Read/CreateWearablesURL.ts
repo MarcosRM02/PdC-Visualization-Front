@@ -1,22 +1,18 @@
 import axios from 'axios';
 
-const getIDFromAPI = async (participantId: string, swId: string) => {
-  const [wearRes, expRes] = await Promise.all([
-    axios.get<number[]>(`/sw/wearable-ids/${swId}`),
-    axios.get<any>(`/participants/experiment-by-participant/${participantId}`),
-  ]);
+const getIDFromAPI = async (participantId: any, swId: any) => {
+  try {
+    const wearablesIds = await axios.get(`sw/wearable-ids/${swId}`);
 
-  // Normaliza experimentId venga como { experimentId: 42 } o como 42
-  const raw = expRes.data;
-  const experimentId: number =
-    typeof raw === 'object' && raw !== null && 'experimentId' in raw
-      ? raw.experimentId
-      : Number(raw);
+    const experimentId = await axios.get(
+      `participants/experiment-by-participant/${participantId}`,
+    );
 
-  return {
-    wearablesIds: wearRes.data,
-    experimentId,
-  };
+    return { experimentId: experimentId.data, wearablesIds: wearablesIds.data };
+  } catch (error) {
+    console.error('Error fetching ID:', error);
+    throw error;
+  }
 };
 
 export { getIDFromAPI };
