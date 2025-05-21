@@ -96,8 +96,15 @@ const WearablesData = ({
         playerRef1.current.seekTo(pointTime, 'seconds');
         playerRef2.current.seekTo(pointTime, 'seconds');
       }
+      // Para cada playerRef, si está montado hacemos seek
+      playerRefs.forEach((ref) => {
+        if (ref.current) {
+          ref.current.seekTo(pointTime, 'seconds');
+        }
+      });
     }
   };
+
   const updateCurrentTimeLine = (currentTime: any) => {
     if (Math.abs(currentTime - previousTimeRef.current) > 0.1) {
       Object.values(refs).forEach((ref) => {
@@ -227,6 +234,11 @@ const WearablesData = ({
     if (playerRef2.current) {
       playerRef2.current.seekTo(newTime, 'seconds');
     }
+    playerRefs.forEach((ref) => {
+      if (ref.current) {
+        ref.current.seekTo(newTime, 'seconds');
+      }
+    });
   };
 
   // Llamada a funciones de graficado
