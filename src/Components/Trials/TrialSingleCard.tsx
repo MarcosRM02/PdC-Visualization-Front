@@ -19,8 +19,8 @@ const TrialSingleCard: React.FC<ITrialSingleCardProps> = ({
   onTrialDeleted,
 }) => {
   const [data, setData] = useState({
-    experimentId: null,
-    wearablesIds: [],
+    experimentId: 0,
+    wearablesIds: [] as number[],
   });
   const [error, setError] = useState('');
   const participantId = trials.participant.id;
