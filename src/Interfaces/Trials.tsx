@@ -8,12 +8,14 @@ export interface ITrial {
 
 export interface ITrialCardProps {
   trials: ITrial[];
+  experimentId: number;
   onTrialEdited: () => void;
   onTrialDeleted: () => void;
 }
 
 export interface ITrialSingleCardProps {
   trials: any;
+  experimentId: number;
   onTrialEdited: () => void;
   onTrialDeleted: () => void;
 }

@@ -34,9 +34,7 @@ const ShowTrials = () => {
   const { id } = useParams<{ id: string }>();
   const professionalId = localStorage.getItem('professionalId');
   const { enqueueSnackbar } = useSnackbar();
-  const [experimentId, setExperimentId] = useState({
-    experimentId: null,
-  });
+  const [experimentId, setExperimentId] = useState();
   const [refresh, setRefresh] = useState(false);
 
   const breadcrumbItems: IBreadcrumbItem[] = [
@@ -46,7 +44,7 @@ const ShowTrials = () => {
     },
     {
       label: 'Participants',
-      path: `/participants/by-experiment/${experimentId.experimentId}`,
+      path: `/participants/by-experiment/${experimentId}`,
     },
     { label: 'Trials', path: `/trials/by-participant/${id}` },
   ];
@@ -72,9 +70,7 @@ const ShowTrials = () => {
     const fetchData = async () => {
       try {
         const result = await getExperimentIdFromAPI(id);
-        setExperimentId({
-          experimentId: result.experimentId,
-        });
+        setExperimentId(result.experimentId);
       } catch (error) {
         console.error('Failed to fetch data:', error);
         setError('Failed to fetch data');
@@ -82,7 +78,7 @@ const ShowTrials = () => {
     };
 
     fetchData();
-  }, [experimentId, refresh]);
+  }, [id, refresh]);
 
   useEffect(() => {
     const fetchTrials = async () => {
@@ -173,6 +169,10 @@ const ShowTrials = () => {
   const openCreateModal = () => setIsCreateModalOpen(true);
   const openAddModal = () => setIsAddModalOpen(true);
   const closeAddModal = () => setIsAddModalOpen(false);
+
+  if (experimentId === undefined) {
+    return <Spinner />;
+  }
 
   return (
     <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
@@ -270,7 +270,7 @@ const ShowTrials = () => {
       </div>
       {/* Contenido Principal */}
       <div className="flex-1 overflow-auto min-h-0 bg-white p-4 pb-24">
-        {loading ? (
+        {experimentId === undefined || loading ? (
           <Spinner />
         ) : filteredSWDatas.length > 0 ? (
           // Pasar ambos manejadores de edición y eliminación a TrialCard
@@ -278,6 +278,7 @@ const ShowTrials = () => {
             trials={filteredSWDatas}
             onTrialEdited={handleTrialEdited}
             onTrialDeleted={handleTrialDeleted}
+            experimentId={experimentId} // Asegurarse de que experimentId no sea undefined
           />
         ) : (
           <div className="flex flex-col items-center justify-center mt-20">

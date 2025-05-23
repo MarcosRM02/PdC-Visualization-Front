@@ -17,11 +17,9 @@ const TrialSingleCard: React.FC<ITrialSingleCardProps> = ({
   trials,
   onTrialEdited,
   onTrialDeleted,
+  experimentId,
 }) => {
-  const [data, setData] = useState({
-    experimentId: null,
-    wearablesIds: [],
-  });
+  const [wearablesIds, setWearablesIds] = useState([]);
   const [error, setError] = useState('');
   const participantId = trials.participant.id;
   const swId = trials.sw.id;
@@ -33,11 +31,8 @@ const TrialSingleCard: React.FC<ITrialSingleCardProps> = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await getIDFromAPI(participantId, swId);
-        setData({
-          experimentId: result.experimentId,
-          wearablesIds: result.wearablesIds,
-        });
+        const result = await getIDFromAPI(swId);
+        setWearablesIds(result);
       } catch (error) {
         console.error('Failed to fetch data:', error);
         setError('Failed to fetch data');
@@ -48,10 +43,8 @@ const TrialSingleCard: React.FC<ITrialSingleCardProps> = ({
   }, [participantId, swId, refresh]);
 
   // Construcción de la URL para el Link
-  const detailsBasePath = `/swData/getData/${data.experimentId}/${participantId}/${swId}/${trials.id}`;
-  const wearableQuery = data.wearablesIds
-    .map((id) => `wearableIds=${id}`)
-    .join('&');
+  const detailsBasePath = `/swData/getData/${experimentId}/${participantId}/${swId}/${trials.id}`;
+  const wearableQuery = wearablesIds.map((id) => `wearableIds=${id}`).join('&');
   const detailsUrl = `${detailsBasePath}?${wearableQuery}`;
 
   // Formateo de fecha

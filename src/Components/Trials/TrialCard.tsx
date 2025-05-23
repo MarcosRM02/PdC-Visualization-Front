@@ -6,6 +6,7 @@ const TrialCard: React.FC<ITrialCardProps> = ({
   trials = [],
   onTrialEdited,
   onTrialDeleted,
+  experimentId,
 }) => {
   return (
     <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -15,6 +16,7 @@ const TrialCard: React.FC<ITrialCardProps> = ({
           trials={item}
           onTrialEdited={onTrialEdited}
           onTrialDeleted={onTrialDeleted}
+          experimentId={experimentId}
         />
       ))}
     </div>
