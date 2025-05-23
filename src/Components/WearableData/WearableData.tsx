@@ -64,6 +64,12 @@ const WearablesData = ({
   const recordedVideoSrc = `${
     import.meta.env.VITE_API_URL
   }/trials/retrieve-video/${trialId}`;
+  const videoDownloadUrl = `${
+    import.meta.env.VITE_API_URL
+  }/trials/download-recroded/${trialId}`;
+  const hmDownloadUrl = `${
+    import.meta.env.VITE_API_URL
+  }/trials/download-HM/${trialId}`;
 
   const leftWearables = wearables.filter(
     (wearable) => wearable.wearableType === 'L',
@@ -465,8 +471,7 @@ const WearablesData = ({
               onSeek={handleSeek}
             />
             <ControlPanel
-              videoSrc={hmVideoSrc}
-              videoName="HeatMapAnimation"
+              videoDownloadUrl={hmDownloadUrl}
               playbackRate={playbackRate}
               playbackRates={playbackRates}
               changePlaybackRate={changePlaybackRate}
@@ -559,6 +564,7 @@ const WearablesData = ({
           <FloatingWindow
             playerRef1={playerRef1}
             videoSrc={recordedVideoSrc}
+            videoDownloadUrl={videoDownloadUrl}
             playbackRate={playbackRate}
             handleProgress={handleProgress}
             handleSeek={handleSeek}

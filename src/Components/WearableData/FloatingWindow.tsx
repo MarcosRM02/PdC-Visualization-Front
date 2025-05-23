@@ -9,6 +9,7 @@ import { IFloatingWindowProps } from '../../Interfaces/DataPanel';
 const FloatingWindow: React.FC<IFloatingWindowProps> = ({
   playerRef1,
   videoSrc,
+  videoDownloadUrl,
   playbackRate,
   handleProgress,
   handleSeek,
@@ -138,8 +139,7 @@ const FloatingWindow: React.FC<IFloatingWindowProps> = ({
         onSeek={handleSeek}
       />
       <ControlPanel
-        videoSrc={videoSrc}
-        videoName="RecordedVideo"
+        videoDownloadUrl={videoDownloadUrl}
         playbackRate={playbackRate}
         playbackRates={playbackRates}
         changePlaybackRate={changePlaybackRate}

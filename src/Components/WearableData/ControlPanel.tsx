@@ -1,15 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PlaybackRateDropdown from './PlaybackRateDropdown';
 import IconActionButton from './IconActionButton';
 import { FaPlay, FaPause } from 'react-icons/fa';
 import { VscDebugRestart } from 'react-icons/vsc';
-import { IControlPanelProps } from '../../Interfaces/DataPanel';
 import { RiVideoDownloadFill } from 'react-icons/ri';
-import axios from 'axios';
+import { IControlPanelProps } from '../../Interfaces/DataPanel';
 
 const ControlPanel: React.FC<IControlPanelProps> = ({
-  videoSrc,
-  videoName,
+  videoDownloadUrl,
   playbackRate,
   playbackRates,
   changePlaybackRate,
@@ -20,59 +18,50 @@ const ControlPanel: React.FC<IControlPanelProps> = ({
   updateHz,
   handleUpdateHzChange,
 }) => {
-  const handleDownload = async () => {
-    try {
-      // 1) Petición al servidor, enviando la cookie HttpOnly
-      const response = await axios.get<Blob>(videoSrc, {
-        responseType: 'blob',
-        withCredentials: true,
-      });
+  const [downloading, setDownloading] = useState(false);
 
-      // 2) Convertir a URL de objeto
-      const blobUrl = URL.createObjectURL(response.data);
-
-      // 3) Simular <a download>
-      const link = document.createElement('a');
-      link.href = blobUrl;
-      link.setAttribute('download', `${videoName}.mp4`);
-      document.body.appendChild(link);
-      link.click();
-
-      // 4) Limpieza
-      URL.revokeObjectURL(blobUrl);
-      document.body.removeChild(link);
-    } catch (error) {
-      console.error('Error downloading video:', error);
-    }
+  const handleDownload = () => {
+    setDownloading(true);
+    // Crea un <a> que apunte al nuevo endpoint de descarga
+    const link = document.createElement('a');
+    link.href = videoDownloadUrl;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setDownloading(false);
   };
+
   return (
-    <div className="w-full mb-2 flex items-center justify-center">
-      <IconActionButton
-        onClick={handlePlay}
-        icon={isPlaying ? <FaPause /> : <FaPlay />}
-        color={isPlaying ? 'orange' : 'green'}
-        tooltip={isPlaying ? 'Pause' : 'Play'}
-      />
-      <IconActionButton
-        onClick={handleReset}
-        icon={<VscDebugRestart />}
-        color="red"
-        tooltip="Reset"
-      />
-      <PlaybackRateDropdown
-        playbackRate={playbackRate}
-        playbackRates={playbackRates}
-        changePlaybackRate={changePlaybackRate}
-        videoAvailable={videoAvailable}
-        updateHz={updateHz}
-        onUpdateHzChange={handleUpdateHzChange}
-      />
-      <IconActionButton
-        onClick={handleDownload}
-        icon={<RiVideoDownloadFill />}
-        color="blue"
-        tooltip="Download Video"
-      />
+    <div className="w-full mb-2 flex flex-col items-center">
+      <div className="flex items-center space-x-2">
+        <IconActionButton
+          onClick={handlePlay}
+          icon={isPlaying ? <FaPause /> : <FaPlay />}
+          color={isPlaying ? 'orange' : 'green'}
+          tooltip={isPlaying ? 'Pause' : 'Play'}
+        />
+        <IconActionButton
+          onClick={handleReset}
+          icon={<VscDebugRestart />}
+          color="red"
+          tooltip="Reset"
+        />
+        <PlaybackRateDropdown
+          playbackRate={playbackRate}
+          playbackRates={playbackRates}
+          changePlaybackRate={changePlaybackRate}
+          videoAvailable={videoAvailable}
+          updateHz={updateHz}
+          onUpdateHzChange={handleUpdateHzChange}
+        />
+        <IconActionButton
+          onClick={handleDownload}
+          icon={<RiVideoDownloadFill />}
+          color={'blue'}
+          tooltip="Download Video"
+          disabled={downloading}
+        />
+      </div>
     </div>
   );
 };

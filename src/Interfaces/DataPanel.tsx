@@ -33,8 +33,7 @@ export interface IPlaybackButtonProps {
 }
 
 export interface IControlPanelProps {
-  videoSrc: string;
-  videoName: string;
+  videoDownloadUrl: string;
   playbackRate: number;
   playbackRates: { label: string; rate: number }[];
   changePlaybackRate: (rate: number) => void;
@@ -51,6 +50,7 @@ export interface IControlPanelProps {
 export interface IFloatingWindowProps {
   playerRef1: React.RefObject<any>;
   videoSrc: string;
+  videoDownloadUrl: string;
   playbackRate: number;
   handleProgress: (progress: any) => void;
   handleSeek: (time: number) => void;
@@ -89,8 +89,9 @@ export interface IHeatmapControlPanelProps {
 export interface IIconActionButtonProps {
   onClick: () => void;
   icon: React.ReactNode;
-  color?: 'blue' | 'red' | 'green' | 'orange';
+  color?: 'blue' | 'red' | 'green' | 'orange' | 'gray';
   tooltip?: string;
+  disabled?: boolean;
 }
 
 export interface IPlaybackRateDropdownProps {
