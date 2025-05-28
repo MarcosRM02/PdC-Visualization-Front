@@ -9,9 +9,9 @@ import {
 import EditTemplateModal from '../../Services/Update/EditTemplate';
 import DeleteTemplate from '../../Services/Delete/DeleteTemplate';
 import { Link } from 'react-router-dom';
-import { ITrialSingleCardProps } from '../../Interfaces/Trials';
+import { ITrialTemplateSingleCardProps } from '../../Interfaces/Trials';
 
-const TemplateSingleCard: React.FC<ITrialSingleCardProps> = ({
+const TemplateSingleCard: React.FC<ITrialTemplateSingleCardProps> = ({
   trials: template,
   onTrialEdited,
   onTrialDeleted,

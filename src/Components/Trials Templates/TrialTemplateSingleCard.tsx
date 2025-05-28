@@ -9,9 +9,9 @@ import {
 import { FaRegCalendarCheck } from 'react-icons/fa';
 import EditTrialTemplateModal from '../../Services/Update/EditTrialTemplate';
 import DeleteTrialTemplate from '../../Services/Delete/DeleteTrialTemplate';
-import { ITrialSingleCardProps } from '../../Interfaces/Trials';
+import { ITrialTemplateSingleCardProps } from '../../Interfaces/Trials';
 
-const TrialSingleCard: React.FC<ITrialSingleCardProps> = ({
+const TrialSingleCard: React.FC<ITrialTemplateSingleCardProps> = ({
   trials,
   onTrialEdited,
   onTrialDeleted,

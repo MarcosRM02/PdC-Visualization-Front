@@ -1,8 +1,8 @@
 import React from 'react';
 import TemplateSingleCard from './TemplateSingleCard';
-import { ITrialCardProps } from '../../Interfaces/Trials';
+import { ITrialTemplateCardProps } from '../../Interfaces/Trials';
 
-const TrialCard: React.FC<ITrialCardProps> = ({
+const TrialCard: React.FC<ITrialTemplateCardProps> = ({
   trials = [],
   onTrialEdited,
   onTrialDeleted,

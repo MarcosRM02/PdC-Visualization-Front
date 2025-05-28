@@ -24,3 +24,15 @@ export interface ITemplate {
   name: string;
   description?: string | null;
 }
+
+export interface ITrialTemplateCardProps {
+  trials: ITrial[];
+  onTrialEdited: () => void;
+  onTrialDeleted: () => void;
+}
+
+export interface ITrialTemplateSingleCardProps {
+  trials: any;
+  onTrialEdited: () => void;
+  onTrialDeleted: () => void;
+}

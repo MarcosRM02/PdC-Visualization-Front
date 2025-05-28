@@ -81,6 +81,7 @@ const WearablesData = ({
   const leftFrames = leftWearables.map(
     (wearable: any) => new DataFrame(wearable.dataframe),
   );
+
   const rightFrames = rightWearables.map(
     (wearable: any) => new DataFrame(wearable.dataframe),
   );

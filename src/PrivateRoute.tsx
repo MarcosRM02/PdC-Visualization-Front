@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate} from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import axios from 'axios';
 import Layout from './Components/CommonComponents/Layout';
 
@@ -30,7 +30,7 @@ const PrivateRoute: React.FC = () => {
   }
   if (auth === 'unauthenticated') {
     // Si no hay sesión, redirige al login
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // Si está autenticado, renderizamos el layout y dentro de éste el <Outlet/>
