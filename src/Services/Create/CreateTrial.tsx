@@ -128,24 +128,6 @@ const CreateTrialModal: React.FC<ICreateModalProps> = ({
               </select>
             </div>
 
-            {/* Campo de Descripción (Opcional) */}
-            <div>
-              <label
-                className="block text-gray-700 text-lg mb-2"
-                htmlFor="description"
-              >
-                Description <span className="text-gray-500">(Optional)</span>
-              </label>
-              <input
-                id="description"
-                type="text"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
-                placeholder="Enter the trial description"
-              />
-            </div>
-
             {/* Campo de Código (Opcional) */}
             <div>
               <label
@@ -161,6 +143,24 @@ const CreateTrialModal: React.FC<ICreateModalProps> = ({
                 onChange={(e) => setCode(e.target.value)}
                 className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
                 placeholder="Enter the trial code"
+              />
+            </div>
+
+            {/* Campo de Descripción (Opcional) */}
+            <div>
+              <label
+                className="block text-gray-700 text-lg mb-2"
+                htmlFor="description"
+              >
+                Description <span className="text-gray-500">(Optional)</span>
+              </label>
+              <input
+                id="description"
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full border-2 border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-sky-500"
+                placeholder="Enter the trial description"
               />
             </div>
 
