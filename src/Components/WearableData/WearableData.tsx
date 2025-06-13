@@ -15,6 +15,7 @@ import InfoButton from './Buttons/InfoButton';
 import { HiOutlineFolderDownload } from 'react-icons/hi';
 import ControlPanel from './ControlPanel';
 import TimeProgressBar from './TimeProgressBar';
+import Spinner from '../CommonComponents/Spinner';
 
 const WearablesData = ({
   wearables,
@@ -57,6 +58,7 @@ const WearablesData = ({
   const [hasEnded, setHasEnded] = useState(false);
   const [videoExists, setVideoExists] = useState<boolean>(false);
   const [hmVideoExists, setHmVideoExists] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true); // Estado de carga
 
   const hmVideoSrc = `${
     import.meta.env.VITE_API_URL
@@ -371,12 +373,52 @@ const WearablesData = ({
       window.removeEventListener('resize', handleResize);
     };
   }, [refs]);
+  // Estado de carga: comprobar la existencia de los videos
+  useEffect(() => {
+    const checkVideos = async () => {
+      try {
+        const videoResponse = await axios.head(
+          `/trials/retrieve-video/${trialId}`,
+        );
+        setVideoExists(videoResponse.status === 200);
+      } catch (error) {
+        console.error('Error comprobando vídeo principal:', error);
+        setVideoExists(false);
+      }
+
+      try {
+        const hmVideoResponse = await axios.head(
+          `/trials/retrieve-HMvideo/${trialId}`,
+        );
+        setHmVideoExists(hmVideoResponse.status === 200);
+      } catch (error) {
+        console.error('Error comprobando HM video:', error);
+        setHmVideoExists(false);
+      }
+    };
+
+    checkVideos();
+  }, [trialId]);
+
+  // Cuando los videos y gráficos estén listos, cambia el estado de carga a false
+  useEffect(() => {
+    if (
+      videoExists &&
+      hmVideoExists &&
+      leftFrames.length > 0 &&
+      rightFrames.length > 0
+    ) {
+      setIsLoading(false); // Se ha cargado todo
+    }
+  }, [videoExists, hmVideoExists, leftFrames, rightFrames]);
 
   return (
     <div
       ref={parentRef}
       className="relative overflow-visible flex flex-col bg-gray-100"
     >
+      {/* Mostrar spinner de carga */}
+      {isLoading && <Spinner />}
       {videoExists && (
         <div className="relative mt-5 mb-6">
           <FloatingWindow

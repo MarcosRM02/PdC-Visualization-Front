@@ -1,9 +1,11 @@
+import { FaSync } from 'react-icons/fa';
+
 const Spinner = () => {
   return (
-    <div className="flex items-center justify-center h-64 w-full">
-      <div className="text-center">
-        <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        <p className="mt-4 text-gray-700">Loading data...</p>
+    <div className="absolute inset-0 flex justify-center items-center bg-white z-50">
+      <div className="flex flex-col items-center">
+        <FaSync className="animate-spin text-3xl text-gray-600" />
+        <span className="text-xl text-gray-600 mt-2">Loading...</span>
       </div>
     </div>
   );
