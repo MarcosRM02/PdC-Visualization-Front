@@ -7,6 +7,7 @@ const IconActionButton: React.FC<IIconActionButtonProps> = ({
   color,
   tooltip,
   disabled = false,
+  tooltipPosition = 'bottom', // Nueva propiedad para decidir la posición
 }) => {
   return (
     <div className="relative group inline-block">
@@ -31,6 +32,10 @@ const IconActionButton: React.FC<IIconActionButtonProps> = ({
               ? 'text-orange-500'
               : color === 'gray'
               ? 'text-gray-500'
+              : color === 'black'
+              ? 'text-zin-950'
+              : color === 'violet'
+              ? 'text-fuchsia-700'
               : ''
           }
         `}
@@ -41,7 +46,14 @@ const IconActionButton: React.FC<IIconActionButtonProps> = ({
       {tooltip && !disabled && (
         <span
           style={{ zIndex: 9999 }}
-          className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-gray-700 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity z-50"
+          className={`
+            absolute transform -translate-x-1/2 px-2 py-1 bg-gray-700 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity z-50
+            ${
+              tooltipPosition === 'bottom'
+                ? 'top-full mt-2'
+                : 'bottom-full mb-2'
+            }
+          `}
         >
           {tooltip}
         </span>

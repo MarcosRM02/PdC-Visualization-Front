@@ -231,19 +231,12 @@ const WearablesData = ({
     changePlaybackRate(newPlaybackRate);
   };
 
-  // Función para sincronizar el seek en ambos videos
   const handleSeek = (newTime: number) => {
     if (Math.abs(newTime - playTime) < 0.1) return;
     setPlayTime(newTime);
-    if (playerRef1.current) {
-      playerRef1.current.seekTo(newTime, 'seconds');
-    }
-    if (playerRef2.current) {
-      playerRef2.current.seekTo(newTime, 'seconds');
-    }
     playerRefs.forEach((ref) => {
       if (ref.current) {
-        ref.current.seekTo(newTime, 'seconds');
+        ref.current.seekTo(newTime, 'seconds'); // Asegúrate de pasar los milisegundos a segundos
       }
     });
   };
@@ -384,6 +377,42 @@ const WearablesData = ({
       ref={parentRef}
       className="relative overflow-visible flex flex-col bg-gray-100"
     >
+      {videoExists && (
+        <div className="relative mt-5 mb-6">
+          <FloatingWindow
+            playerRef1={playerRef1}
+            videoSrc={recordedVideoSrc}
+            videoDownloadUrl={videoDownloadUrl}
+            playbackRate={playbackRate}
+            handleProgress={handleProgress}
+            handleSeek={handleSeek}
+            setDuration1={setDuration1}
+            playTime={playTime}
+            globalDuration={globalDuration}
+            playbackRates={playbackRates}
+            changePlaybackRate={changePlaybackRate}
+            videoAvailable={videoExists}
+            handlePlay={handlePlayPause}
+            isPlaying={isPlaying}
+            handleReset={restartAll}
+            resetGraphs={resetGraphs}
+            updateHz={updateHz}
+            handleUpdateHzChange={handleUpdateHzChange}
+            descargarDatosVisibles={descargarDatosVisibles}
+            refs={refs}
+            leftWearables={leftWearables}
+            rightWearables={rightWearables}
+            experimentId={experimentId}
+            participantId={participantId}
+            trialId={trialId}
+            swId={swId}
+            parentRef={parentRef}
+            onEnded={handleEnded}
+            playref2={playerRef2}
+            fps={leftHeatmapRef.current?.fps} // Fps de las plantillas
+          />
+        </div>
+      )}
       {/* Sección de gráficos detallados */}
       <div className="flex justify-center space-x-6 items-center">
         <IconActionButton
@@ -495,6 +524,9 @@ const WearablesData = ({
                   swId,
                 )
               }
+              playerRef1={playerRef1}
+              playerRef2={playerRef2}
+              fps={leftHeatmapRef.current?.fps} // Fps de las plantillas
             />
           </div>
           <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
@@ -514,7 +546,7 @@ const WearablesData = ({
       </div>
 
       {/* Contenedor para las gráficas adicionales */}
-      <div className="flex flex-col lg:flex-row">
+      <div className="flex flex-col lg:flex-row mb-12 gap-8">
         <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
           {leftWearables.map((_wearable, index) => (
             <Fragment key={index}>
@@ -560,40 +592,6 @@ const WearablesData = ({
           ))}
         </div>
       </div>
-      {videoExists && (
-        <div className="relative mt-5">
-          <FloatingWindow
-            playerRef1={playerRef1}
-            videoSrc={recordedVideoSrc}
-            videoDownloadUrl={videoDownloadUrl}
-            playbackRate={playbackRate}
-            handleProgress={handleProgress}
-            handleSeek={handleSeek}
-            setDuration1={setDuration1}
-            playTime={playTime}
-            globalDuration={globalDuration}
-            playbackRates={playbackRates}
-            changePlaybackRate={changePlaybackRate}
-            videoAvailable={videoExists}
-            handlePlay={handlePlayPause}
-            isPlaying={isPlaying}
-            handleReset={restartAll}
-            resetGraphs={resetGraphs}
-            updateHz={updateHz}
-            handleUpdateHzChange={handleUpdateHzChange}
-            descargarDatosVisibles={descargarDatosVisibles}
-            refs={refs}
-            leftWearables={leftWearables}
-            rightWearables={rightWearables}
-            experimentId={experimentId}
-            participantId={participantId}
-            trialId={trialId}
-            swId={swId}
-            parentRef={parentRef}
-            onEnded={handleEnded}
-          />
-        </div>
-      )}
     </div>
   );
 };

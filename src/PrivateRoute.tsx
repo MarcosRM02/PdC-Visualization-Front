@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import axios from 'axios';
 import Layout from './Components/CommonComponents/Layout';
+import Spinner from './Components/CommonComponents/Spinner';
 
 type AuthState = 'loading' | 'authenticated' | 'unauthenticated';
 
@@ -26,7 +27,7 @@ const PrivateRoute: React.FC = () => {
 
   if (auth === 'loading') {
     // Mientras comprobamos la cookie, podemos mostrar un spinner o null
-    return <div>Loading…</div>;
+    return <Spinner />;
   }
   if (auth === 'unauthenticated') {
     // Si no hay sesión, redirige al login

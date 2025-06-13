@@ -5,6 +5,7 @@ import { FaPlay, FaPause } from 'react-icons/fa';
 import { VscDebugRestart } from 'react-icons/vsc';
 import { RiVideoDownloadFill } from 'react-icons/ri';
 import { IControlPanelProps } from '../../Interfaces/DataPanel';
+import VideoFrameStepper from './VideoFrameStpper';
 
 const ControlPanel: React.FC<IControlPanelProps> = ({
   videoDownloadUrl,
@@ -17,6 +18,9 @@ const ControlPanel: React.FC<IControlPanelProps> = ({
   handleReset,
   updateHz,
   handleUpdateHzChange,
+  playerRef1,
+  playerRef2,
+  fps = 64, // Fps por defecto
 }) => {
   const [downloading, setDownloading] = useState(false);
 
@@ -32,7 +36,7 @@ const ControlPanel: React.FC<IControlPanelProps> = ({
   };
 
   return (
-    <div className="w-full mb-2 flex flex-col items-center">
+    <div className="w-full mb-2 flex flex-col items-center mb-4 space-y-4">
       <div className="flex items-center space-x-2">
         <IconActionButton
           onClick={handlePlay}
@@ -62,6 +66,11 @@ const ControlPanel: React.FC<IControlPanelProps> = ({
           disabled={downloading}
         />
       </div>
+      <VideoFrameStepper
+        playerRef1={playerRef1} // Referencia del primer reproductor
+        playerRef2={playerRef2} // Referencia del segundo reproductor
+        fps={fps} // Fps de las plantillas
+      />
     </div>
   );
 };

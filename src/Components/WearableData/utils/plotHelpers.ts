@@ -171,11 +171,14 @@ function generateLayout(yRange?: [number, number]) {
       },
     },
     xaxis: {
-      title: 'Time (s)',
+      title: 'Time (ms)', // Aquí cambiamos a ms
       titlefont: {
         size: 16,
         color: '#333',
       },
+      tickmode: 'array',
+
+      tickformat: '.4f', // Para que las etiquetas tengan formato flotante con 2 decimales
     },
     margin: {
       l: 60,

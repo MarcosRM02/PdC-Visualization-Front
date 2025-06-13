@@ -3,6 +3,7 @@ import PlaybackButton from './Buttons/PlaybackButton';
 import { MdOutlineShutterSpeed } from 'react-icons/md';
 import HzControlPanel from './HZControlPannel';
 import { IPlaybackRateDropdownProps } from '../../Interfaces/DataPanel';
+import IconActionButton from './IconActionButton';
 
 const PlaybackRateDropdown: React.FC<IPlaybackRateDropdownProps> = ({
   playbackRate,
@@ -37,13 +38,21 @@ const PlaybackRateDropdown: React.FC<IPlaybackRateDropdownProps> = ({
   return (
     <div className="relative inline-block" ref={dropdownRef}>
       {/* Botón principal con estilo similar al de IconActionButton */}
-      <button
+
+      <IconActionButton
+        onClick={toggleDropdown}
+        icon={<MdOutlineShutterSpeed />}
+        color="violet"
+        tooltip="Playback Speed"
+        tooltipPosition="top"
+      />
+      {/* <button
         onClick={toggleDropdown}
         className="ffont-bold py-3 px-8 rounded shadow-lg hover:shadow-xl transition duration-200 text-xl flex items-center justify-center  h-[40px] "
         title="Playback Speed"
       >
         <MdOutlineShutterSpeed size={24} color="blueviolet" />
-      </button>
+      </button> */}
       {/* Menú desplegable con scroll vertical en caso de exceso de elementos */}
       {isOpen && (
         <div className="absolute bottom-full mb-2 right-0 bg-white border border-gray-300 rounded shadow-lg z-10 p-2 max-h-60 overflow-y-auto">

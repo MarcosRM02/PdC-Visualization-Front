@@ -68,7 +68,7 @@ export async function descargarDatosVisibles(
     const headers = [];
     for (let i = 0; i < originalCount; i++) {
       if (i < 32) {
-        headers.push(`PressureSensor ${i + 1}`);
+        headers.push(`PressureSensor ${i}`);
       } else if (i === 32) {
         headers.push('AccelerometerX');
       } else if (i === 33) {
@@ -83,7 +83,7 @@ export async function descargarDatosVisibles(
         headers.push('GyroscopeZ');
       } else {
         // en caso de haber más columnas
-        headers.push(`sensor ${i + 1}`);
+        headers.push(`sensor ${i}`);
       }
     }
     headers.push('copX', 'copY', 'sumP');

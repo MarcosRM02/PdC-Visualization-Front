@@ -11,6 +11,9 @@ const TimeProgressBar: React.FC<ITimeProgressBarProps> = ({
     onSeek(newTime);
   };
 
+  // Calculamos el tiempo restante
+  const remainingTime = duration - currentTime;
+
   return (
     <div className="w-full ">
       <input
@@ -23,8 +26,10 @@ const TimeProgressBar: React.FC<ITimeProgressBarProps> = ({
         className="w-full"
       />
       <div className="flex justify-between text-sm text-gray-600">
+        {/* Formateamos el tiempo restante */}
         <span>{formatTime(currentTime)}</span>
-        <span>{formatTime(duration)}</span>
+        <span>{formatTime(remainingTime)}</span>{' '}
+        {/* Puedes mantener la duración si lo deseas */}
       </div>
     </div>
   );
@@ -32,8 +37,9 @@ const TimeProgressBar: React.FC<ITimeProgressBarProps> = ({
 
 function formatTime(time: number): string {
   const minutes = Math.floor(time / 60);
-  const seconds = Math.floor(time % 60);
-  return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+  const milliseconds = time % 1000; // Milisegundos restantes
+
+  return `${minutes}:${milliseconds.toFixed(4)}`; // Muestra el tiempo en formato MIN:MS
 }
 
 export default TimeProgressBar;

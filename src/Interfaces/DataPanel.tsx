@@ -1,3 +1,4 @@
+import React from 'react';
 import ReactPlayer from 'react-player';
 
 interface IDataFrameRow {
@@ -45,10 +46,13 @@ export interface IControlPanelProps {
   updateHz: number;
   handleUpdateHzChange: (newHz: number) => void;
   descargarDatos: () => void;
+  playerRef1: React.RefObject<ReactPlayer>;
+  playerRef2: React.RefObject<ReactPlayer>;
+  fps?: number; // Fotogramas por segundo, default 64
 }
 
 export interface IFloatingWindowProps {
-  playerRef1: React.RefObject<any>;
+  playerRef1: React.RefObject<ReactPlayer>;
   videoSrc: string;
   videoDownloadUrl: string;
   playbackRate: number;
@@ -79,6 +83,8 @@ export interface IFloatingWindowProps {
   swId: number;
   parentRef: React.RefObject<HTMLDivElement>;
   onEnded: () => void;
+  playref2: React.RefObject<ReactPlayer>;
+  fps: number; // Fotogramas por segundo, default 64
 }
 
 export interface IHeatmapControlPanelProps {
@@ -89,9 +95,10 @@ export interface IHeatmapControlPanelProps {
 export interface IIconActionButtonProps {
   onClick: () => void;
   icon: React.ReactNode;
-  color?: 'blue' | 'red' | 'green' | 'orange' | 'gray';
+  color?: 'blue' | 'red' | 'green' | 'orange' | 'gray' | 'black' | 'violet';
   tooltip?: string;
   disabled?: boolean;
+  tooltipPosition?: 'bottom' | 'top'; // Nueva propiedad para decidir la posición del tooltip
 }
 
 export interface IPlaybackRateDropdownProps {
@@ -118,4 +125,10 @@ export interface IVideoSectionProps {
   handleSeek: (newTime: number) => void;
   onDuration1: (duration: number) => void;
   onEnded: () => void;
+}
+
+export interface IVideoFrameStepperProps {
+  playerRef1: React.RefObject<ReactPlayer>; // Primera referencia de ReactPlayer
+  playerRef2: React.RefObject<ReactPlayer>; // Segunda referencia de ReactPlayer
+  fps?: number; // Fotogramas por segundo, default 25
 }

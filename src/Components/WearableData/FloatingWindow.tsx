@@ -35,6 +35,8 @@ const FloatingWindow: React.FC<IFloatingWindowProps> = ({
   swId,
   parentRef,
   onEnded,
+  playref2, // Añadido para compatibilidad con VideoFrameStepper
+  fps = 64, // Fotogramas por segundo por defecto
 }) => {
   // TAMAÑO ORIGINAL deseado para la ventana fija.
   const originalSize = { width: 1200, height: 900 };
@@ -162,6 +164,9 @@ const FloatingWindow: React.FC<IFloatingWindowProps> = ({
             swId,
           )
         }
+        playerRef2={playref2} // Añadido para compatibilidad con VideoFrameStepper
+        fps={fps} // Fotogramas por segundo
+        playerRef1={playerRef1}
       />
     </>
   );
