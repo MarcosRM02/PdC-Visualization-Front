@@ -402,12 +402,7 @@ const WearablesData = ({
 
   // Cuando los videos y gráficos estén listos, cambia el estado de carga a false
   useEffect(() => {
-    if (
-      videoExists &&
-      hmVideoExists &&
-      leftFrames.length > 0 &&
-      rightFrames.length > 0
-    ) {
+    if (leftFrames.length > 0 && rightFrames.length > 0) {
       setIsLoading(false); // Se ha cargado todo
     }
   }, [videoExists, hmVideoExists, leftFrames, rightFrames]);

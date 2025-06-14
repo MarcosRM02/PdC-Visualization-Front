@@ -1,16 +1,6 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-
-interface LocationState {
-  from?: string;
-}
 
 const CookiesPolicy: React.FC = () => {
-  const navigate = useNavigate();
-  const { state } = useLocation() as { state: LocationState };
-
-  const backTo = state?.from ?? '/';
-
   return (
     <div className="max-w-3xl mx-auto p-8 bg-white rounded shadow mt-10">
       <h1 className="text-3xl font-bold mb-4">Cookie Policy</h1>
@@ -83,23 +73,6 @@ const CookiesPolicy: React.FC = () => {
         Please note disabling strictly necessary cookies may prevent you from
         logging in or using key features of the site.
       </p>
-
-      {/* <h2 className="text-2xl font-semibold mb-2">4. Privacy Policy</h2>
-    <p className="mb-4">
-      For more information on how we collect and process your personal data,
-      please see our{' '}
-      <Link to="/privacy-policy" className="text-indigo-600 hover:underline">
-        Privacy Policy
-      </Link>
-      .
-    </p> */}
-
-      <button
-        onClick={() => navigate(backTo, { replace: true })}
-        className="text-indigo-600 hover:underline"
-      >
-        ← Back
-      </button>
     </div>
   );
 };
