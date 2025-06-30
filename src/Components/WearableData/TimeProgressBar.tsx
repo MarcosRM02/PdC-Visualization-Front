@@ -11,9 +11,6 @@ const TimeProgressBar: React.FC<ITimeProgressBarProps> = ({
     onSeek(newTime);
   };
 
-  // Calculamos el tiempo restante
-  const remainingTime = duration - currentTime;
-
   return (
     <div className="w-full ">
       <input
@@ -28,7 +25,7 @@ const TimeProgressBar: React.FC<ITimeProgressBarProps> = ({
       <div className="flex justify-between text-sm text-gray-600">
         {/* Formateamos el tiempo restante */}
         <span>{formatTime(currentTime)}</span>
-        <span>{formatTime(remainingTime)}</span>{' '}
+        <span>{formatTime(duration)}</span>{' '}
         {/* Puedes mantener la duración si lo deseas */}
       </div>
     </div>

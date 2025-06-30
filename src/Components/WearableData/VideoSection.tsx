@@ -15,7 +15,7 @@ const VideoSection: React.FC<IVideoSectionProps> = ({
   const frequency = 50;
 
   return (
-    <div className="flex flex-col bg-gray-50 p-6 rounded-lg shadow-inner relative">
+    <div className="flex flex-col p-6 rounded-lg shadow-inner relative">
       <ReactPlayer
         ref={playerRef1}
         url={videoFile}

@@ -408,14 +408,11 @@ const WearablesData = ({
   }, [videoExists, hmVideoExists, leftFrames, rightFrames]);
 
   return (
-    <div
-      ref={parentRef}
-      className="relative overflow-visible flex flex-col bg-gray-100"
-    >
+    <div ref={parentRef} className="relative overflow-visible flex flex-col">
       {/* Mostrar spinner de carga */}
       {isLoading && <Spinner />}
       {videoExists && (
-        <div className="relative mt-5 mb-6">
+        <div className="relative mt-5 mb-2">
           <FloatingWindow
             playerRef1={playerRef1}
             videoSrc={recordedVideoSrc}
@@ -482,7 +479,7 @@ const WearablesData = ({
       <div className="mt-4 flex flex-col gap-8">
         {/* Contenedor para las gráficas de presión */}
         <div className="flex flex-col lg:flex-row items-start">
-          <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
+          <div className="flex-1  p-6 rounded-lg shadow-inner overflow-auto">
             {leftWearables.map((_wearable, index) => (
               <Fragment key={index}>
                 <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
@@ -566,7 +563,7 @@ const WearablesData = ({
               fps={leftHeatmapRef.current?.fps} // Fps de las plantillas
             />
           </div>
-          <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
+          <div className="flex-1 p-6 rounded-lg shadow-inner overflow-auto">
             {rightWearables.map((_wearable, index) => (
               <Fragment key={index}>
                 <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
@@ -584,7 +581,7 @@ const WearablesData = ({
 
       {/* Contenedor para las gráficas adicionales */}
       <div className="flex flex-col lg:flex-row mb-12 gap-8">
-        <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
+        <div className="flex-1 p-6 rounded-lg shadow-inner overflow-auto">
           {leftWearables.map((_wearable, index) => (
             <Fragment key={index}>
               <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">
@@ -606,7 +603,7 @@ const WearablesData = ({
             </Fragment>
           ))}
         </div>
-        <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-inner overflow-auto">
+        <div className="flex-1 p-6 rounded-lg shadow-inner overflow-auto">
           {rightWearables.map((_wearable, index) => (
             <Fragment key={index}>
               <h2 className="text-xl font-semibold text-center text-gray-800 mb-4">

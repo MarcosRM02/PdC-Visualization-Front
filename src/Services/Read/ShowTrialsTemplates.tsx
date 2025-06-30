@@ -124,18 +124,18 @@ const ShowTrialsTemplates = () => {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+    <div className="flex flex-col h-screen overflow-hidden">
       {/* Área fija: cabecera, filtros y botones */}
       <div className="p-6">
         {/* Título Principal */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center">
           <Breadcrumb items={breadcrumbItems} />
         </div>
         <h1 className="text-3xl font-bold text-gray-800 mb-6">
           Trial Templates
         </h1>
         {/* Sección de Filtros */}
-        <div className="flex flex-col md:flex-row items-center justify-between mb-6 space-y-4 md:space-y-0">
+        <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
           {/* Filtro por Código */}
           <div className="flex items-center bg-gray-100 rounded-lg px-4 py-2 w-full md:w-1/3">
             <FaSearch className="text-gray-500 mr-2" />
@@ -163,25 +163,26 @@ const ShowTrialsTemplates = () => {
             />
           </div>
 
-          {/* Botón para Resetear Filtros */}
-          <button
-            onClick={resetFilters}
-            className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors duration-200"
-            aria-label="Resetear filtros"
-          >
-            <FaUndo className="mr-2" />
-            Reset
-          </button>
-        </div>
+          {/* Contenedor para el botón de reset y el botón de creación */}
+          <div className="flex space-x-4 w-full md:w-auto justify-end">
+            {/* Botón para Resetear Filtros */}
+            <button
+              onClick={resetFilters}
+              className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors duration-200"
+              aria-label="Resetear filtros"
+            >
+              <FaUndo className="mr-2" />
+              Reset
+            </button>
 
-        {/* Botón para Abrir el Modal de Crear Trial */}
-        <div className="flex justify-end mb-6">
-          <button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="flex items-center text-sky-800 hover:text-sky-900 transition-colors duration-200"
-          >
-            <MdOutlineAddBox className="text-4xl mr-2" />
-          </button>
+            {/* Botón para Abrir el Modal de Crear Trial */}
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="flex items-center text-sky-800 hover:text-sky-900 transition-colors duration-200"
+            >
+              <MdOutlineAddBox className="text-4xl mr-2" />
+            </button>
+          </div>
         </div>
 
         {/* Mostrar Errores */}
@@ -192,7 +193,7 @@ const ShowTrialsTemplates = () => {
         )}
       </div>
       {/* Contenido Principal */}
-      <div className="flex-1 overflow-auto min-h-0 bg-white p-4 pb-24">
+      <div className="flex-1 overflow-auto min-h-0 bg-white p-2 pb-24">
         {loading ? (
           <Spinner />
         ) : filteredSWDatas.length > 0 ? (

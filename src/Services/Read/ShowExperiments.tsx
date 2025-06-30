@@ -122,15 +122,15 @@ const ShowExperiment = () => {
   }, [fetchExperiments]);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+    <div className="flex flex-col h-screen  overflow-hidden">
       {/* Área fija: cabecera, filtros y botones */}
       <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center ">
           <Breadcrumb items={breadcrumbItems} />
         </div>
         <h1 className="text-3xl font-bold text-gray-800 mb-6">Experiments</h1>
 
-        <div className="flex flex-col md:flex-row items-center justify-between mb-6 space-y-4 md:space-y-0">
+        <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
           <div className="flex items-center bg-gray-100 rounded-lg px-4 py-2 w-full md:w-1/3">
             <FaSearch className="text-gray-500 mr-2" />
             <input
@@ -177,12 +177,11 @@ const ShowExperiment = () => {
             <FaUndo className="mr-2" />
             Reset
           </button>
-        </div>
 
-        <div className="flex justify-end mb-6">
+          {/* Botón de crear al lado de los filtros */}
           <button
             onClick={openCreateModal}
-            className="flex items-center text-sky-900 hover:text-blue-800 transition-colors duration-200"
+            className="flex items-center text-sky-900 hover:text-blue-800 transition-colors duration-200 ml-4"
           >
             <MdOutlineAddBox className="text-4xl mr-2" />
           </button>
@@ -196,7 +195,7 @@ const ShowExperiment = () => {
       </div>
 
       {/* Área scrollable: lista de experimentos */}
-      <div className="flex-1 overflow-auto min-h-0 bg-white p-4 pb-24">
+      <div className="flex-1 overflow-auto min-h-0 bg-white p-2 pb-24">
         {loading ? (
           <Spinner />
         ) : filteredExperiments.length > 0 ? (

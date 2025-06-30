@@ -53,7 +53,7 @@ const ShowWearables = () => {
   }, [experimentId, participantId, swId, trialId, wearableQuery]);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+    <div className="flex flex-col h-screen overflow-hidden">
       <div className="flex justify-between items-center ">
         <Breadcrumb items={breadcrumbItems} />
       </div>

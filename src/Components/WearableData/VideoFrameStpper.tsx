@@ -52,8 +52,6 @@ export default function VideoFrameStepper({
 
   return (
     <div className="flex flex-col items-center space-y-4">
-      <p className="text-sm text-gray-500">FPS del video: {fps}</p>
-
       <div className="flex space-x-4">
         <IconActionButton
           onClick={stepBackward}

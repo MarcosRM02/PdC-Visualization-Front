@@ -175,17 +175,17 @@ const ShowTrials = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 overflow-hidden">
+    <div className="flex flex-col h-screen overflow-hidden">
       {/* Área fija: cabecera, filtros y botones */}
       <div className="p-6">
         {/* Título Principal */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center">
           <Breadcrumb items={breadcrumbItems} />
         </div>
         <h1 className="text-3xl font-bold text-gray-800 mb-6">Trials</h1>
 
         {/* Sección de Filtros */}
-        <div className="flex flex-col md:flex-row items-center justify-between mb-6 space-y-4 md:space-y-0">
+        <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
           {/* Filtro por Código */}
           <div className="flex items-center bg-gray-100 rounded-lg px-4 py-2 w-full md:w-1/3">
             <FaSearch className="text-gray-500 mr-2" />
@@ -213,51 +213,52 @@ const ShowTrials = () => {
             />
           </div>
 
-          {/* Botón para Resetear Filtros */}
-          <button
-            onClick={resetFilters}
-            className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors duration-200"
-            aria-label="Resetear filtros"
-          >
-            <FaUndo className="mr-2" />
-            Reset
-          </button>
-        </div>
-
-        {/* Dropdown */}
-        <div className="flex justify-end mb-6">
-          <div className="relative inline-block" ref={menuRef}>
+          {/* Contenedor para los elementos a la derecha */}
+          <div className="flex space-x-4 w-full md:w-auto justify-end">
+            {/* Botón para Resetear Filtros */}
             <button
-              onClick={() => setMenuOpen((prev) => !prev)}
-              className="flex items-center text-sky-900 hover:text-blue-800 transition-colors duration-200"
+              onClick={resetFilters}
+              className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors duration-200"
+              aria-label="Resetear filtros"
             >
-              <MdOutlineAddBox className="text-4xl mr-2" />
+              <FaUndo className="mr-2" />
+              Reset
             </button>
-            {menuOpen && (
-              <div className="absolute right-0 top-full mt-2 w-44  bg-gray-200 rounded shadow z-50">
-                <ul>
-                  <li>
-                    <button
-                      onClick={openAddModal}
-                      className="flex items-center w-44 bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors duration-200"
-                    >
-                      <RiContactsBookUploadLine className="text-2xl mr-2" />
-                      Import Templates
-                    </button>
-                  </li>
-                  <li className="border-t border-gray-200"></li>
-                  <li>
-                    <button
-                      onClick={openCreateModal}
-                      className="flex items-center w-44  bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors duration-200"
-                    >
-                      <LuFilePlus className="text-2xl mr-2" />
-                      Create Trial
-                    </button>
-                  </li>
-                </ul>
-              </div>
-            )}
+
+            {/* Dropdown */}
+            <div className="relative inline-block" ref={menuRef}>
+              <button
+                onClick={() => setMenuOpen((prev) => !prev)}
+                className="flex items-center text-sky-900 hover:text-blue-800 transition-colors duration-200"
+              >
+                <MdOutlineAddBox className="text-4xl mr-2" />
+              </button>
+              {menuOpen && (
+                <div className="absolute right-0 top-full mt-2 w-44  bg-gray-200 rounded shadow z-50">
+                  <ul>
+                    <li>
+                      <button
+                        onClick={openAddModal}
+                        className="flex items-center w-44 bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors duration-200"
+                      >
+                        <RiContactsBookUploadLine className="text-2xl mr-2" />
+                        Import Templates
+                      </button>
+                    </li>
+                    <li className="border-t border-gray-200"></li>
+                    <li>
+                      <button
+                        onClick={openCreateModal}
+                        className="flex items-center w-44  bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors duration-200"
+                      >
+                        <LuFilePlus className="text-2xl mr-2" />
+                        Create Trial
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -269,7 +270,7 @@ const ShowTrials = () => {
         )}
       </div>
       {/* Contenido Principal */}
-      <div className="flex-1 overflow-auto min-h-0 bg-white p-4 pb-24">
+      <div className="flex-1 overflow-auto min-h-0 bg-white p-2 pb-24">
         {experimentId === undefined || loading ? (
           <Spinner />
         ) : filteredSWDatas.length > 0 ? (
