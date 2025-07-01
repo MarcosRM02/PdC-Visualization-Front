@@ -168,24 +168,27 @@ const ShowExperiment = () => {
               isClearable
             />
           </div>
+          <div className="flex space-x-4 w-full md:w-auto justify-end">
+            <button
+              onClick={resetFilters}
+              className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors duration-200"
+              aria-label="Resetear filtros"
+            >
+              <FaUndo className="mr-2" />
+              Reset
+            </button>
 
-          <button
-            onClick={resetFilters}
-            className="flex items-center bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors duration-200"
-            aria-label="Resetear filtros"
-          >
-            <FaUndo className="mr-2" />
-            Reset
-          </button>
-
-          {/* Botón de crear al lado de los filtros */}
-          <button
-            onClick={openCreateModal}
-            className="flex items-center text-sky-900 hover:text-blue-800 transition-colors duration-200 ml-4"
-          >
-            <MdOutlineAddBox className="text-4xl mr-2" />
-          </button>
+            {/* Botón de crear al lado de los filtros */}
+            <button
+              onClick={openCreateModal}
+              className="flex items-center text-sky-900 hover:text-blue-800 transition-colors duration-200 ml-4"
+            >
+              <MdOutlineAddBox className="text-4xl mr-2" />
+            </button>
+          </div>
         </div>
+
+        {/* Mensaje de error */}
 
         {error && (
           <div className="flex items-center justify-center bg-red-200 text-red-700 px-4 py-2 rounded-lg mb-4">
