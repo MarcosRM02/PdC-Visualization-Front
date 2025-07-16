@@ -1,4 +1,4 @@
-**MVP-Gait Web Service for managing and visualizing research data from the MAmI Research Lab.**
+# **MVP-Gait Web Service for managing and visualizing research data from the MAmI Research Lab.**
 
 ---
 
