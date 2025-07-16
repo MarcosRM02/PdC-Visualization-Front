@@ -1,5 +1,6 @@
 <div align="center">
     <img width="300" height="168" alt="MAmI_logo" src="https://github.com/user-attachments/assets/871eedfe-0812-4ac1-9679-3f49ba5aea1f" />
+    <img width="293" height="168" alt="download" src="https://github.com/user-attachments/assets/a2c11698-f795-448f-8edd-64595c8258a3" />
 </div>
 
 # **MVP-Gait Web Service for managing and visualizing research data**
