@@ -1,4 +1,8 @@
-# **MVP-Gait Web Service for managing and visualizing research data from the MAmI Research Lab.**
+<div align="center">
+    <img width="300" height="168" alt="MAmI_logo" src="https://github.com/user-attachments/assets/871eedfe-0812-4ac1-9679-3f49ba5aea1f" />
+</div>
+
+# **MVP-Gait Web Service for managing and visualizing research data.**
 
 ## 🚀 Features
 
