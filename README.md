@@ -3,6 +3,8 @@
     <img width="293" height="168" alt="download" src="https://github.com/user-attachments/assets/a2c11698-f795-448f-8edd-64595c8258a3" />
 </div>
 
+This repository is one component of the MVP‑Gait toolkit, a collection of interoperable services including an Application Program Interface, Front‑End web Service, and an Animation Generator Microservice, developed to support the [SSITH](https://mamilab.eu/ssith-project/) project and advance research in human gait studies.
+
 # **MVP-Gait Web Service for managing and visualizing research data**
 
 This web service, built with React, provides tools for managing and visualizing research data related to human gait studies. It offers interactive modules to explore datasets, view animation outputs, and support research workflows in gait analysis.
