@@ -1,31 +1,109 @@
-# React + TypeScript + Vite
+**MVP-Gait Web Service for managing and visualizing research data from the MAmI Research Lab.**
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Secure Authentication** with login and protected routes.
+    
+- **Full CRUD** for:
+    
+    - Experiments
+        
+    - Participants
+        
+    - Participant templates and personal data
+        
+    - Trials and trial templates
+        
+- **Interactive visualizations** of wearable sensor data.
+- **Routing** via React Router with access control through `PrivateRoute`.
+- **Cookie Policy** support via a dedicated component.
+    
 
-## Expanding the ESLint configuration
+## 🛠️ Technologies
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- **Framework**: React + TypeScript + Vite
+    
+- **Styling**: Tailwind CSS
+    
+- **HTTP**: Axios for REST API calls
+    
+- **Visualization**: Plotly.js
+    
+- **Data Handling**: Danfo.js
 
-- Configure the top-level `parserOptions` property like this:
+## 📋 Requirements
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+- Node.js >= 16
+    
+- npm >= 8
+    
+- Docker (optional, for containerization)
+    
+
+## 🔧 Installation
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd PdC-Visualization-Front
+
+# Install dependencies
+npm install
+# or run ./install.sh
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
-# MarcosRM02-PdC-Visualization-Front
+## 🏃‍♂️ Development
+
+```bash
+# Start the development server
+npm run dev
+```
+
+- The app will run at `http://localhost:5173/`.
+    
+- Hot Module Replacement (HMR) is enabled by default.
+    
+
+## 📦 Production Build
+
+```bash
+# Create an optimized production build
+npm run build
+# or run ./build.sh
+```
+
+- Output files in the `dist/` folder.
+    
+- Preview with `npm run preview`.
+    
+
+## 🐳 Docker Usage
+
+```bash
+# Build the Docker image
+docker build -t pdc-visualization-front .
+
+# Run the container
+docker run -d -p 5173:80 pdc-visualization-front
+```
+
+## 📁 Project Structure
+
+```
+PdC-Visualization-Front/
+├── public/                # Static assets
+├── src/
+│   ├── assets/            # Images & JSON data
+│   ├── Components/        # Reusable React components
+│   ├── Interfaces/        # TypeScript types & interfaces
+│   ├── Services/          # Business logic & API calls
+│   ├── PrivateRoute.tsx   # Route guard component
+│   ├── App.tsx            # Main layout & routing
+│   └── main.tsx           # Entry point
+├── Dockerfile
+├── install.sh
+├── build.sh
+├── package.json
+└── vite.config.ts
