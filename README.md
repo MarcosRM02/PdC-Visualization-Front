@@ -1,7 +1,5 @@
 # **MVP-Gait Web Service for managing and visualizing research data from the MAmI Research Lab.**
 
----
-
 ## 🚀 Features
 
 - **Secure Authentication** with login and protected routes.
