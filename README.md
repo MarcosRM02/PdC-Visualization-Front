@@ -5,6 +5,8 @@
 
 # **MVP-Gait Web Service for managing and visualizing research data**
 
+This web service, built with React, provides tools for managing and visualizing research data related to human gait studies. It offers interactive modules to explore datasets, view animation outputs, and support research workflows in gait analysis.
+
 ## 🚀 Features
 
 - **Secure Authentication** with login and protected routes.
